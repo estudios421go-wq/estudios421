@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
 
@@ -15,6 +15,13 @@ interface MovieRowProps {
 }
 
 const MovieRow = ({ title, movies }: MovieRowProps) => {
+  // ESTADO DE SINCRONIZACIÓN: Evita que el carrusel se dibuje "a ciegas"
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Se activa solo cuando el navegador está listo
+  }, []);
+
   const settings = {
     dots: false,
     infinite: true,
@@ -26,20 +33,23 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     responsive: [
       { breakpoint: 1440, settings: { slidesToShow: 5, slidesToScroll: 2 } },
       { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 2 } },
-      { 
-        breakpoint: 850, 
-        settings: { slidesToShow: 3.5, slidesToScroll: 2, arrows: true } 
-      },
+      { breakpoint: 850, settings: { slidesToShow: 3.5, slidesToScroll: 2 } },
       { 
         breakpoint: 480, 
         settings: { 
-          slidesToShow: 3.2, 
+          slidesToShow: 3.2, // El tamaño ideal que ya habíamos aceptado
           slidesToScroll: 1,
           arrows: true 
         } 
       },
     ],
   };
+
+  // Mientras el servidor carga, mostramos un contenedor vacío con la altura correcta
+  // para evitar saltos visuales (Layout Shift)
+  if (!isClient) {
+    return <div className="mb-6 md:mb-8 h-[200px] md:h-[400px]" />;
+  }
 
   return (
     <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row">
@@ -53,7 +63,13 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
             <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 33vw, 16vw" />
+                  <Image 
+                    src={movie.image} 
+                    alt={movie.title} 
+                    fill 
+                    className="object-cover" 
+                    sizes="(max-width: 480px) 33vw, 16vw" 
+                  />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
                   <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
