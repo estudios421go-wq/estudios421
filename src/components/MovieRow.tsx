@@ -31,9 +31,9 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
         settings: { slidesToShow: 3.2, slidesToScroll: 1, arrows: true } 
       },
       { 
-        breakpoint: 480, // MÓVIL VERTICAL
+        breakpoint: 480, 
         settings: { 
-          slidesToShow: 3.2, // Forzamos a ver solo 3 para que los pósters se agranden
+          slidesToShow: 3.2, 
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -50,10 +50,17 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       <div className="relative overflow-hidden md:overflow-visible">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            <div key={movie.id} className="item-container outline-none py-2 md:py-6"> 
+            /* Añadimos un padding lateral fijo (px-2) para separar los posters entre sí */
+            <div key={movie.id} className="item-container outline-none py-2 md:py-6 px-2"> 
               <div className="relative poster-wrapper rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 40vw, 16vw" />
+                  <Image 
+                    src={movie.image} 
+                    alt={movie.title} 
+                    fill 
+                    className="object-cover" 
+                    sizes="(max-width: 480px) 40vw, 16vw" 
+                  />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
                   <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
@@ -67,21 +74,19 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* ATAQUE DIRECTO AL TAMAÑO DE PÓSTER EN MÓVIL */
         @media (max-width: 480px) {
-          .item-container {
-             padding: 0 6px !important; /* Espacio entre pósters */
-          }
           .poster-wrapper {
              aspect-ratio: 2/3 !important;
-             height: 160px !important; /* FORZAMOS altura mínima para que crezcan */
+             height: 165px !important; /* Mantenemos el tamaño grande */
           }
           .movie-slider .slick-list { 
-            padding: 15px 0 !important; 
+            padding: 15px 0 !important;
+            /* El margin negativo compensa el padding de los items para que el primero y ultimo alineen bien */
+            margin: 0 -8px; 
           }
         }
 
-        .movie-slider .slick-list { overflow: hidden !important; margin: 0 -4px; }
+        .movie-slider .slick-list { overflow: hidden !important; }
         @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; } }
         
         .movie-slider .slick-prev, .movie-slider .slick-next { z-index: 110; width: 25px; height: 100%; background: rgba(0,0,0,0.6); opacity: 1 !important; }
