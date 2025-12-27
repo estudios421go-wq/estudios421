@@ -30,7 +30,7 @@ export default function HeroBanner() {
   };
 
   return (
-    <section className="relative w-full h-auto aspect-video md:h-[95vh] bg-black overflow-hidden mb-10 md:mb-0">
+    <section className="relative w-full h-auto aspect-video md:h-[95vh] bg-black overflow-hidden mb-6 md:mb-0">
       <Slider ref={sliderRef} {...settings}>
         {banners.map((item) => (
           <div key={item.id} className="relative w-full h-auto aspect-video md:h-[95vh] outline-none">
@@ -41,24 +41,24 @@ export default function HeroBanner() {
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent z-10" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent z-10" />
             
-            <div className="absolute inset-0 z-20 flex flex-col justify-center px-4 md:px-20 mt-2 md:mt-12">
-              <div className="relative w-[120px] h-[40px] md:w-[380px] md:h-[140px] mb-2 md:mb-6">
+            <div className="absolute inset-0 z-20 flex flex-col justify-center px-4 md:px-20 mt-1 md:mt-12">
+              <div className="relative w-[110px] h-[35px] md:w-[380px] md:h-[140px] mb-2 md:mb-6">
                 <Image src={item.logo} alt="Logo" fill className="object-contain object-left" />
               </div>
               
-              {/* DESCRIPCIÓN: max-w-[200px] para que sea más estrecha y crezca hacia abajo */}
-              <p className="max-w-[200px] md:max-w-[480px] text-white text-[10px] md:text-[17px] font-medium mb-3 md:mb-8 leading-tight md:leading-relaxed drop-shadow-md">
+              {/* DESCRIPCIÓN: Ajuste sutil de fuente y justificado */}
+              <p className="max-w-[180px] md:max-w-[480px] text-white text-[9px] md:text-[17px] font-medium mb-3 md:mb-8 leading-tight md:leading-relaxed drop-shadow-md text-justify">
                 {item.desc}
               </p>
               
               <div className="flex items-center gap-2 md:gap-4">
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-1 text-white px-3 md:px-7 py-1 md:py-2.5 rounded font-bold text-[9px] md:text-base shadow-xl">
+                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-1 text-white px-3 md:px-7 py-1.5 md:py-2.5 rounded font-bold text-[9px] md:text-base shadow-xl">
                   <FaPlay className="text-[8px] md:text-xs" /> Ver
                 </button>
-                <button className="flex items-center justify-center gap-1 bg-white/10 text-white px-3 md:px-7 py-1 md:py-2.5 rounded font-bold backdrop-blur-md border border-white/20 text-[9px] md:text-base">
+                <button className="flex items-center justify-center gap-1 bg-white/10 text-white px-3 md:px-7 py-1.5 md:py-2.5 rounded font-bold backdrop-blur-md border border-white/20 text-[9px] md:text-base">
                   <HiOutlineInformationCircle className="text-sm md:text-xl" /> Info
                 </button>
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-1 text-white px-3 md:px-7 py-1 md:py-2.5 rounded font-bold text-[9px] md:text-base shadow-lg">
+                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-1 text-white px-3 md:px-7 py-1.5 md:py-2.5 rounded font-bold text-[9px] md:text-base shadow-lg">
                   <BiDonateHeart className="text-sm md:text-xl" /> Donar
                 </button>
               </div>
@@ -68,9 +68,10 @@ export default function HeroBanner() {
       </Slider>
 
       <style jsx global>{`
-        .custom-dots { bottom: 12% !important; z-index: 50 !important; }
+        /* Bajamos los puntos sutilmente al 5% para que no toquen los botones */
+        .custom-dots { bottom: 5% !important; z-index: 50 !important; }
         @media (min-width: 768px) { .custom-dots { bottom: 70px !important; } }
-        .custom-dots li button:before { color: white !important; font-size: 8px !important; }
+        .custom-dots li button:before { color: white !important; font-size: 7px !important; }
         .custom-dots li.slick-active button:before { color: #F09800 !important; }
       `}</style>
     </section>
