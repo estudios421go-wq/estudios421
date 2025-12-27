@@ -33,8 +33,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { 
         breakpoint: 480, 
         settings: { 
-          /* Aumentamos el tamaño sutilmente a 2.7 para ganar visibilidad real */
-          slidesToShow: 2.7, 
+          slidesToShow: 3.2, 
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -43,25 +42,18 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
   };
 
   return (
-    <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row overflow-hidden md:overflow-visible">
-      <h2 className="text-white text-[13px] md:text-2xl font-bold mb-2 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-95">
+    <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row">
+      <h2 className="text-white text-[13px] md:text-2xl font-bold mb-2 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-90">
         {title}
       </h2>
       
-      <div className="relative">
+      <div className="relative overflow-hidden md:overflow-visible">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            /* Aplicamos un padding mínimo para forzar el crecimiento de la imagen */
             <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                  <Image 
-                    src={movie.image} 
-                    alt={movie.title} 
-                    fill 
-                    className="object-cover" 
-                    sizes="(max-width: 480px) 40vw, 16vw" 
-                  />
+                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 33vw, 16vw" />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
                   <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
@@ -75,35 +67,13 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* SOLUCIÓN QUIRÚRGICA PARA MÓVIL */
-        @media (max-width: 480px) {
-          .movie-slider .slick-list { 
-            overflow: visible !important; /* Permite que el póster se estire sin compresión */
-            padding: 10px 0 !important;
-            margin: 0 -10px !important; /* Expansión lateral para ganar tamaño real */
-          }
-          .movie-slider .slick-track {
-            display: flex !important;
-            align-items: center !important;
-          }
-        }
-
-        .movie-slider .slick-list { overflow: hidden; }
+        .movie-slider .slick-list { overflow: hidden !important; padding: 10px 0 !important; margin: 0 -2px; }
         @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; } }
-        
-        .movie-slider .slick-prev, .movie-slider .slick-next { 
-          z-index: 110; 
-          width: 30px; 
-          height: 100%; 
-          background: rgba(0,0,0,0.5); 
-          opacity: 1 !important; 
-        }
-        
+        .movie-slider .slick-prev, .movie-slider .slick-next { z-index: 110; width: 30px; height: 100%; background: rgba(0,0,0,0.5); opacity: 1 !important; }
         @media (min-width: 768px) {
           .movie-slider .slick-prev, .movie-slider .slick-next { width: 50px; opacity: 0 !important; }
           .group\/row:hover .movie-slider .slick-prev, .group\/row:hover .movie-slider .slick-next { opacity: 1 !important; }
         }
-        
         .movie-slider .slick-prev:hover, .movie-slider .slick-next:hover { background: rgba(240, 152, 0, 0.8); }
         .movie-slider .slick-prev { left: 0px; border-radius: 0 4px 4px 0; }
         .movie-slider .slick-next { right: 0px; border-radius: 4px 0 0 4px; }
