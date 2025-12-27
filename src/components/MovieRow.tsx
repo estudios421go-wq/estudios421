@@ -27,13 +27,14 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { breakpoint: 1440, settings: { slidesToShow: 5, slidesToScroll: 2 } },
       { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 2 } },
       { 
-        breakpoint: 850, 
-        settings: { slidesToShow: 3.5, slidesToScroll: 2, arrows: true } 
+        breakpoint: 768, 
+        settings: { slidesToShow: 3.2, slidesToScroll: 2, arrows: true } 
       },
       { 
         breakpoint: 480, 
+        /* VALOR DE LA VERSIÓN INICIAL: Forzamos el gigantismo */
         settings: { 
-          slidesToShow: 2.6, // Reducimos para que el póster gane ancho físico
+          slidesToShow: 2.2, 
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -42,8 +43,8 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
   };
 
   return (
-    <div className="mb-6 md:mb-8 px-1 md:px-16 relative group/row">
-      <h2 className="text-white text-[13px] md:text-2xl font-bold mb-2 md:mb-4 uppercase tracking-wider ml-2 md:ml-2 opacity-95">
+    <div className="mb-6 md:mb-8 px-4 md:px-16 relative group/row">
+      <h2 className="text-white text-[14px] md:text-2xl font-bold mb-3 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-95">
         {title}
       </h2>
       
@@ -58,11 +59,12 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
                     alt={movie.title} 
                     fill 
                     className="object-cover" 
-                    sizes="(max-width: 480px) 45vw, 16vw" 
+                    sizes="(max-width: 480px) 50vw, 16vw" 
                   />
                 </div>
-                <div className="absolute bottom-1 left-1 z-20">
-                  <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                {/* Funcionalidad moderna de etiquetas */}
+                <div className="absolute bottom-2 left-2 z-20">
+                  <span className={`text-[8px] md:text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
                     {movie.isLatino ? 'LAT' : 'SUB'}
                   </span>
                 </div>
@@ -73,20 +75,21 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* CAZA-FALLAS: Forzamos el estiramiento solo en móvil */
-        @media (max-width: 480px) {
-          .movie-slider .slick-list { 
-            padding: 10px 0 !important; 
-            margin: 0 -12px !important; /* Ganamos espacio para que el póster crezca */
-          }
+        /* ADN de la Versión Inicial para recuperar el tamaño */
+        .movie-slider .slick-list { 
+          overflow: hidden !important; 
+          padding: 10px 0 !important; 
+          margin: 0 -5px; 
         }
-
-        .movie-slider .slick-list { overflow: hidden !important; }
-        @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -4px; } }
         
+        @media (min-width: 768px) { 
+          .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -4px; } 
+        }
+        
+        /* Funcionalidad moderna de flechas */
         .movie-slider .slick-prev, .movie-slider .slick-next { 
           z-index: 110; 
-          width: 30px; 
+          width: 35px; 
           height: 100%; 
           background: rgba(0,0,0,0.5); 
           opacity: 1 !important; 
