@@ -27,13 +27,13 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { breakpoint: 1440, settings: { slidesToShow: 5, slidesToScroll: 2 } },
       { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 2 } },
       { 
-        breakpoint: 850, 
+        breakpoint: 850, // Tablets
         settings: { slidesToShow: 3.5, slidesToScroll: 2, arrows: true } 
       },
       { 
-        breakpoint: 480, 
+        breakpoint: 480, // MÓVIL: TÉRMINO MEDIO (Equilibrio perfecto)
         settings: { 
-          slidesToShow: 2.8, // AGRANDADO FINAL: Menos posters = más tamaño individual
+          slidesToShow: 3.2, // Reducimos de 4 a 3.2 para que el póster crezca al tamaño ideal
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -42,7 +42,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
   };
 
   return (
-    <div className="mb-6 md:mb-10 px-2 md:px-16 relative group/row">
+    <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row">
       <h2 className="text-white text-[13px] md:text-2xl font-bold mb-2 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-90">
         {title}
       </h2>
@@ -50,7 +50,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       <div className="relative overflow-hidden md:overflow-visible">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            <div key={movie.id} className="px-1.5 md:px-1.5 outline-none py-2 md:py-6"> 
+            <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
                   <Image 
@@ -58,7 +58,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
                     alt={movie.title} 
                     fill 
                     className="object-cover" 
-                    sizes="(max-width: 480px) 40vw, 16vw" 
+                    sizes="(max-width: 480px) 33vw, 16vw" 
                   />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
@@ -73,21 +73,22 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
+        /* Ajuste de márgenes para que el póster respire y crezca en móvil */
         .movie-slider .slick-list { 
           overflow: hidden !important; 
           padding: 10px 0 !important; 
-          margin: 0 -4px; 
+          margin: 0 -2px; 
         }
         
         @media (min-width: 768px) { 
-          .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -6px; } 
+          .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -4px; } 
         }
         
         .movie-slider .slick-prev, .movie-slider .slick-next { 
           z-index: 110; 
           width: 30px; 
           height: 100%; 
-          background: rgba(0,0,0,0.4); 
+          background: rgba(0,0,0,0.5); 
           opacity: 1 !important; 
         }
         
