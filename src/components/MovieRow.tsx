@@ -27,14 +27,14 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { breakpoint: 1440, settings: { slidesToShow: 5, slidesToScroll: 2 } },
       { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 2 } },
       { 
-        breakpoint: 768, 
-        settings: { slidesToShow: 3.2, slidesToScroll: 2, arrows: true } 
+        breakpoint: 850, 
+        settings: { slidesToShow: 3.5, slidesToScroll: 2, arrows: true } 
       },
       { 
         breakpoint: 480, 
-        /* VALOR DE LA VERSIÓN INICIAL: Forzamos el gigantismo */
         settings: { 
-          slidesToShow: 2.2, 
+          /* Aumentamos el tamaño sutilmente a 2.7 para ganar visibilidad real */
+          slidesToShow: 2.7, 
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -43,15 +43,16 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
   };
 
   return (
-    <div className="mb-6 md:mb-8 px-4 md:px-16 relative group/row">
-      <h2 className="text-white text-[14px] md:text-2xl font-bold mb-3 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-95">
+    <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row overflow-hidden md:overflow-visible">
+      <h2 className="text-white text-[13px] md:text-2xl font-bold mb-2 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-95">
         {title}
       </h2>
       
-      <div className="relative overflow-hidden md:overflow-visible">
+      <div className="relative">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            <div key={movie.id} className="px-1.5 md:px-1.5 outline-none py-2 md:py-6"> 
+            /* Aplicamos un padding mínimo para forzar el crecimiento de la imagen */
+            <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
                   <Image 
@@ -59,12 +60,11 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
                     alt={movie.title} 
                     fill 
                     className="object-cover" 
-                    sizes="(max-width: 480px) 50vw, 16vw" 
+                    sizes="(max-width: 480px) 40vw, 16vw" 
                   />
                 </div>
-                {/* Funcionalidad moderna de etiquetas */}
-                <div className="absolute bottom-2 left-2 z-20">
-                  <span className={`text-[8px] md:text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                <div className="absolute bottom-1 left-1 z-20">
+                  <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
                     {movie.isLatino ? 'LAT' : 'SUB'}
                   </span>
                 </div>
@@ -75,21 +75,25 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* ADN de la Versión Inicial para recuperar el tamaño */
-        .movie-slider .slick-list { 
-          overflow: hidden !important; 
-          padding: 10px 0 !important; 
-          margin: 0 -5px; 
+        /* SOLUCIÓN QUIRÚRGICA PARA MÓVIL */
+        @media (max-width: 480px) {
+          .movie-slider .slick-list { 
+            overflow: visible !important; /* Permite que el póster se estire sin compresión */
+            padding: 10px 0 !important;
+            margin: 0 -10px !important; /* Expansión lateral para ganar tamaño real */
+          }
+          .movie-slider .slick-track {
+            display: flex !important;
+            align-items: center !important;
+          }
         }
+
+        .movie-slider .slick-list { overflow: hidden; }
+        @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; } }
         
-        @media (min-width: 768px) { 
-          .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -4px; } 
-        }
-        
-        /* Funcionalidad moderna de flechas */
         .movie-slider .slick-prev, .movie-slider .slick-next { 
           z-index: 110; 
-          width: 35px; 
+          width: 30px; 
           height: 100%; 
           background: rgba(0,0,0,0.5); 
           opacity: 1 !important; 
