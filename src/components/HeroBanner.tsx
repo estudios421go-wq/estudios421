@@ -22,7 +22,7 @@ export default function HeroBanner() {
     infinite: true,
     speed: 1000,
     autoplay: true,
-    autoplaySpeed: 3500,
+    autoplaySpeed: 4500, // Un poco más de tiempo para leer en móvil
     pauseOnHover: false,
     pauseOnFocus: false,
     arrows: false,
@@ -35,35 +35,38 @@ export default function HeroBanner() {
   };
 
   return (
-    <section className="relative w-full h-[95vh] bg-black overflow-hidden">
+    <section className="relative w-full h-[85vh] md:h-[95vh] bg-black overflow-hidden">
       <Slider ref={sliderRef} {...settings}>
         {banners.map((item) => (
-          <div key={item.id} className="relative w-full h-[95vh] outline-none">
-            {/* Aumento de opacidad para mayor brillo */}
-            <Image src={item.bg} alt="Banner" fill className="object-cover opacity-85" priority />
+          <div key={item.id} className="relative w-full h-[85vh] md:h-[95vh] outline-none">
+            {/* Imagen de fondo con ajuste de brillo */}
+            <Image src={item.bg} alt="Banner" fill className="object-cover opacity-80 md:opacity-85" priority />
             
-            {/* Gradientes suavizados para no oscurecer demasiado la imagen */}
+            {/* Gradientes corregidos para profundidad */}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent z-10" />
             
-            <div className="absolute inset-0 z-20 flex flex-col justify-center px-10 md:px-20 lg:px-32 mt-12">
-              <div className="relative w-[280px] h-[90px] md:w-[380px] md:h-[140px] mb-6">
+            <div className="absolute inset-0 z-20 flex flex-col justify-center px-6 md:px-20 lg:px-32 mt-10 md:mt-12">
+              {/* Logo: Tamaño responsivo */}
+              <div className="relative w-[180px] h-[70px] md:w-[380px] md:h-[140px] mb-4 md:mb-6">
                 <Image src={item.logo} alt="Logo" fill className="object-contain object-left" />
               </div>
               
-              <p className="max-w-[480px] text-white text-[15px] md:text-[17px] font-medium mb-8 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+              {/* Descripción: Límite de líneas en móvil */}
+              <p className="max-w-[480px] text-white text-[13px] md:text-[17px] font-medium mb-6 md:mb-8 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] line-clamp-4 md:line-clamp-none">
                 {item.desc}
               </p>
               
-              <div className="flex flex-wrap gap-4">
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center gap-2 text-white px-7 py-2.5 rounded font-bold hover:scale-105 transition transform text-sm md:text-base shadow-xl">
-                  <FaPlay className="text-xs" /> Ver Ahora
+              {/* Botones: Reorganizados para móvil */}
+              <div className="flex flex-wrap gap-3 md:gap-4 max-w-[350px] md:max-w-none">
+                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-2 text-white px-5 md:px-7 py-2 md:py-2.5 rounded font-bold hover:scale-105 transition transform text-xs md:text-base shadow-xl flex-1 md:flex-none">
+                  <FaPlay className="text-[10px]" /> Ver Ahora
                 </button>
-                <button className="flex items-center gap-2 bg-white/10 text-white px-7 py-2.5 rounded font-bold backdrop-blur-md border border-white/20 hover:bg-white/30 transition text-sm md:text-base">
-                  <HiOutlineInformationCircle className="text-xl" /> Más Información
+                <button className="flex items-center justify-center gap-2 bg-white/10 text-white px-5 md:px-7 py-2 md:py-2.5 rounded font-bold backdrop-blur-md border border-white/20 hover:bg-white/30 transition text-xs md:text-base flex-1 md:flex-none">
+                  <HiOutlineInformationCircle className="text-lg md:text-xl" /> Info
                 </button>
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center gap-2 text-white px-7 py-2.5 rounded font-bold hover:scale-105 transition transform text-sm md:text-base shadow-lg shadow-orange-500/20">
-                  <BiDonateHeart className="text-xl" /> Donar
+                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-2 text-white px-5 md:px-7 py-2 md:py-2.5 rounded font-bold hover:scale-105 transition transform text-xs md:text-base shadow-lg shadow-orange-500/20 w-full md:w-auto">
+                  <BiDonateHeart className="text-lg md:text-xl" /> Donar
                 </button>
               </div>
             </div>
@@ -73,27 +76,31 @@ export default function HeroBanner() {
 
       <style jsx global>{`
         .custom-dots { 
-          bottom: 70px !important; 
+          bottom: 60px !important; 
           z-index: 50 !important;
+        }
+        @media (min-width: 768px) {
+          .custom-dots { bottom: 70px !important; }
         }
         .custom-dots li {
           margin: 0 4px !important;
         }
         .custom-dots li button:before { 
           color: white !important; 
-          font-size: 14px !important; 
+          font-size: 10px !important; 
           opacity: 0.4; 
           transition: all 0.3s ease;
+        }
+        @media (min-width: 768px) {
+          .custom-dots li button:before { font-size: 14px !important; }
         }
         .custom-dots li.slick-active button:before { 
           color: #F09800 !important; 
           opacity: 1; 
-          font-size: 16px !important;
+          font-size: 12px !important;
         }
-        .custom-dots li button {
-          width: 20px !important;
-          height: 20px !important;
-          cursor: pointer !important;
+        @media (min-width: 768px) {
+          .custom-dots li.slick-active button:before { font-size: 16px !important; }
         }
       `}</style>
     </section>
