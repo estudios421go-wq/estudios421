@@ -33,7 +33,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { 
         breakpoint: 480, 
         settings: { 
-          slidesToShow: 2.6, // Fuerza a que cada póster ocupe más ancho de pantalla
+          slidesToShow: 2.6, // Reducimos para que el póster gane ancho físico
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -73,16 +73,16 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* AJUSTE TÉCNICO PARA MÓVIL: Esto hace que el póster crezca realmente */
+        /* CAZA-FALLAS: Forzamos el estiramiento solo en móvil */
         @media (max-width: 480px) {
           .movie-slider .slick-list { 
             padding: 10px 0 !important; 
-            margin: 0 -12px !important; /* Elimina el aire lateral para que la imagen se estire */
+            margin: 0 -12px !important; /* Ganamos espacio para que el póster crezca */
           }
         }
 
         .movie-slider .slick-list { overflow: hidden !important; }
-        @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; } }
+        @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; margin: 0 -4px; } }
         
         .movie-slider .slick-prev, .movie-slider .slick-next { 
           z-index: 110; 
