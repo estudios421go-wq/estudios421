@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Slider from 'react-slick';
 import Image from 'next/image';
 
@@ -15,11 +15,24 @@ interface MovieRowProps {
 }
 
 const MovieRow = ({ title, movies }: MovieRowProps) => {
-  // ESTADO DE SINCRONIZACIÓN: Evita que el carrusel se dibuje "a ciegas"
   const [isClient, setIsClient] = useState(false);
+  const sliderRef = useRef<Slider | null>(null);
 
   useEffect(() => {
-    setIsClient(true); // Se activa solo cuando el navegador está listo
+    setIsClient(true);
+    
+    // LA SOLUCIÓN MAESTRA:
+    // Forzamos al carrusel a recalcular su tamaño 300ms después de cargar.
+    // Esto simula el "giro de pantalla" que tú haces manualmente.
+    const timer = setTimeout(() => {
+      if (sliderRef.current) {
+        // @ts-ignore - Forzamos el re-layout interno de Slick
+        sliderRef.current.slickGoTo(0);
+        window.dispatchEvent(new Event('resize'));
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const settings = {
@@ -37,7 +50,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       { 
         breakpoint: 480, 
         settings: { 
-          slidesToShow: 3.2, // El tamaño ideal que ya habíamos aceptado
+          slidesToShow: 3.2, // El tamaño grande que queremos
           slidesToScroll: 1,
           arrows: true 
         } 
@@ -45,11 +58,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     ],
   };
 
-  // Mientras el servidor carga, mostramos un contenedor vacío con la altura correcta
-  // para evitar saltos visuales (Layout Shift)
-  if (!isClient) {
-    return <div className="mb-6 md:mb-8 h-[200px] md:h-[400px]" />;
-  }
+  if (!isClient) return <div className="mb-6 md:mb-8 h-[250px]" />;
 
   return (
     <div className="mb-6 md:mb-8 px-2 md:px-16 relative group/row">
@@ -58,18 +67,12 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </h2>
       
       <div className="relative overflow-hidden md:overflow-visible">
-        <Slider {...settings} className="movie-slider">
+        <Slider ref={sliderRef} {...settings} className="movie-slider">
           {movies.map((movie) => (
             <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                  <Image 
-                    src={movie.image} 
-                    alt={movie.title} 
-                    fill 
-                    className="object-cover" 
-                    sizes="(max-width: 480px) 33vw, 16vw" 
-                  />
+                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 33vw, 16vw" />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
                   <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
