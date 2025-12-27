@@ -22,7 +22,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     slidesToShow: 6,
     slidesToScroll: 2,
     initialSlide: 0,
-    arrows: true, // Habilitadas globalmente
+    arrows: true,
     responsive: [
       {
         breakpoint: 1440,
@@ -35,17 +35,17 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       {
         breakpoint: 768, // Tablets o móvil horizontal
         settings: { 
-          slidesToShow: 4.5, // Más pósters visibles
+          slidesToShow: 3.5, // Agrandamos un poco en horizontal
           slidesToScroll: 2,
           arrows: true 
         }
       },
       {
-        breakpoint: 480, // Móvil vertical (Tu solicitud de 4 a 5)
+        breakpoint: 480, // Móvil vertical
         settings: { 
-          slidesToShow: 4.2, // 4 completos y un asomo del 5to para indicar scroll
-          slidesToScroll: 2,
-          arrows: true // Flechas visibles en móvil
+          slidesToShow: 3.2, // REDUCIDO: Ahora los pósters son más grandes y legibles
+          slidesToScroll: 1,
+          arrows: true 
         }
       },
     ],
@@ -53,7 +53,6 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
 
   return (
     <div className="mb-4 md:mb-8 px-2 md:px-16 relative group/row">
-      {/* Título más pegado al póster en móvil (mb-1) */}
       <h2 className="text-white text-sm md:text-2xl font-bold mb-1 md:mb-4 uppercase tracking-wider ml-1 md:ml-2 opacity-90">
         {title}
       </h2>
@@ -61,7 +60,7 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       <div className="relative overflow-hidden md:overflow-visible">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            <div key={movie.id} className="px-0.5 md:px-1.5 outline-none py-2 md:py-6"> 
+            <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
@@ -70,13 +69,12 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
                     alt={movie.title} 
                     fill 
                     className="object-cover"
-                    sizes="(max-width: 768px) 25vw, 16vw"
+                    sizes="(max-width: 768px) 33vw, 16vw"
                   />
                 </div>
 
-                {/* Etiqueta miniaturizada para móvil */}
                 <div className="absolute bottom-1 left-1 z-20">
-                  <span className={`text-[6px] md:text-[10px] font-bold px-1 py-0.2 md:py-0.5 rounded shadow-lg border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                  <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded shadow-lg border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
                     {movie.isLatino ? 'LAT' : 'SUB'}
                   </span>
                 </div>
@@ -87,11 +85,10 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        /* COMPACTACIÓN PARA MÓVIL */
         .movie-slider .slick-list {
           overflow: hidden !important;
-          padding: 5px 0 !important; /* Espacio mínimo para evitar cortes */
-          margin: 0 -2px;
+          padding: 8px 0 !important; 
+          margin: 0 -4px;
         }
 
         @media (min-width: 768px) {
@@ -100,20 +97,19 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
           }
         }
         
-        /* FLECHAS VISIBLES EN MÓVIL Y PC */
         .movie-slider .slick-prev, .movie-slider .slick-next {
           z-index: 110;
-          width: 30px; /* Más delgadas en móvil */
+          width: 30px;
           height: 100%;
-          background: rgba(0,0,0,0.3);
-          opacity: 1 !important; /* Siempre visibles en móvil para guiar */
+          background: rgba(0,0,0,0.4);
+          opacity: 1 !important;
           transition: all 0.4s ease;
         }
 
         @media (min-width: 768px) {
           .movie-slider .slick-prev, .movie-slider .slick-next {
             width: 50px;
-            opacity: 0 !important; /* Solo hover en PC */
+            opacity: 0 !important;
           }
           .group\/row:hover .movie-slider .slick-prev,
           .group\/row:hover .movie-slider .slick-next {
@@ -122,15 +118,15 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
         }
 
         .movie-slider .slick-prev:hover, .movie-slider .slick-next:hover {
-          background: rgba(240, 152, 0, 0.7);
+          background: rgba(240, 152, 0, 0.8);
         }
 
         .movie-slider .slick-prev { left: 0px; border-radius: 0 4px 4px 0; }
         .movie-slider .slick-next { right: 0px; border-radius: 4px 0 0 4px; }
         
-        /* Ocultar flechas pequeñas por defecto de slick */
         .movie-slider .slick-prev:before, .movie-slider .slick-next:before {
-          font-size: 20px;
+          font-size: 18px;
+          color: white !important;
         }
       `}</style>
     </div>
