@@ -26,18 +26,8 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     responsive: [
       { breakpoint: 1440, settings: { slidesToShow: 5, slidesToScroll: 2 } },
       { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 2 } },
-      { 
-        breakpoint: 850, 
-        settings: { slidesToShow: 3.5, slidesToScroll: 2, arrows: true } 
-      },
-      { 
-        breakpoint: 480, 
-        settings: { 
-          slidesToShow: 3.2, 
-          slidesToScroll: 1,
-          arrows: true 
-        } 
-      },
+      { breakpoint: 850, settings: { slidesToShow: 3.5, slidesToScroll: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 2.5, slidesToScroll: 1 } },
     ],
   };
 
@@ -50,10 +40,10 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       <div className="relative overflow-hidden md:overflow-visible">
         <Slider {...settings} className="movie-slider">
           {movies.map((movie) => (
-            <div key={movie.id} className="px-1 md:px-1.5 outline-none py-2 md:py-6"> 
+            <div key={movie.id} className="item-container px-1 md:px-1.5 outline-none py-2 md:py-6"> 
               <div className="relative aspect-[2/3] rounded-md transition-all duration-300 md:hover:scale-110 md:hover:z-[100] cursor-pointer shadow-2xl group">
                 <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 33vw, 16vw" />
+                  <Image src={movie.image} alt={movie.title} fill className="object-cover" sizes="(max-width: 480px) 45vw, 16vw" priority />
                 </div>
                 <div className="absolute bottom-1 left-1 z-20">
                   <span className={`text-[7px] md:text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
@@ -67,7 +57,17 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
       </div>
 
       <style jsx global>{`
-        .movie-slider .slick-list { overflow: hidden !important; padding: 10px 0 !important; margin: 0 -2px; }
+        @media (max-width: 480px) {
+          /* FORZADO: Si el carrusel falla, el CSS obliga al tamaño grande */
+          .movie-slider .slick-slide {
+            width: 40vw !important; /* Cada poster ocupará el 40% del ancho del celular */
+          }
+          .movie-slider .slick-list {
+            padding: 10px 0 !important;
+            margin: 0 -10px !important;
+          }
+        }
+        .movie-slider .slick-list { overflow: hidden !important; }
         @media (min-width: 768px) { .movie-slider .slick-list { padding: 25px 0 !important; } }
         .movie-slider .slick-prev, .movie-slider .slick-next { z-index: 110; width: 30px; height: 100%; background: rgba(0,0,0,0.5); opacity: 1 !important; }
         @media (min-width: 768px) {
