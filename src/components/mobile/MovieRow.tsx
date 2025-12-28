@@ -12,28 +12,41 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
 
   const settings = {
     dots: false,
-    infinite: true,
+    infinite: movies.length > 3,
     speed: 400,
-    slidesToShow: 2.2, // TAMAÑO GRANDE PARA MÓVIL
+    slidesToShow: 3.3, // Tamaño optimizado: Ni muy grande ni muy pequeño
     slidesToScroll: 1,
     arrows: false,
     swipeToSlide: true,
+    touchThreshold: 10,
   };
 
-  if (!isClient) return <div className="mb-6 h-[200px]" />;
+  if (!isClient) return <div className="mb-2 h-[150px]" />;
 
   return (
-    <div className="mb-6 px-4 relative">
-      <h2 className="text-white text-[14px] font-bold mb-3 uppercase tracking-wider opacity-90">{title}</h2>
+    <div className="mb-2 px-4 relative">
+      {/* Título más compacto y elegante */}
+      <h2 className="text-white text-[12px] font-bold mb-2 uppercase tracking-wider opacity-80 ml-1">
+        {title}
+      </h2>
+      
       <Slider {...settings}>
         {movies.map((movie) => (
-          <div key={movie.id} className="px-1.5 outline-none"> 
-            <div className="relative aspect-[2/3] rounded-md shadow-lg active:opacity-70 transition-opacity">
-              <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
-                <Image src={movie.image} alt={movie.title} fill className="object-cover" unoptimized />
+          <div key={movie.id} className="px-1 outline-none"> 
+            <div className="relative aspect-[2/3] rounded shadow-md active:opacity-70 transition-opacity">
+              <div className="relative w-full h-full rounded overflow-hidden ring-1 ring-white/5">
+                <Image 
+                  src={movie.image} 
+                  alt={movie.title} 
+                  fill 
+                  className="object-cover" 
+                  unoptimized 
+                />
               </div>
-              <div className="absolute bottom-1.5 left-1.5 z-20">
-                <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/80 text-white'}`}>
+              
+              {/* Etiqueta de idioma más pequeña para no tapar el arte */}
+              <div className="absolute bottom-1 left-1 z-20">
+                <span className={`text-[7px] font-black px-1 py-0.5 rounded-sm ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white'}`}>
                   {movie.isLatino ? 'LAT' : 'SUB'}
                 </span>
               </div>
@@ -44,4 +57,5 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     </div>
   );
 };
+
 export default MovieRow;
