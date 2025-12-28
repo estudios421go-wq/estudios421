@@ -16,51 +16,70 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     speed: 400,
     slidesToShow: 3.3,
     slidesToScroll: 1,
-    arrows: false,
+    arrows: true, // Ahora las flechas están activas en móvil
     swipeToSlide: true,
     touchThreshold: 10,
     lazyLoad: 'progressive' as const,
   };
 
-  // Reducimos la altura del skeleton para que no empuje el contenido mientras carga
-  if (!isClient) return <div className="mb-1 h-[120px]" />;
+  if (!isClient) return <div className="mb-0 h-[100px]" />;
 
   return (
-    <div className="mb-1 px-4 relative"> {/* mb-1 para pegar los carruseles al máximo */}
-      {/* Título más pegado a la fila y con tamaño optimizado */}
-      <h2 className="text-white text-[11px] font-bold mb-1.5 uppercase tracking-wider opacity-70 ml-1">
+    <div className="relative z-10 -mt-3 pb-2 px-4"> 
+      {/* Título pegado al carrusel */}
+      <h2 className="text-white text-[11px] font-bold mb-1 uppercase tracking-wider opacity-60 ml-1">
         {title}
       </h2>
       
-      <Slider {...settings}>
-        {movies.map((movie) => (
-          <div key={movie.id} className="px-1 outline-none"> 
-            <div className="relative aspect-[2/3] rounded shadow-md active:opacity-70 transition-opacity">
-              <div className="relative w-full h-full rounded overflow-hidden ring-1 ring-white/5">
-                <Image 
-                  src={movie.image} 
-                  alt={movie.title} 
-                  fill 
-                  className="object-cover" 
-                  unoptimized 
-                />
-              </div>
-              
-              {/* Etiqueta de idioma minimalista */}
-              <div className="absolute bottom-1 left-1 z-20">
-                <span className={`text-[6.5px] font-black px-1 py-0.5 rounded-sm ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white border border-white/10'}`}>
-                  {movie.isLatino ? 'LAT' : 'SUB'}
-                </span>
+      <div className="relative group">
+        <Slider {...settings}>
+          {movies.map((movie) => (
+            <div key={movie.id} className="px-1 outline-none"> 
+              <div className="relative aspect-[2/3] rounded shadow-md active:scale-95 transition-transform duration-200">
+                <div className="relative w-full h-full rounded overflow-hidden ring-1 ring-white/5">
+                  <Image 
+                    src={movie.image} 
+                    alt={movie.title} 
+                    fill 
+                    className="object-cover" 
+                    unoptimized 
+                  />
+                </div>
+                
+                <div className="absolute bottom-1 left-1 z-20">
+                  <span className={`text-[6.5px] font-black px-1 py-0.5 rounded-sm ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white border border-white/10'}`}>
+                    {movie.isLatino ? 'LAT' : 'SUB'}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </Slider>
+          ))}
+        </Slider>
+      </div>
 
       <style jsx global>{`
-        /* Eliminamos cualquier padding extra que slick-slider añada por defecto */
+        /* Flechas visibles y táctiles para móvil */
+        .slick-prev, .slick-next {
+          width: 25px !important;
+          height: 25px !important;
+          z-index: 30 !important;
+          background: rgba(0,0,0,0.5) !important;
+          border-radius: 50% !important;
+        }
+        .slick-prev { left: -5px !important; }
+        .slick-next { right: -5px !important; }
+        .slick-prev:before, .slick-next:before {
+          font-size: 18px !important;
+          opacity: 0.8 !important;
+        }
+
+        /* Eliminación total de espacios fantasmas */
         .slick-slider { margin-bottom: 0 !important; }
-        .slick-list { padding-top: 5px !important; padding-bottom: 5px !important; }
+        .slick-list { 
+          padding-top: 2px !important; 
+          padding-bottom: 2px !important;
+          overflow: visible !important; 
+        }
       `}</style>
     </div>
   );
