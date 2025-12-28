@@ -13,7 +13,7 @@ import Footer from '../components/Footer';
 
 export default function Home() {
   const [device, setDevice] = useState<'desktop' | 'mobile' | 'tv'>('desktop');
-  const [myList] = useState([]); // El carrusel se mantendrá oculto hasta tener datos
+  const [myList] = useState([]);
 
   useEffect(() => {
     const detect = () => {
@@ -27,7 +27,7 @@ export default function Home() {
     return () => window.removeEventListener('resize', detect);
   }, []);
 
-  // --- BASE DE DATOS ACTUALIZADA (44 PÓSTERS) ---
+  // --- BASE DE DATOS (44 PÓSTERS) ---
   const estrenos = [
     { id: 1, title: "Reyes La Decadencia", image: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", isLatino: true },
     { id: 2, title: "Pablo El Apóstol", image: "https://static.wixstatic.com/media/859174_1a4c34a2bb8a495bad6ea09b5da366dd~mv2.jpg", isLatino: true },
@@ -87,7 +87,6 @@ export default function Home() {
   const renderRows = (RowComponent: any) => (
     <>
       <RowComponent title="Estrenos" movies={estrenos} />
-      {/* Condicional para que Mi Lista no ocupe espacio si está vacía */}
       {myList.length > 0 && <RowComponent title="Mi Lista" movies={myList} />}
       <RowComponent title="Series Bíblicas" movies={seriesBiblicas} />
       <RowComponent title="Recomendados" movies={[...peliculas, ...seriesTv].sort(() => 0.5 - Math.random()).slice(0, 10)} />
@@ -100,7 +99,7 @@ export default function Home() {
     <div className="min-h-screen bg-black overflow-x-hidden">
       <Head><title>Estudios 421 | La Fe en Pantalla</title></Head>
 
-      {/* VERSIÓN DESKTOP */}
+      {/* VERSIÓN DESKTOP: Mantener espacios equilibrados */}
       {device === 'desktop' && (
         <>
           <DesktopNavbar />
@@ -113,20 +112,20 @@ export default function Home() {
         </>
       )}
 
-      {/* VERSIÓN MÓVIL */}
+      {/* VERSIÓN MÓVIL: Bajar bloque y compactar filas al máximo */}
       {device === 'mobile' && (
         <>
           <MobileNavbar />
           <main>
             <MobileHero />
-            <div className="relative z-30 -mt-6 pb-10 space-y-2">
+            <div className="relative z-30 mt-4 pb-10 space-y-0"> {/* mt-4 para los dots y space-y-0 para pegar carruseles */}
               {renderRows(MobileRow)}
             </div>
           </main>
         </>
       )}
 
-      {/* VERSIÓN SMART TV */}
+      {/* VERSIÓN SMART TV: Mantener espaciado TV */}
       {device === 'tv' && (
         <>
           <TVNavbar />

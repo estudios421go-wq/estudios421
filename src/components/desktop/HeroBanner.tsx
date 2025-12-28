@@ -34,23 +34,29 @@ export default function HeroBanner() {
         {banners.map((item) => (
           <div key={item.id} className="relative w-full h-[95vh] outline-none">
             <div className="relative w-full h-full">
-               <Image src={item.bg} alt="Banner" fill className="object-cover opacity-80" priority />
+               {/* Opacidad al 100% para máxima nitidez y brillo */}
+               <Image 
+                 src={item.bg} 
+                 alt="Banner" 
+                 fill 
+                 className="object-cover opacity-100 transition-opacity duration-500" 
+                 priority 
+               />
             </div>
             
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-transparent z-10" />
+            {/* Degradados quirúrgicos: Solo afectan la base y el lateral izquierdo para lectura */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent z-10 w-2/3" />
             
             <div className="absolute inset-0 z-20 flex flex-col justify-center px-20 pt-10">
-              <div className="relative w-[450px] h-[160px] mb-6">
+              <div className="relative w-[450px] h-[160px] mb-6 drop-shadow-2xl">
                 <Image src={item.logo} alt="Logo" fill className="object-contain object-left" />
               </div>
               
-              {/* Reducimos un poco el margen inferior de la descripción */}
-              <p className="max-w-[550px] text-white text-[19px] font-medium mb-6 leading-relaxed drop-shadow-lg text-justify opacity-95">
+              <p className="max-w-[550px] text-white text-[19px] font-medium mb-6 leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] text-justify opacity-95">
                 {item.desc}
               </p>
               
-              {/* Botones más compactos (py-2.5 y text-base) y con menos espacio superior */}
               <div className="flex items-center gap-4">
                 <button 
                   style={{ backgroundColor: '#F09800' }} 
