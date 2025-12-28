@@ -1,43 +1,70 @@
 import React from 'react';
 import Image from 'next/image';
 
-interface Movie { id: number; title: string; image: string; isLatino: boolean; }
-interface MovieRowProps { title: string; movies: Movie[]; }
+interface Movie {
+  id: number;
+  title: string;
+  image: string;
+  isLatino: boolean;
+}
 
-const TVMovieRow = ({ title, movies }: MovieRowProps) => {
+interface TVMovieRowProps {
+  title: string;
+  movies: Movie[];
+}
+
+const TVMovieRow = ({ title, movies }: TVMovieRowProps) => {
   return (
-    <div className="mb-20 px-16 relative">
-      <h2 className="text-white/60 text-4xl font-black mb-8 uppercase tracking-[0.2em] ml-4">{title}</h2>
+    <div className="mb-2 px-16 outline-none focus:outline-none">
+      {/* Título más compacto para Smart TV */}
+      <h2 className="text-white/50 text-xl font-black mb-2 uppercase tracking-[0.15em] ml-4">
+        {title}
+      </h2>
       
-      <div className="relative overflow-visible">
-        {/* Contenedor con Scroll Snap para navegación fluida con control remoto */}
-        <div className="flex gap-8 overflow-x-auto no-scrollbar py-10 px-4 scroll-smooth snap-x snap-proximity">
-          {movies.map((movie) => (
-            <button 
-              key={movie.id} 
-              className="relative flex-shrink-0 w-[320px] aspect-[2/3] rounded-xl border-[6px] border-transparent focus:border-[#F09800] focus:scale-110 outline-none transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.8)] snap-center group"
-            >
-              <div className="relative w-full h-full rounded-lg overflow-hidden ring-2 ring-white/5">
-                <Image src={movie.image} alt={movie.title} fill className="object-cover" unoptimized />
-              </div>
-              
-              <div className="absolute bottom-6 left-6 z-20">
-                <span className={`text-xl font-black px-4 py-1.5 rounded-md shadow-lg ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white border border-white/30'}`}>
-                  {movie.isLatino ? 'LAT' : 'SUB'}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
+      {/* Contenedor con Scroll Snap: La TV centrará el elemento enfocado automáticamente */}
+      <div className="flex gap-5 overflow-x-auto no-scrollbar py-8 px-4 snap-x snap-mandatory scroll-smooth">
+        {movies.map((movie) => (
+          <button 
+            key={movie.id} 
+            className="relative flex-shrink-0 w-[240px] aspect-[2/3] rounded-xl border-[5px] border-transparent focus:border-[#F09800] focus:scale-110 outline-none transition-all duration-300 shadow-[0_15px_35px_rgba(0,0,0,0.7)] snap-center group"
+          >
+            <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
+              <Image 
+                src={movie.image} 
+                alt={movie.title} 
+                fill 
+                className="object-cover" 
+                unoptimized 
+              />
+            </div>
+            
+            {/* Indicador de idioma optimizado para TV */}
+            <div className="absolute bottom-4 left-4 z-20">
+              <span className={`text-[10px] font-black px-2.5 py-1 rounded shadow-md ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white border border-white/20'}`}>
+                {movie.isLatino ? 'LAT' : 'SUB'}
+              </span>
+            </div>
+          </button>
+        ))}
       </div>
 
       <style jsx global>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar { 
+          display: none; 
+        }
+        .no-scrollbar { 
+          -ms-overflow-style: none; 
+          scrollbar-width: none; 
+        }
         
-        /* Asegura que el foco no se corte en los bordes de la fila */
+        /* Asegura que el foco no se corte y que el scroll se mantenga limpio */
         .snap-center {
-          scroll-margin: 60px;
+          scroll-margin: 80px;
+        }
+
+        /* Ajuste de scroll horizontal fluido para navegadores de TV */
+        .flex {
+          -webkit-overflow-scrolling: touch;
         }
       `}</style>
     </div>

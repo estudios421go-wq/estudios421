@@ -14,19 +14,21 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
     dots: false,
     infinite: movies.length > 3,
     speed: 400,
-    slidesToShow: 3.3, // Tamaño optimizado: Ni muy grande ni muy pequeño
+    slidesToShow: 3.3,
     slidesToScroll: 1,
     arrows: false,
     swipeToSlide: true,
     touchThreshold: 10,
+    lazyLoad: 'progressive' as const,
   };
 
-  if (!isClient) return <div className="mb-2 h-[150px]" />;
+  // Reducimos la altura del skeleton para que no empuje el contenido mientras carga
+  if (!isClient) return <div className="mb-1 h-[120px]" />;
 
   return (
-    <div className="mb-2 px-4 relative">
-      {/* Título más compacto y elegante */}
-      <h2 className="text-white text-[12px] font-bold mb-2 uppercase tracking-wider opacity-80 ml-1">
+    <div className="mb-1 px-4 relative"> {/* mb-1 para pegar los carruseles al máximo */}
+      {/* Título más pegado a la fila y con tamaño optimizado */}
+      <h2 className="text-white text-[11px] font-bold mb-1.5 uppercase tracking-wider opacity-70 ml-1">
         {title}
       </h2>
       
@@ -44,9 +46,9 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
                 />
               </div>
               
-              {/* Etiqueta de idioma más pequeña para no tapar el arte */}
+              {/* Etiqueta de idioma minimalista */}
               <div className="absolute bottom-1 left-1 z-20">
-                <span className={`text-[7px] font-black px-1 py-0.5 rounded-sm ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white'}`}>
+                <span className={`text-[6.5px] font-black px-1 py-0.5 rounded-sm ${movie.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/90 text-white border border-white/10'}`}>
                   {movie.isLatino ? 'LAT' : 'SUB'}
                 </span>
               </div>
@@ -54,6 +56,12 @@ const MovieRow = ({ title, movies }: MovieRowProps) => {
           </div>
         ))}
       </Slider>
+
+      <style jsx global>{`
+        /* Eliminamos cualquier padding extra que slick-slider añada por defecto */
+        .slick-slider { margin-bottom: 0 !important; }
+        .slick-list { padding-top: 5px !important; padding-bottom: 5px !important; }
+      `}</style>
     </div>
   );
 };

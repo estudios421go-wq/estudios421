@@ -45,24 +45,31 @@ export default function HeroBanner() {
                 <Image src={item.logo} alt="Logo" fill className="object-contain object-left" />
               </div>
               
-              <p className="max-w-[550px] text-white text-[19px] font-medium mb-10 leading-relaxed drop-shadow-lg text-justify opacity-95">
+              {/* Reducimos un poco el margen inferior de la descripción */}
+              <p className="max-w-[550px] text-white text-[19px] font-medium mb-6 leading-relaxed drop-shadow-lg text-justify opacity-95">
                 {item.desc}
               </p>
               
-              <div className="flex items-center gap-5">
-                {/* BOTÓN VER AHORA - RESTAURADO */}
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-3 text-white px-9 py-3.5 rounded font-bold text-[17px] shadow-2xl hover:scale-105 transition-all duration-300">
-                  <FaPlay className="text-sm" /> Ver Ahora
+              {/* Botones más compactos (py-2.5 y text-base) y con menos espacio superior */}
+              <div className="flex items-center gap-4">
+                <button 
+                  style={{ backgroundColor: '#F09800' }} 
+                  className="flex items-center justify-center gap-2 text-white px-7 py-2.5 rounded font-bold text-base shadow-2xl hover:scale-105 transition-all duration-300"
+                >
+                  <FaPlay className="text-[10px]" /> Ver Ahora
                 </button>
 
-                {/* BOTÓN MÁS INFORMACIÓN - RESTAURADO */}
-                <button className="flex items-center justify-center gap-3 bg-white/10 text-white px-9 py-3.5 rounded font-bold backdrop-blur-md border border-white/20 text-[17px] hover:bg-white/20 hover:scale-105 transition-all duration-300">
-                  <HiOutlineInformationCircle className="text-2xl" /> Más Información
+                <button 
+                  className="flex items-center justify-center gap-2 bg-white/10 text-white px-7 py-2.5 rounded font-bold backdrop-blur-md border border-white/20 text-base hover:bg-white/20 hover:scale-105 transition-all duration-300"
+                >
+                  <HiOutlineInformationCircle className="text-xl" /> Más Información
                 </button>
 
-                {/* BOTÓN DONAR - RESTAURADO */}
-                <button style={{ backgroundColor: '#F09800' }} className="flex items-center justify-center gap-3 text-white px-9 py-3.5 rounded font-bold text-[17px] shadow-lg hover:scale-105 transition-all duration-300">
-                  <BiDonateHeart className="text-2xl" /> Donar
+                <button 
+                  style={{ backgroundColor: '#F09800' }} 
+                  className="flex items-center justify-center gap-2 text-white px-7 py-2.5 rounded font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
+                >
+                  <BiDonateHeart className="text-xl" /> Donar
                 </button>
               </div>
             </div>
