@@ -1,0 +1,20 @@
+[33mcd172db[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix Global: Restaurada version PC/Movil y etiquetas LAT-SUB. TV aislada.
+[33m285bdfd[m TV Navigation: HeroBanner integrado en la malla de coordenadas
+[33m32485f0[m TV Navigation: Asignados rowIndexes a las filas de peliculas
+[33me4e352e[m TV Navigation: Implementado sistema de coordenadas data-row y data-col
+[33m97bf67b[m TV Navigation: Implementado handleKeyDown para movimiento entre posters
+[33m9dff8fd[m Fix final: Eliminado style-jsx conflictivo para soporte Turbopack
+[33m1b4c83b[m Build Fix: Eliminada referencia conflictiva y optimizado foco nativo
+[33ma9de271[m Fix: Tipado de ref para despliegue en Render
+[33mcbbf632[m Smart TV: Implementada navegacion por control remoto en MovieRows
+[33mb0b9a1d[m Solucion Final: Implementado Auto-Resize para sincronizar React 19
+[33m0c28be5[m Solucion Sincronizada: Implementada hidratación segura para carruseles
+[33mda0c805[m Restauracion: Volviendo a la version estable de MovieRow
+[33m6ac88a0[m Ajuste maestro: CSS inyectado para tamaño 32vw
+[33m3365b7f[m Ajuste final: Posters a 31vw y bloqueo de filas extras
+[33mbd489b1[m Solucion final: Meta viewport y CSS forzado 40vw
+[33m52c75cd[m Solucion estructural: Añadido viewport meta tag para habilitar responsive
+[33m5cec18d[m restauracioooon
+[33md39f50c[m Prueba de diagnostico: Version inicial gigante
+[33m991f1f3[m regrsando a mi estabilidad
+[33mc4fc5ae[m Cazafallas: Desbloqueo de tamaño con overflow visible
