@@ -68,9 +68,8 @@ export const useTVNavigation = (sectionId: string, priority: number = 0) => {
   return containerRef;
 };
 
-// ========================================
+
 // 2. NAVBAR MEJORADO (TVNavbar.tsx)
-// ========================================
 
 import Image from 'next/image';
 import { IoSearchOutline } from 'react-icons/io5';
@@ -155,9 +154,7 @@ const TVNavbar = () => {
 
 export default TVNavbar;
 
-// ========================================
 // 3. HERO BANNER MEJORADO (TVHeroBanner.tsx)
-// ========================================
 
 import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
@@ -243,9 +240,7 @@ export default function TVHeroBanner() {
   );
 }
 
-// ========================================
 // 4. FILA DE PELÍCULAS MEJORADA (TVMovieRow.tsx)
-// ========================================
 
 import React, { useRef, useEffect } from 'react';
 import Image from 'next/image';
@@ -371,9 +366,7 @@ const TVMovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
 
 export default TVMovieRow;
 
-// ========================================
 // 5. FOOTER MEJORADO (Footer.tsx)
-// ========================================
 
 import React from 'react';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
