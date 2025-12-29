@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-// IMPORTACIONES CORREGIDAS SEGÚN TU CAPTURA:
 import Navbar from './Navbar';
 import HeroBanner from './HeroBanner';
 import MovieRow from './MovieRow';
@@ -34,7 +33,6 @@ export default function TVHomePage() {
   const row0Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Foco automático al entrar para Smart TV
     const timer = setTimeout(() => {
       const firstButton = heroBannerRef.current?.querySelector('button');
       if (firstButton) (firstButton as HTMLElement).focus();
@@ -55,6 +53,7 @@ export default function TVHomePage() {
           title="ESTRENOS" 
           movies={estrenosMovies}
           rowIndex={0}
+          totalRows={3} 
         />
       </div>
 
@@ -62,12 +61,14 @@ export default function TVHomePage() {
         title="SERIES BÍBLICAS" 
         movies={seriesBiblicasMovies}
         rowIndex={1}
+        totalRows={3} 
       />
 
       <MovieRow 
         title="PELÍCULAS" 
         movies={peliculasMovies}
         rowIndex={2}
+        totalRows={3} 
       />
 
       <Footer />
