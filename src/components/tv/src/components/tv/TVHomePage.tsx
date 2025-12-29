@@ -4,7 +4,6 @@ import TVHeroBanner from './HeroBanner';
 import TVMovieRow from './MovieRow';
 import Footer from './Footer';
 
-// DATOS DE EJEMPLO - Reemplaza con tus datos reales
 const estrenosMovies = [
   { id: 1, title: 'Reyes', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
   { id: 2, title: 'Pablo', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
