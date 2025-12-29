@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import TVNavbar from './TVNavbar';
-import TVHeroBanner from './TVHeroBanner';
-import TVMovieRow from './TVMovieRow';
-import Footer from '../Footer'; // El footer suele estar una carpeta arriba
+import TVNavbar from './Navbar';
+import TVHeroBanner from './HeroBanner';
+import TVMovieRow from './MovieRow';
+import Footer from '../Footer'; 
 
 const estrenosMovies = [
   { id: 1, title: 'Reyes', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
@@ -37,24 +37,26 @@ export default function TVHomePage() {
   const footerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Foco inicial en el Hero
+    // Foco inicial en el HeroBanner después de un pequeño retraso para asegurar carga
     const timer = setTimeout(() => {
       const firstButton = heroBannerRef.current?.querySelector('button');
       if (firstButton) (firstButton as HTMLElement).focus();
-    }, 1000);
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 
-  // Lógica de navegación simple entre secciones
+  // Manejo de navegación por secciones para Smart TV
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const active = document.activeElement;
+      
       if (e.key === 'ArrowDown') {
-        const active = document.activeElement;
-        if (active?.closest('section')) { // Si estamos en el Hero
-          const firstRow = row0Ref.current?.querySelector('.focusable-item') as HTMLElement;
-          if (firstRow) {
+        // Si estamos en el Hero, saltar a la primera fila de películas
+        if (active?.closest('section')) { 
+          const firstRowItem = row0Ref.current?.querySelector('.focusable-item') as HTMLElement;
+          if (firstRowItem) {
             e.preventDefault();
-            firstRow.focus();
+            firstRowItem.focus();
           }
         }
       }
@@ -65,6 +67,7 @@ export default function TVHomePage() {
 
   return (
     <div className="bg-black min-h-screen">
+      {/* Las referencias ayudan a que el código sepa dónde está cada bloque */}
       <div ref={navbarRef}><TVNavbar /></div>
       <div ref={heroBannerRef}><TVHeroBanner /></div>
 
