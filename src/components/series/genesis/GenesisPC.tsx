@@ -136,7 +136,6 @@ const GenesisPC = () => {
         <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
         
-        {/* BOTONES BAJADOS (PARA NO TAPAR EL TEXTO DEL BANNER) */}
         <div className="absolute bottom-12 left-16 flex gap-6 z-10 items-center">
           <button 
             onClick={() => openEpisode(currentIdx)} 
@@ -160,7 +159,7 @@ const GenesisPC = () => {
           {genesisEpisodes.map((ep, index) => (
             <div 
               key={ep.id} 
-              ref={el => episodeRefs.current[index] = el}
+              ref={(el) => { episodeRefs.current[index] = el; }}
               className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/30'}`}
               onClick={() => openEpisode(index)}
             >
@@ -183,12 +182,11 @@ const GenesisPC = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR FUSIONADO (TÍTULO ARRIBA, BOTONES ABAJO) */}
+      {/* REPRODUCTOR FUSIONADO */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-black/95 backdrop-blur-xl flex items-center justify-center p-4">
           <div className="w-full max-w-[1280px] bg-[#050608] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,0,0,0.8)]">
             
-            {/* Header del Reproductor */}
             <div className="px-8 py-5 flex items-center justify-between border-b border-white/5 bg-gradient-to-r from-[#FF8A00]/10 to-transparent">
               <div className="flex flex-col">
                 <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.3em]">Serie: Génesis</span>
@@ -199,7 +197,6 @@ const GenesisPC = () => {
               </button>
             </div>
 
-            {/* Iframe del Video */}
             <div className="relative aspect-video bg-black">
               <iframe 
                 src={selectedVideo + "?autoplay=1"} 
@@ -208,7 +205,6 @@ const GenesisPC = () => {
               />
             </div>
 
-            {/* Footer del Reproductor (Botones de Pablo Style) */}
             <div className="px-8 py-6 flex items-center justify-between border-t border-white/5 bg-[#050608]">
               <button 
                 disabled={currentIdx === 0}
