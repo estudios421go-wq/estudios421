@@ -119,13 +119,13 @@ const GenesisPC = () => {
         </div>
       </nav>
 
-      <div className="relative w-full h-[88vh] overflow-hidden">
+      {/* BANNER PRINCIPAL */}
+      <div className="relative w-full h-[88vh] overflow-visible">
         <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
-        {/* DEGRADADO INFERIOR PARA LECTURA DE BOTONES AL LÍMITE */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         
-        {/* BOTONES AL LÍMITE ABSOLUTO (BOTTOM-0) */}
-        <div className="absolute bottom-0 left-16 flex gap-6 z-10 items-center pb-4">
+        {/* BOTONES POSICIONADOS ENTRE EL BANNER Y EL FONDO NEGRO */}
+        <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${genesisEpisodes[currentIdx].id}`}
           </button>
@@ -134,7 +134,10 @@ const GenesisPC = () => {
         </div>
       </div>
 
-      <div className="px-16 mt-20 mb-32">
+      {/* ESPACIADOR PARA QUE LA GRILLA NO CHOQUE CON LOS BOTONES FLOTANTES */}
+      <div className="h-20 bg-black"></div>
+
+      <div className="px-16 mb-32 relative z-10">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
             <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
             <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
