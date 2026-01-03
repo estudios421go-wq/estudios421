@@ -122,7 +122,8 @@ const GenesisPC = () => {
       <div className="relative w-full h-[88vh] overflow-hidden">
         <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
-        <div className="absolute bottom-4 left-16 flex gap-6 z-10 items-center">
+        {/* BOTONES BAJADOS AL MÁXIMO */}
+        <div className="absolute bottom-2 left-16 flex gap-6 z-10 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${genesisEpisodes[currentIdx].id}`}
           </button>
