@@ -31,6 +31,24 @@ const peliculasMovies = [
 export default function TVHomePage() {
   const heroBannerRef = useRef<HTMLDivElement>(null);
   const row0Ref = useRef<HTMLDivElement>(null);
+  const row1Ref = useRef<HTMLDivElement>(null);
+  const row2Ref = useRef<HTMLDivElement>(null);
+
+  // Funciones para navegar entre filas
+  const focusRow = (rowRef: React.RefObject<HTMLDivElement>) => {
+    const firstButton = rowRef.current?.querySelector('.focusable-item') as HTMLElement;
+    if (firstButton) firstButton.focus();
+  };
+
+  const navigateFromHeroToRow0 = () => focusRow(row0Ref);
+  const navigateFromRow0ToRow1 = () => focusRow(row1Ref);
+  const navigateFromRow1ToRow2 = () => focusRow(row2Ref);
+  const navigateFromRow1ToRow0 = () => focusRow(row0Ref);
+  const navigateFromRow2ToRow1 = () => focusRow(row1Ref);
+  const navigateFromRow0ToHero = () => {
+    const firstButton = heroBannerRef.current?.querySelector('button') as HTMLElement;
+    if (firstButton) firstButton.focus();
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,7 +63,7 @@ export default function TVHomePage() {
       <Navbar />
       
       <div ref={heroBannerRef}>
-        <HeroBanner />
+        <HeroBanner onNavigateDown={navigateFromHeroToRow0} />
       </div>
 
       <div ref={row0Ref}>
@@ -53,23 +71,32 @@ export default function TVHomePage() {
           title="ESTRENOS" 
           movies={estrenosMovies}
           rowIndex={0}
-          totalRows={3} 
+          totalRows={3}
+          onNavigateUp={navigateFromRow0ToHero}
+          onNavigateDown={navigateFromRow0ToRow1}
         />
       </div>
 
-      <MovieRow 
-        title="SERIES BÍBLICAS" 
-        movies={seriesBiblicasMovies}
-        rowIndex={1}
-        totalRows={3} 
-      />
+      <div ref={row1Ref}>
+        <MovieRow 
+          title="SERIES BÍBLICAS" 
+          movies={seriesBiblicasMovies}
+          rowIndex={1}
+          totalRows={3}
+          onNavigateUp={navigateFromRow1ToRow0}
+          onNavigateDown={navigateFromRow1ToRow2}
+        />
+      </div>
 
-      <MovieRow 
-        title="PELÍCULAS" 
-        movies={peliculasMovies}
-        rowIndex={2}
-        totalRows={3} 
-      />
+      <div ref={row2Ref}>
+        <MovieRow 
+          title="PELÍCULAS" 
+          movies={peliculasMovies}
+          rowIndex={2}
+          totalRows={3}
+          onNavigateUp={navigateFromRow2ToRow1}
+        />
+      </div>
 
       <Footer />
     </div>
