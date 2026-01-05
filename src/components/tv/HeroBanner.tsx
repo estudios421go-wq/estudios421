@@ -8,7 +8,7 @@ interface HeroBannerProps {
   onNavigateDown?: () => void;
 }
 
-export default function TVHeroBanner({ onNavigateDown }: HeroBannerProps) {
+export default function HeroBanner({ onNavigateDown }: HeroBannerProps) {
   const verAhoraRef = useRef<HTMLButtonElement>(null);
   const infoRef = useRef<HTMLButtonElement>(null);
   const donarRef = useRef<HTMLButtonElement>(null);
