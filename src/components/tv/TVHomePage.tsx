@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Navbar from './Navbar';
 import HeroBanner from './HeroBanner';
 import MovieRow from './MovieRow';
-import Footer from '../Footer'; 
+import Footer from '../Footer';
 
 const estrenosMovies = [
   { id: 1, title: 'Reyes', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
@@ -29,17 +29,19 @@ const peliculasMovies = [
 ];
 
 export default function TVHomePage() {
-  const heroBannerRef = useRef<HTMLDivElement>(null);
-  const row0Ref = useRef<HTMLDivElement>(null);
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
+  const heroBannerRef = useRef<HTMLDivElement | null>(null);
+  const row0Ref = useRef<HTMLDivElement | null>(null);
+  const row1Ref = useRef<HTMLDivElement | null>(null);
+  const row2Ref = useRef<HTMLDivElement | null>(null);
 
-  // Funciones para navegar entre filas
-  const focusRow = (rowRef: React.RefObject<HTMLDivElement>) => {
-    setTimeout(() => {
-      const firstButton = rowRef.current?.querySelector('.focusable-item') as HTMLElement;
-      if (firstButton) firstButton.focus();
-    }, 100);
+  // ✅ Ahora acepta refs que pueden ser null
+  const focusRow = (rowRef: React.RefObject<HTMLDivElement | null>) => {
+    if (!rowRef.current) return;
+
+    const firstButton = rowRef.current.querySelector<HTMLElement>('.focusable-item');
+    if (firstButton) {
+      firstButton.focus();
+    }
   };
 
   const navigateFromHeroToRow0 = () => focusRow(row0Ref);
@@ -47,32 +49,40 @@ export default function TVHomePage() {
   const navigateFromRow1ToRow2 = () => focusRow(row2Ref);
   const navigateFromRow1ToRow0 = () => focusRow(row0Ref);
   const navigateFromRow2ToRow1 = () => focusRow(row1Ref);
+
   const navigateFromRow0ToHero = () => {
-    setTimeout(() => {
-      const firstButton = heroBannerRef.current?.querySelector('button') as HTMLElement;
-      if (firstButton) firstButton.focus();
-    }, 100);
+    if (!heroBannerRef.current) return;
+
+    const firstButton = heroBannerRef.current.querySelector<HTMLElement>('button');
+    if (firstButton) {
+      firstButton.focus();
+    }
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const firstButton = heroBannerRef.current?.querySelector('button');
-      if (firstButton) (firstButton as HTMLElement).focus();
-    }, 500);
+      if (!heroBannerRef.current) return;
+
+      const firstButton = heroBannerRef.current.querySelector<HTMLElement>('button');
+      if (firstButton) {
+        firstButton.focus();
+      }
+    }, 300);
+
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
-      
+
       <div ref={heroBannerRef}>
         <HeroBanner onNavigateDown={navigateFromHeroToRow0} />
       </div>
 
       <div ref={row0Ref}>
-        <MovieRow 
-          title="ESTRENOS" 
+        <MovieRow
+          title="ESTRENOS"
           movies={estrenosMovies}
           rowIndex={0}
           totalRows={3}
@@ -82,8 +92,8 @@ export default function TVHomePage() {
       </div>
 
       <div ref={row1Ref}>
-        <MovieRow 
-          title="SERIES BÍBLICAS" 
+        <MovieRow
+          title="SERIES BÍBLICAS"
           movies={seriesBiblicasMovies}
           rowIndex={1}
           totalRows={3}
@@ -93,8 +103,8 @@ export default function TVHomePage() {
       </div>
 
       <div ref={row2Ref}>
-        <MovieRow 
-          title="PELÍCULAS" 
+        <MovieRow
+          title="PELÍCULAS"
           movies={peliculasMovies}
           rowIndex={2}
           totalRows={3}
