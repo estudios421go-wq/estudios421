@@ -36,8 +36,10 @@ export default function TVHomePage() {
 
   // Funciones para navegar entre filas
   const focusRow = (rowRef: React.RefObject<HTMLDivElement>) => {
-    const firstButton = rowRef.current?.querySelector('.focusable-item') as HTMLElement;
-    if (firstButton) firstButton.focus();
+    setTimeout(() => {
+      const firstButton = rowRef.current?.querySelector('.focusable-item') as HTMLElement;
+      if (firstButton) firstButton.focus();
+    }, 100);
   };
 
   const navigateFromHeroToRow0 = () => focusRow(row0Ref);
@@ -46,15 +48,17 @@ export default function TVHomePage() {
   const navigateFromRow1ToRow0 = () => focusRow(row0Ref);
   const navigateFromRow2ToRow1 = () => focusRow(row1Ref);
   const navigateFromRow0ToHero = () => {
-    const firstButton = heroBannerRef.current?.querySelector('button') as HTMLElement;
-    if (firstButton) firstButton.focus();
+    setTimeout(() => {
+      const firstButton = heroBannerRef.current?.querySelector('button') as HTMLElement;
+      if (firstButton) firstButton.focus();
+    }, 100);
   };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const firstButton = heroBannerRef.current?.querySelector('button');
       if (firstButton) (firstButton as HTMLElement).focus();
-    }, 1000);
+    }, 500);
     return () => clearTimeout(timer);
   }, []);
 
