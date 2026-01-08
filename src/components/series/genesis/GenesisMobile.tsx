@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Navbar from '../../tv/Navbar'; 
 import Footer from '../../Footer';
+import { IoChevronBack, IoChevronForward, IoList, IoClose } from 'react-icons/io5';
 
 const genesisEpisodes = [
   { id: 1, title: "El Edén", dur: "43:16", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/13888818973184" },
