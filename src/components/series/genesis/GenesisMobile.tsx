@@ -289,21 +289,32 @@ const GenesisMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800]">
       <Head><title>Génesis — Móvil</title></Head>
       <Navbar />
-      <div className="relative w-full pt-8 bg-black">
+      
+      {/* Contenedor del Banner - pt-0 para pegar al tope */}
+      <div className="relative w-full pt-0 bg-black">
         <div className="w-full aspect-[4/3] relative">
-          <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
+          <img 
+            src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" 
+            className="w-full h-full object-contain" 
+            alt="Banner" 
+          />
+          {/* Degradado para mejorar visibilidad de botones sobre la imagen */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
         </div>
-        <div className="px-4 py-0 flex flex-col gap-3">
-          <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest">
+
+        {/* Botones -mt-14 para que monten sobre el banner */}
+        <div className="px-4 py-0 -mt-14 flex flex-col gap-3 relative z-20">
+          <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest shadow-2xl">
             {currentIdx === 0 ? "▶ VER AHORA" : `▶ CONTINUAR EP. ${genesisEpisodes[currentIdx].id}`}
           </button>
           <div className="flex gap-3">
-            <button className="flex-1 bg-white/10 py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">+ MI LISTA</button>
-            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">❤ DONAR</button>
+            <button className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">+ MI LISTA</button>
+            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">❤ DONAR</button>
           </div>
         </div>
       </div>
-      <div className="px-4 mt-4 mb-20">
+
+      <div className="px-4 mt-10 mb-20">
         <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Capítulos Disponibles</h2>
         <div className="grid grid-cols-2 gap-4">
           {genesisEpisodes.map((ep, index) => (
@@ -317,6 +328,7 @@ const GenesisMobile = () => {
           ))}
         </div>
       </div>
+
       {selectedVideo && (
         <div className="fixed inset-0 z-[2000] bg-black flex flex-col">
           <div className="p-4 flex justify-between items-center bg-black/80 backdrop-blur-md">
