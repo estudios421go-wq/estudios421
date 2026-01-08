@@ -289,11 +289,11 @@ const GenesisMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800]">
       <Head><title>Génesis — Móvil</title></Head>
       <Navbar />
-      <div className="relative w-full pt-16 bg-black">
+      <div className="relative w-full pt-12 bg-black">
         <div className="w-full aspect-[4/3] relative">
           <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
         </div>
-        <div className="px-4 py-6 flex flex-col gap-3">
+        <div className="px-4 py-2 flex flex-col gap-3">
           <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest">
             {currentIdx === 0 ? "▶ VER AHORA" : `▶ CONTINUAR EP. ${genesisEpisodes[currentIdx].id}`}
           </button>
