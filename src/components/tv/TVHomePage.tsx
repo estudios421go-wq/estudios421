@@ -1,116 +1,79 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navbar from './Navbar';
 import HeroBanner from './HeroBanner';
 import MovieRow from './MovieRow';
 import Footer from '../Footer';
 
-const estrenosMovies = [
-  { id: 1, title: 'Reyes', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 2, title: 'Pablo', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-  { id: 3, title: 'La Casa de David', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 4, title: 'Moisés', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 5, title: 'José de Egipto', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-];
-
-const seriesBiblicasMovies = [
-  { id: 6, title: 'Jesús', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 7, title: 'Los Hechos', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 8, title: 'Apocalipsis', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-  { id: 9, title: 'Sansón', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 10, title: 'Daniel', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-];
-
-const peliculasMovies = [
-  { id: 11, title: 'La Pasión', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 12, title: 'Ben-Hur', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-  { id: 13, title: 'Los Diez Mandamientos', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-  { id: 14, title: 'Quo Vadis', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: false },
-  { id: 15, title: 'El Rey de Reyes', image: 'https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg', isLatino: true },
-];
-
 export default function TVHomePage() {
-  const heroBannerRef = useRef<HTMLDivElement | null>(null);
-  const row0Ref = useRef<HTMLDivElement | null>(null);
-  const row1Ref = useRef<HTMLDivElement | null>(null);
-  const row2Ref = useRef<HTMLDivElement | null>(null);
+  const heroBannerRef = useRef<HTMLDivElement>(null);
+  const rowsRef = useRef<Array<HTMLDivElement | null>>([]);
+  const [currentRow, setCurrentRow] = useState(0);
 
-  // ✅ Ahora acepta refs que pueden ser null
-  const focusRow = (rowRef: React.RefObject<HTMLDivElement | null>) => {
-    if (!rowRef.current) return;
-
-    const firstButton = rowRef.current.querySelector<HTMLElement>('.focusable-item');
-    if (firstButton) {
-      firstButton.focus();
-    }
+  const focusHero = () => {
+    const btn = heroBannerRef.current?.querySelector<HTMLElement>('button');
+    btn?.focus();
   };
 
-  const navigateFromHeroToRow0 = () => focusRow(row0Ref);
-  const navigateFromRow0ToRow1 = () => focusRow(row1Ref);
-  const navigateFromRow1ToRow2 = () => focusRow(row2Ref);
-  const navigateFromRow1ToRow0 = () => focusRow(row0Ref);
-  const navigateFromRow2ToRow1 = () => focusRow(row1Ref);
+  const focusRow = (index: number) => {
+    const row = rowsRef.current[index];
+    if (!row) return;
 
-  const navigateFromRow0ToHero = () => {
-    if (!heroBannerRef.current) return;
-
-    const firstButton = heroBannerRef.current.querySelector<HTMLElement>('button');
-    if (firstButton) {
-      firstButton.focus();
-    }
+    const item = row.querySelector<HTMLElement>('[tabindex="0"]');
+    item?.focus();
   };
 
+  // 🔑 Foco inicial ROBUSTO (Smart TV)
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!heroBannerRef.current) return;
+    let attempts = 0;
 
-      const firstButton = heroBannerRef.current.querySelector<HTMLElement>('button');
-      if (firstButton) {
-        firstButton.focus();
+    const tryFocus = () => {
+      attempts++;
+      const btn = heroBannerRef.current?.querySelector<HTMLElement>('button');
+      if (btn) {
+        btn.focus();
+      } else if (attempts < 10) {
+        setTimeout(tryFocus, 300);
       }
-    }, 300);
+    };
 
-    return () => clearTimeout(timer);
+    tryFocus();
   }, []);
+
+  // 🎮 Control remoto GLOBAL
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = Math.min(currentRow + 1, rowsRef.current.length);
+        setCurrentRow(next);
+        next === 0 ? focusHero() : focusRow(next - 1);
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = Math.max(currentRow - 1, 0);
+        setCurrentRow(prev);
+        prev === 0 ? focusHero() : focusRow(prev - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [currentRow]);
 
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
 
       <div ref={heroBannerRef}>
-        <HeroBanner onNavigateDown={navigateFromHeroToRow0} />
+        <HeroBanner />
       </div>
 
-      <div ref={row0Ref}>
-        <MovieRow
-          title="ESTRENOS"
-          movies={estrenosMovies}
-          rowIndex={0}
-          totalRows={3}
-          onNavigateUp={navigateFromRow0ToHero}
-          onNavigateDown={navigateFromRow0ToRow1}
-        />
-      </div>
-
-      <div ref={row1Ref}>
-        <MovieRow
-          title="SERIES BÍBLICAS"
-          movies={seriesBiblicasMovies}
-          rowIndex={1}
-          totalRows={3}
-          onNavigateUp={navigateFromRow1ToRow0}
-          onNavigateDown={navigateFromRow1ToRow2}
-        />
-      </div>
-
-      <div ref={row2Ref}>
-        <MovieRow
-          title="PELÍCULAS"
-          movies={peliculasMovies}
-          rowIndex={2}
-          totalRows={3}
-          onNavigateUp={navigateFromRow2ToRow1}
-        />
-      </div>
+      {[0, 1, 2].map((i) => (
+        <div key={i} ref={(el) => (rowsRef.current[i] = el)}>
+          <MovieRow rowIndex={i} />
+        </div>
+      ))}
 
       <Footer />
     </div>
