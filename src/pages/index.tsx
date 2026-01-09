@@ -16,45 +16,48 @@ export default function Home() {
   const [myList] = useState([]);
 
   useEffect(() => {
-  const detect = () => {
-    const ua = navigator.userAgent.toLowerCase();
-    const w = window.innerWidth;
+    const detect = () => {
+      const ua = navigator.userAgent.toLowerCase();
+      const w = window.innerWidth;
 
-    // ✅ DETECCIÓN REAL DE SMART TV (Samsung, LG, Android TV, etc)
-    const isTV =
-      ua.includes('smarttv') ||
-      ua.includes('smart-tv') ||
-      ua.includes('tizen') ||
-      ua.includes('webos') ||
-      ua.includes('netcast') ||
-      ua.includes('hbbtv') ||
-      ua.includes('appletv') ||
-      ua.includes('googletv') ||
-      ua.includes('android tv');
+      // ✅ PASO 1: DETECTOR REFORZADO PARA SMART TV
+      const isTV =
+        ua.includes('smarttv') ||
+        ua.includes('smart-tv') ||
+        ua.includes('tizen') || // Samsung
+        ua.includes('webos') ||  // LG
+        ua.includes('netcast') ||
+        ua.includes('hbbtv') ||
+        ua.includes('appletv') ||
+        ua.includes('googletv') ||
+        ua.includes('android tv') ||
+        ua.includes('large screen') ||
+        ua.includes('viera') ||
+        ua.includes('aquos');
 
-    // 📺 SMART TV
-    if (isTV) {
-      setDevice('tv');
-      return;
-    }
+      if (isTV) {
+        setDevice('tv');
+        // ✅ PASO 2: TEST DE FONDO ROJO (Solo se activa si detecta TV)
+        document.body.style.backgroundColor = "#FF0000";
+        return;
+      }
 
-    // 📱 MÓVIL (NO TOCADO)
-    if (w <= 768) {
-      setDevice('mobile');
-      return;
-    }
+      if (w <= 768) {
+        setDevice('mobile');
+        document.body.style.backgroundColor = "black";
+        return;
+      }
 
-    // 💻 DESKTOP (NO TOCADO)
-    setDevice('desktop');
-  };
+      setDevice('desktop');
+      document.body.style.backgroundColor = "black";
+    };
 
-  detect();
-  window.addEventListener('resize', detect);
-  return () => window.removeEventListener('resize', detect);
-}, []);
+    detect();
+    window.addEventListener('resize', detect);
+    return () => window.removeEventListener('resize', detect);
+  }, []);
 
-
-  // --- BASE DE DATOS (44 PÓSTERS) ---
+  // --- BASE DE DATOS ---
   const estrenos = [
     { id: 1, title: "Reyes La Decadencia", image: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", isLatino: true },
     { id: 2, title: "Pablo El Apóstol", image: "https://static.wixstatic.com/media/859174_1a4c34a2bb8a495bad6ea09b5da366dd~mv2.jpg", isLatino: true },
@@ -126,7 +129,6 @@ export default function Home() {
     <div className="min-h-screen bg-black overflow-x-hidden">
       <Head><title>Estudios 421 | La Fe en Pantalla</title></Head>
 
-      {/* VERSIÓN DESKTOP: Mantener espacios equilibrados */}
       {device === 'desktop' && (
         <>
           <DesktopNavbar />
@@ -139,20 +141,18 @@ export default function Home() {
         </>
       )}
 
-      {/* VERSIÓN MÓVIL: Bajar bloque y compactar filas al máximo */}
       {device === 'mobile' && (
         <>
           <MobileNavbar />
           <main>
             <MobileHero />
-            <div className="relative z-30 mt-4 pb-10 space-y-0"> {/* mt-4 para los dots y space-y-0 para pegar carruseles */}
+            <div className="relative z-30 mt-4 pb-10 space-y-0">
               {renderRows(MobileRow)}
             </div>
           </main>
         </>
       )}
 
-      {/* VERSIÓN SMART TV: Mantener espaciado TV */}
       {device === 'tv' && (
         <>
           <TVNavbar />
