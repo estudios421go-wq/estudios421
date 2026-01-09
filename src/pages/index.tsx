@@ -16,16 +16,43 @@ export default function Home() {
   const [myList] = useState([]);
 
   useEffect(() => {
-    const detect = () => {
-      const w = window.innerWidth;
-      if (w >= 1920) setDevice('tv');
-      else if (w <= 768) setDevice('mobile');
-      else setDevice('desktop');
-    };
-    detect();
-    window.addEventListener('resize', detect);
-    return () => window.removeEventListener('resize', detect);
-  }, []);
+  const detect = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    const w = window.innerWidth;
+
+    // ✅ DETECCIÓN REAL DE SMART TV (Samsung, LG, Android TV, etc)
+    const isTV =
+      ua.includes('smarttv') ||
+      ua.includes('smart-tv') ||
+      ua.includes('tizen') ||
+      ua.includes('webos') ||
+      ua.includes('netcast') ||
+      ua.includes('hbbtv') ||
+      ua.includes('appletv') ||
+      ua.includes('googletv') ||
+      ua.includes('android tv');
+
+    // 📺 SMART TV
+    if (isTV) {
+      setDevice('tv');
+      return;
+    }
+
+    // 📱 MÓVIL (NO TOCADO)
+    if (w <= 768) {
+      setDevice('mobile');
+      return;
+    }
+
+    // 💻 DESKTOP (NO TOCADO)
+    setDevice('desktop');
+  };
+
+  detect();
+  window.addEventListener('resize', detect);
+  return () => window.removeEventListener('resize', detect);
+}, []);
+
 
   // --- BASE DE DATOS (44 PÓSTERS) ---
   const estrenos = [
