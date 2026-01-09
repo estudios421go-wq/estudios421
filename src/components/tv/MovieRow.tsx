@@ -11,28 +11,22 @@ interface Movie {
 interface TVMovieRowProps {
   title: string;
   movies: Movie[];
-  rowIndex: number;
+  rowIndex?: number; // Opcional para identificar la fila
 }
 
-const MovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
+const MovieRow = ({ title, movies, rowIndex = 0 }: TVMovieRowProps) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const currentFocusIndex = useRef(0);
 
-  // 🎯 Auto-scroll al enfocar un item
-  const scrollToItem = (index: number) => {
+  // 🎯 Función para centrar el elemento enfocado en la pantalla
+  const scrollToItem = (target: HTMLElement) => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container || !target) return;
 
-    const items = container.querySelectorAll<HTMLElement>('.focusable-item');
-    const item = items[index];
-    if (!item) return;
-
-    const itemLeft = item.offsetLeft;
-    const itemWidth = item.offsetWidth;
+    const itemLeft = target.offsetLeft;
+    const itemWidth = target.offsetWidth;
     const containerWidth = container.offsetWidth;
 
-    const scrollPosition =
-      itemLeft - containerWidth / 2 + itemWidth / 2;
+    const scrollPosition = itemLeft - containerWidth / 2 + itemWidth / 2;
 
     container.scrollTo({
       left: scrollPosition,
@@ -40,65 +34,44 @@ const MovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
     });
   };
 
-  // 🎮 Control horizontal (← →) + OK
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLButtonElement>,
-    index: number
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
     const container = scrollContainerRef.current;
     if (!container) return;
-
     const items = container.querySelectorAll<HTMLElement>('.focusable-item');
 
-    if (e.key === 'ArrowRight') {
+    if (e.key === 'ArrowRight' && index < items.length - 1) {
       e.preventDefault();
-      e.stopPropagation();
-
-      if (index < items.length - 1) {
-        currentFocusIndex.current = index + 1;
-        items[index + 1].focus();
-        scrollToItem(index + 1);
-      }
+      items[index + 1].focus();
     }
 
-    if (e.key === 'ArrowLeft') {
+    if (e.key === 'ArrowLeft' && index > 0) {
       e.preventDefault();
-      e.stopPropagation();
-
-      if (index > 0) {
-        currentFocusIndex.current = index - 1;
-        items[index - 1].focus();
-        scrollToItem(index - 1);
-      }
+      items[index - 1].focus();
     }
 
     if (e.key === 'Enter') {
       e.preventDefault();
-      console.log('Seleccionaste:', movies[index].title);
+      console.log('Seleccionado:', movies[index].title);
     }
   };
 
   return (
-    <div className="mb-4 px-16 overflow-hidden" data-row={rowIndex}>
-      {/* 🟢 CAMBIO DE PRUEBA: Título en Verde y con etiqueta MODO TV */}
-      <h2 className="text-[#00FF00] text-xl font-black mb-2 uppercase tracking-[0.2em] ml-4">
-        {title} (MODO TV)
+    <div className="mb-8 px-4 md:px-16 overflow-hidden">
+      <h2 className="text-white/60 text-xl font-bold mb-4 uppercase tracking-widest ml-2">
+        {title}
       </h2>
 
       <div
         ref={scrollContainerRef}
-        className="flex gap-5 overflow-x-auto no-scrollbar py-6 px-4 scroll-smooth"
+        className="flex gap-4 overflow-x-auto no-scrollbar py-6 px-2 scroll-smooth"
+        style={{ scrollbarWidth: 'none' }}
       >
         {movies.map((movie, index) => (
           <button
             key={`${rowIndex}-${movie.id}`}
-            tabIndex={0}
-            className="focusable-item relative flex-shrink-0 w-[240px] aspect-[2/3] rounded-xl border-[5px] border-transparent focus:border-[#F09800] focus:scale-110 outline-none transition-all duration-300 shadow-2xl bg-zinc-900"
+            className="focusable-item relative flex-shrink-0 w-[220px] aspect-[2/3] rounded-lg border-[5px] border-transparent outline-none transition-all duration-300 bg-zinc-900 focus:border-[#F09800] focus:scale-110 focus:z-50 focus:shadow-[0_0_40px_rgba(240,152,0,0.4)]"
             onKeyDown={(e) => handleKeyDown(e, index)}
-            onFocus={() => {
-              currentFocusIndex.current = index;
-              scrollToItem(index);
-            }}
+            onFocus={(e) => scrollToItem(e.currentTarget)}
           >
             <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10">
               <Image
@@ -107,16 +80,17 @@ const MovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
                 fill
                 className="object-cover"
                 unoptimized
-                priority
+                priority={index < 6}
               />
             </div>
 
-            <div className="absolute bottom-4 left-4 z-20">
+            {/* Etiqueta de idioma mantenida del original */}
+            <div className="absolute bottom-2 left-2 z-20">
               <span
-                className={`text-[10px] font-black px-2.5 py-1 rounded shadow-md ${
-                  movie.isLatino
-                    ? 'bg-[#F09800] text-white'
-                    : 'bg-black/90 text-white border border-white/20'
+                className={`text-[10px] font-bold px-2 py-0.5 rounded border border-white/10 ${
+                  movie.isLatino 
+                    ? 'bg-[#F09800] text-white' 
+                    : 'bg-black/80 text-white backdrop-blur-md'
                 }`}
               >
                 {movie.isLatino ? 'LAT' : 'SUB'}
@@ -133,11 +107,6 @@ const MovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
         .no-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;
-        }
-
-        .focusable-item:focus {
-          z-index: 50;
-          box-shadow: 0 0 45px rgba(240, 152, 0, 0.45);
         }
       `}</style>
     </div>
