@@ -46,14 +46,16 @@ export default function TVHomePage() {
         e.preventDefault();
         const next = Math.min(currentRow + 1, rowsRef.current.length);
         setCurrentRow(next);
-        next === 0 ? focusHero() : focusRow(next - 1);
+        if (next === 0) focusHero();
+        else focusRow(next - 1);
       }
 
       if (e.key === 'ArrowUp') {
         e.preventDefault();
         const prev = Math.max(currentRow - 1, 0);
         setCurrentRow(prev);
-        prev === 0 ? focusHero() : focusRow(prev - 1);
+        if (prev === 0) focusHero();
+        else focusRow(prev - 1);
       }
     };
 
@@ -70,7 +72,15 @@ export default function TVHomePage() {
       </div>
 
       {[0, 1, 2].map((i) => (
-        <div key={i} ref={(el) => (rowsRef.current[i] = el)}>
+        /* ✅ CORRECCIÓN DE TIPADO: Validación explícita del elemento para evitar error en Render */
+        <div 
+          key={i} 
+          ref={(el) => {
+            if (el) {
+              rowsRef.current[i] = el;
+            }
+          }}
+        >
           <MovieRow rowIndex={i} />
         </div>
       ))}
