@@ -72,13 +72,11 @@ export default function TVHomePage() {
       </div>
 
       {[0, 1, 2].map((i) => (
-        /* ✅ CORRECCIÓN DE TIPADO: Validación explícita del elemento para evitar error en Render */
+        /* ✅ CORRECCIÓN FINAL DE TIPADO PARA RENDER */
         <div 
           key={i} 
           ref={(el) => {
-            if (el) {
-              rowsRef.current[i] = el;
-            }
+            rowsRef.current[i] = el;
           }}
         >
           <MovieRow rowIndex={i} />
