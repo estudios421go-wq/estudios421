@@ -75,14 +75,14 @@ const MovieRow = ({ title, movies, rowIndex }: TVMovieRowProps) => {
     if (e.key === 'Enter') {
       e.preventDefault();
       console.log('Seleccionaste:', movies[index].title);
-      // 👉 acá después podés abrir detalle o reproducir
     }
   };
 
   return (
     <div className="mb-4 px-16 overflow-hidden" data-row={rowIndex}>
-      <h2 className="text-white/40 text-xl font-black mb-2 uppercase tracking-[0.2em] ml-4">
-        {title}
+      {/* 🟢 CAMBIO DE PRUEBA: Título en Verde y con etiqueta MODO TV */}
+      <h2 className="text-[#00FF00] text-xl font-black mb-2 uppercase tracking-[0.2em] ml-4">
+        {title} (MODO TV)
       </h2>
 
       <div
