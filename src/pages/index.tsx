@@ -20,12 +20,12 @@ export default function Home() {
       const ua = navigator.userAgent.toLowerCase();
       const w = window.innerWidth;
 
-      // ✅ PASO 1: DETECTOR REFORZADO PARA SMART TV
+      // ✅ DETECTOR DE SMART TV (Samsung, LG, Android TV, etc.)
       const isTV =
         ua.includes('smarttv') ||
         ua.includes('smart-tv') ||
-        ua.includes('tizen') || // Samsung
-        ua.includes('webos') ||  // LG
+        ua.includes('tizen') ||
+        ua.includes('webos') ||
         ua.includes('netcast') ||
         ua.includes('hbbtv') ||
         ua.includes('appletv') ||
@@ -37,8 +37,7 @@ export default function Home() {
 
       if (isTV) {
         setDevice('tv');
-        // ✅ PASO 2: TEST DE FONDO ROJO (Solo se activa si detecta TV)
-        document.body.style.backgroundColor = "#FF0000";
+        document.body.style.backgroundColor = "black";
         return;
       }
 
