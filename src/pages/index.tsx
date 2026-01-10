@@ -11,6 +11,9 @@ import MobileRow from '../components/mobile/MovieRow';
 import TVRow from '../components/tv/MovieRow';
 import Footer from '../components/Footer';
 
+// IMPORTACIÓN DEL CEREBRO DE TV
+import TVHomePage from '../components/tv/TVHomePage';
+
 export default function Home() {
   const [device, setDevice] = useState<'desktop' | 'mobile' | 'tv'>('desktop');
   const [myList] = useState([]);
@@ -20,7 +23,6 @@ export default function Home() {
       const ua = navigator.userAgent.toLowerCase();
       const w = window.innerWidth;
 
-      // ✅ DETECTOR DE SMART TV (Samsung, LG, Android TV, etc.)
       const isTV =
         ua.includes('smarttv') ||
         ua.includes('smart-tv') ||
@@ -137,6 +139,7 @@ export default function Home() {
               {renderRows(DesktopRow)}
             </div>
           </main>
+          <Footer />
         </>
       )}
 
@@ -149,21 +152,20 @@ export default function Home() {
               {renderRows(MobileRow)}
             </div>
           </main>
+          <Footer />
         </>
       )}
 
+      {/* 📺 SECCIÓN TV: AHORA CONECTADA AL CEREBRO CENTRAL */}
       {device === 'tv' && (
-        <>
-          <TVNavbar />
-          <main>
-            <TVHero />
-            <div className="relative z-30 pb-20 space-y-6">
-              {renderRows(TVRow)}
-            </div>
-          </main>
-        </>
+        <TVHomePage 
+          estrenos={estrenos}
+          seriesBiblicas={seriesBiblicas}
+          recomendados={[...peliculas, ...seriesTv].sort(() => 0.5 - Math.random()).slice(0, 10)}
+          seriesTv={seriesTv}
+          peliculas={peliculas}
+        />
       )}
-      <Footer />
     </div>
   );
 }
