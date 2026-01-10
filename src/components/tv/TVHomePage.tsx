@@ -8,12 +8,12 @@ export default function TVHomePage({ estrenos, seriesBiblicas, recomendados, ser
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 🎯 Foco inicial en el primer elemento de la Navbar al cargar
+    // 🎯 Foco inicial: 500ms después de cargar para asegurar que el DOM esté listo
     const initialFocus = () => {
-      const first = containerRef.current?.querySelector<HTMLElement>('.nav-focusable, .hero-btn, .focusable-item');
+      const first = containerRef.current?.querySelector<HTMLElement>('.nav-focusable, .hero-focusable, .focusable-item');
       first?.focus();
     };
-    setTimeout(initialFocus, 500);
+    const timer = setTimeout(initialFocus, 500);
 
     const handleVerticalNavigation = (e: KeyboardEvent) => {
       if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
@@ -21,28 +21,38 @@ export default function TVHomePage({ estrenos, seriesBiblicas, recomendados, ser
       const active = document.activeElement as HTMLElement;
       if (!active) return;
 
-      e.preventDefault(); // Bloqueamos el scroll molesto del navegador
+      e.preventDefault(); // Evitamos scroll nativo del navegador
 
-      // Obtenemos todos los elementos enfocables de la página
+      // Buscamos todos los elementos con las clases que definimos en los componentes hijos
       const allElements = Array.from(
-        containerRef.current?.querySelectorAll<HTMLElement>('.nav-focusable, .hero-btn, .focusable-item') || []
+        containerRef.current?.querySelectorAll<HTMLElement>('.nav-focusable, .hero-focusable, .focusable-item') || []
       );
 
       const activeRect = active.getBoundingClientRect();
       let bestCandidate: HTMLElement | null = null;
       let minDistance = Infinity;
 
+      // 🛑 REGLA DE SEGURIDAD PARA SUBIR: 
+      // Si el usuario está en un póster (.focusable-item), no permitimos que salte directo a la Navbar (.nav-focusable).
+      // Debe pasar primero por el Hero (.hero-focusable).
+      const isCurrentlyInRow = active.classList.contains('focusable-item');
+
       allElements.forEach((candidate) => {
         if (candidate === active) return;
 
         const candRect = candidate.getBoundingClientRect();
         
-        // ¿Está en la dirección correcta?
-        const isBelow = e.key === 'ArrowDown' && candRect.top >= activeRect.bottom - 10;
-        const isAbove = e.key === 'ArrowUp' && candRect.bottom <= activeRect.top + 10;
+        // Validación de dirección
+        const isBelow = e.key === 'ArrowDown' && candRect.top >= activeRect.bottom - 15;
+        const isAbove = e.key === 'ArrowUp' && candRect.bottom <= activeRect.top + 15;
 
         if (isBelow || isAbove) {
-          // Cálculo de distancia euclidiana entre centros para encontrar el "más cercano"
+          // Si estamos subiendo desde una fila, ignoramos los elementos de la Navbar
+          if (e.key === 'ArrowUp' && isCurrentlyInRow && candidate.classList.contains('nav-focusable')) {
+            return;
+          }
+
+          // Cálculo de proximidad (Centro a Centro)
           const activeCenterX = activeRect.left + activeRect.width / 2;
           const candCenterX = candRect.left + candRect.width / 2;
           const activeCenterY = activeRect.top + activeRect.height / 2;
@@ -62,17 +72,20 @@ export default function TVHomePage({ estrenos, seriesBiblicas, recomendados, ser
 
       if (bestCandidate) {
         (bestCandidate as HTMLElement).focus();
-        // Centramos la pantalla suavemente en el nuevo elemento
+        
+        // Centrado suave: importante para que el usuario no pierda la referencia visual
         (bestCandidate as HTMLElement).scrollIntoView({
           behavior: 'smooth',
           block: 'center',
-          inline: 'nearest'
         });
       }
     };
 
     window.addEventListener('keydown', handleVerticalNavigation);
-    return () => window.removeEventListener('keydown', handleVerticalNavigation);
+    return () => {
+      window.removeEventListener('keydown', handleVerticalNavigation);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
@@ -80,12 +93,11 @@ export default function TVHomePage({ estrenos, seriesBiblicas, recomendados, ser
       <Navbar />
       
       <main>
-        {/* Sección del Banner */}
+        {/* El "Cerebro" ahora buscará .hero-focusable aquí dentro */}
         <section>
           <HeroBanner />
         </section>
         
-        {/* Sección de las Filas de Películas */}
         <div className="relative z-30 pb-20 space-y-10">
           <MovieRow title="Estrenos" movies={estrenos} rowIndex={1} />
           <MovieRow title="Series Bíblicas" movies={seriesBiblicas} rowIndex={2} />
