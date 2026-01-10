@@ -8,57 +8,85 @@ export default function TVHomePage({ estrenos, seriesBiblicas, recomendados, ser
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // 🎯 FOCO INICIAL: Al abrir la app, enfocamos el primer link de la Navbar
-    const firstFocus = containerRef.current?.querySelector<HTMLElement>('nav a, nav button, button');
-    firstFocus?.focus();
+    // 🎯 Foco inicial en el primer elemento de la Navbar al cargar
+    const initialFocus = () => {
+      const first = containerRef.current?.querySelector<HTMLElement>('.nav-focusable, .hero-btn, .focusable-item');
+      first?.focus();
+    };
+    setTimeout(initialFocus, 500);
 
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+    const handleVerticalNavigation = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+
       const active = document.activeElement as HTMLElement;
       if (!active) return;
 
-      // ⬇️ LÓGICA PARA BAJAR
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        // Buscamos el siguiente elemento enfocable que esté debajo del actual
-        const allFocusables = Array.from(containerRef.current?.querySelectorAll<HTMLElement>('button, a, input') || []);
-        const currentIndex = allFocusables.indexOf(active);
+      e.preventDefault(); // Bloqueamos el scroll molesto del navegador
+
+      // Obtenemos todos los elementos enfocables de la página
+      const allElements = Array.from(
+        containerRef.current?.querySelectorAll<HTMLElement>('.nav-focusable, .hero-btn, .focusable-item') || []
+      );
+
+      const activeRect = active.getBoundingClientRect();
+      let bestCandidate: HTMLElement | null = null;
+      let minDistance = Infinity;
+
+      allElements.forEach((candidate) => {
+        if (candidate === active) return;
+
+        const candRect = candidate.getBoundingClientRect();
         
-        // Intentamos encontrar un elemento en la siguiente fila visual
-        const nextRowElement = allFocusables.find((el, idx) => {
-          return idx > currentIndex && el.getBoundingClientRect().top > active.getBoundingClientRect().bottom;
+        // ¿Está en la dirección correcta?
+        const isBelow = e.key === 'ArrowDown' && candRect.top >= activeRect.bottom - 10;
+        const isAbove = e.key === 'ArrowUp' && candRect.bottom <= activeRect.top + 10;
+
+        if (isBelow || isAbove) {
+          // Cálculo de distancia euclidiana entre centros para encontrar el "más cercano"
+          const activeCenterX = activeRect.left + activeRect.width / 2;
+          const candCenterX = candRect.left + candRect.width / 2;
+          const activeCenterY = activeRect.top + activeRect.height / 2;
+          const candCenterY = candRect.top + candRect.height / 2;
+
+          const distance = Math.sqrt(
+            Math.pow(candCenterX - activeCenterX, 2) + 
+            Math.pow(candCenterY - activeCenterY, 2)
+          );
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            bestCandidate = candidate;
+          }
+        }
+      });
+
+      if (bestCandidate) {
+        (bestCandidate as HTMLElement).focus();
+        // Centramos la pantalla suavemente en el nuevo elemento
+        (bestCandidate as HTMLElement).scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
         });
-
-        nextRowElement?.focus();
-      }
-
-      // ⬆️ LÓGICA PARA SUBIR
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        const allFocusables = Array.from(containerRef.current?.querySelectorAll<HTMLElement>('button, a, input') || []);
-        const currentIndex = allFocusables.indexOf(active);
-
-        // Buscamos el elemento que esté por encima del actual
-        const prevRowElement = [...allFocusables].reverse().find((el, idx) => {
-          const revIdx = allFocusables.length - 1 - idx;
-          return revIdx < currentIndex && el.getBoundingClientRect().bottom < active.getBoundingClientRect().top;
-        });
-
-        prevRowElement?.focus();
       }
     };
 
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('keydown', handleVerticalNavigation);
+    return () => window.removeEventListener('keydown', handleVerticalNavigation);
   }, []);
 
   return (
-    <div ref={containerRef} className="bg-black min-h-screen">
+    <div ref={containerRef} className="bg-black min-h-screen outline-none">
       <Navbar />
       
-      <main className="pt-20">
-        <HeroBanner />
+      <main>
+        {/* Sección del Banner */}
+        <section>
+          <HeroBanner />
+        </section>
         
-        <div className="relative z-30 pb-20 -mt-10 space-y-10">
+        {/* Sección de las Filas de Películas */}
+        <div className="relative z-30 pb-20 space-y-10">
           <MovieRow title="Estrenos" movies={estrenos} rowIndex={1} />
           <MovieRow title="Series Bíblicas" movies={seriesBiblicas} rowIndex={2} />
           <MovieRow title="Recomendados" movies={recomendados} rowIndex={3} />
