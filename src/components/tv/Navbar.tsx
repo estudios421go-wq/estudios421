@@ -1,18 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 import { IoSearchOutline } from 'react-icons/io5';
 
 const Navbar = () => {
   const router = useRouter();
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navLinks = [
     { name: 'Inicio', href: '/' },
@@ -27,60 +19,74 @@ const Navbar = () => {
     { name: 'PT', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
   ];
 
+  const handleKeyDown = (e: React.KeyboardEvent, index: number, totalElements: number) => {
+    const navElements = document.querySelectorAll<HTMLElement>('.nav-focusable');
+    
+    if (e.key === 'ArrowRight' && index < totalElements - 1) {
+      e.preventDefault();
+      navElements[index + 1].focus();
+    }
+    if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      navElements[index - 1].focus();
+    }
+    // Dejamos que 'ArrowDown' se propague para que el Home lo detecte y baje al Banner
+  };
+
   return (
-    <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-12 py-6 flex items-center justify-between ${isScrolled ? 'bg-black shadow-2xl' : 'bg-gradient-to-b from-black via-black/80 to-transparent'}`}>
+    <nav className="fixed top-0 w-full z-[100] px-12 py-6 flex items-center justify-between bg-gradient-to-b from-black via-black/90 to-transparent">
       <div className="flex items-center gap-12">
-        {/* LOGO */}
+        {/* LOGO (Índice 0) */}
         <Link href="/">
-          <div className="relative w-[180px] h-[50px] outline-none focus:scale-110 transition-transform duration-300">
+          <div 
+            tabIndex={0}
+            onKeyDown={(e) => handleKeyDown(e, 0, navLinks.length + languages.length + 2)}
+            className="nav-focusable relative w-[180px] h-[50px] outline-none focus:ring-2 focus:ring-[#F09800] rounded-lg transition-transform focus:scale-105"
+          >
             <Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority />
           </div>
         </Link>
 
-        {/* LINKS DE NAVEGACIÓN - En TV usamos focus: para el control remoto */}
-        <div className="flex gap-10">
-          {navLinks.map((link) => (
+        {/* LINKS (Índices 1 a 4) */}
+        <div className="flex gap-6">
+          {navLinks.map((link, i) => (
             <Link 
               key={link.href} 
               href={link.href} 
-              className={`relative text-white text-lg font-bold tracking-wide outline-none px-4 py-2 rounded-lg transition-all duration-300 focus:bg-white/10 focus:ring-2 focus:ring-[#F09800] ${router.pathname === link.href ? 'text-[#F09800]' : ''}`}
+              tabIndex={0}
+              onKeyDown={(e) => handleKeyDown(e, i + 1, navLinks.length + languages.length + 2)}
+              className="nav-focusable text-white text-lg font-bold outline-none px-4 py-2 rounded-lg focus:bg-white/20 focus:ring-2 focus:ring-[#F09800]"
             >
               {link.name}
-              {/* Línea decorativa que brilla cuando está activo */}
-              <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#F09800] transition-all duration-500 ${router.pathname === link.href ? 'w-full' : 'w-0'}`} />
             </Link>
           ))}
         </div>
       </div>
 
-      <div className="flex items-center gap-8">
-        {/* IDIOMAS - Navegables con flechas */}
-        <div className="flex gap-6 mr-4">
-          {languages.map((lang) => (
+      <div className="flex items-center gap-6">
+        {/* IDIOMAS (Índices 5, 6, 7) */}
+        <div className="flex gap-4">
+          {languages.map((lang, i) => (
             <button 
               key={lang.name} 
-              className="outline-none focus:scale-125 focus:ring-2 focus:ring-[#F09800] rounded-full p-1 transition-all duration-300"
+              tabIndex={0}
+              onKeyDown={(e) => handleKeyDown(e, i + 5, navLinks.length + languages.length + 2)}
+              className="nav-focusable outline-none focus:ring-2 focus:ring-[#F09800] rounded-full p-1 transition-all focus:scale-125"
             >
               <img src={lang.img} alt={lang.name} className="w-8 h-8 object-contain" />
             </button>
           ))}
         </div>
 
-        {/* BUSCADOR - Adaptado para TV */}
-        <div className="flex items-center bg-white/10 rounded-full px-6 py-2 border border-white/10 focus-within:ring-2 focus-within:ring-[#F09800] transition-all">
+        {/* BUSCADOR (Índice 8) */}
+        <div 
+          tabIndex={0}
+          onKeyDown={(e) => handleKeyDown(e, 8, navLinks.length + languages.length + 2)}
+          className="nav-focusable flex items-center bg-white/10 rounded-full px-6 py-2 border border-white/10 outline-none focus:ring-2 focus:ring-[#F09800]"
+        >
           <IoSearchOutline className="text-white text-2xl" />
-          <input 
-            type="text" 
-            placeholder="Buscar..." 
-            className="bg-transparent border-none outline-none text-white text-lg ml-3 w-40 placeholder:text-gray-400"
-            tabIndex={0}
-          />
+          <span className="text-white ml-2 text-sm opacity-50">Buscar...</span>
         </div>
-
-        {/* USUARIO */}
-        <button className="outline-none focus:ring-4 focus:ring-[#F09800] rounded-full transition-all">
-          <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={40} height={40} className="rounded-full ring-1 ring-white/20" />
-        </button>
       </div>
     </nav>
   );
