@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { IoPlay, IoClose } from 'react-icons/io5';
+import { useRouter } from 'next/router';
+import { IoChevronBack, IoChevronForward, IoClose, IoPlay, IoList } from 'react-icons/io5';
 
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "00:40:09", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -17,7 +18,7 @@ const leaEpisodes = [
 ];
 
 const LeaTV = () => {
-  const [focusIndex, setFocusIndex] = useState(0); // 0 = Botón Hero, 1-10 = Episodios
+  const [focusIndex, setFocusIndex] = useState(0); 
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -29,10 +30,10 @@ const LeaTV = () => {
         return;
       }
       switch (e.key) {
-        case 'ArrowRight': setFocusIndex(p => Math.min(p + 1, leaEpisodes.length)); break;
-        case 'ArrowLeft': setFocusIndex(p => Math.max(p - 1, 0)); break;
-        case 'ArrowDown': setFocusIndex(p => Math.min(p + 5, leaEpisodes.length)); break;
-        case 'ArrowUp': setFocusIndex(p => Math.max(p - 5, 0)); break;
+        case 'ArrowRight': setFocusIndex((prev) => Math.min(prev + 1, leaEpisodes.length)); break;
+        case 'ArrowLeft': setFocusIndex((prev) => Math.max(prev - 1, 0)); break;
+        case 'ArrowDown': setFocusIndex((prev) => Math.min(prev + 4, leaEpisodes.length)); break;
+        case 'ArrowUp': setFocusIndex((prev) => Math.max(prev - 4, 0)); break;
         case 'Enter': 
           if (focusIndex === 0) openEpisode(currentIdx);
           else openEpisode(focusIndex - 1);
@@ -44,55 +45,55 @@ const LeaTV = () => {
   }, [focusIndex, selectedVideo, currentIdx]);
 
   useEffect(() => {
-    if (focusIndex > 0) episodeRefs.current[focusIndex - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (focusIndex > 0) {
+      episodeRefs.current[focusIndex - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    }
   }, [focusIndex]);
 
   const openEpisode = (idx: number) => { setCurrentIdx(idx); setSelectedVideo(leaEpisodes[idx].url); };
 
   return (
     <div className="bg-[#0a0a0a] min-h-screen text-white font-sans overflow-hidden">
-      <Head><title>Lea — Modo Smart TV</title></Head>
-
+      <Head><title>Lea — Smart TV Mode</title></Head>
       <div className="relative w-full h-[70vh]">
-        <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Lea TV" />
+        <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Lea" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
         <div className="absolute left-20 top-1/2 -translate-y-1/2 max-w-2xl">
           <h1 className="text-8xl font-black italic mb-4 tracking-tighter text-[#FF8A00]">LEA</h1>
           <p className="text-2xl text-gray-300 mb-10 leading-relaxed uppercase font-bold tracking-widest">Una historia de superación y fe basada en el libro del Génesis.</p>
           <button className={`flex items-center gap-4 py-5 px-12 rounded-lg text-2xl font-black transition-all duration-300 ${focusIndex === 0 ? 'bg-[#FF8A00] text-white scale-110 shadow-[0_0_30px_rgba(255,138,0,0.5)]' : 'bg-white text-black'}`}>
-            <IoPlay className="text-4xl" /> VER CAPÍTULO {leaEpisodes[currentIdx].id}
+            <IoPlay className="text-4xl" /> CONTINUAR EP. {leaEpisodes[currentIdx].id}
           </button>
         </div>
       </div>
-
       <div className="px-20 -mt-10 relative z-10 pb-20">
-        <h2 className="text-2xl font-black mb-8 uppercase tracking-[0.3em] text-[#FF8A00]">Episodios Disponibles</h2>
+        <h2 className="text-3xl font-bold mb-8 uppercase tracking-widest text-[#FF8A00]">Capítulos</h2>
         <div className="grid grid-cols-5 gap-8">
           {leaEpisodes.map((ep, index) => (
-            <div key={ep.id} ref={el => { episodeRefs.current[index] = el; }} className={`relative rounded-xl overflow-hidden transition-all duration-300 border-4 ${focusIndex === index + 1 ? 'border-[#FF8A00] scale-110 z-20 shadow-2xl' : 'border-transparent opacity-60'}`}>
+            <div key={ep.id} ref={(el) => { episodeRefs.current[index] = el; }} className={`relative rounded-xl overflow-hidden transition-all duration-300 border-4 ${focusIndex === index + 1 ? 'border-[#FF8A00] scale-110 z-20 shadow-2xl' : 'border-transparent opacity-60'}`}>
               <img src={ep.thumb} className="w-full aspect-video object-cover" />
-              <div className="p-4 bg-black/80">
-                <h3 className="text-lg font-black truncate uppercase tracking-tighter">Cap. {ep.id} — {ep.title}</h3>
+              <div className="p-4 bg-gradient-to-t from-black to-transparent">
+                <h3 className="text-xl font-bold truncate uppercase tracking-tighter">EP {ep.id} — {ep.title}</h3>
+                <span className="text-sm font-bold text-gray-400">{ep.dur}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
-
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-black">
           <iframe src={selectedVideo + "?autoplay=1"} className="w-full h-full" allow="autoplay; fullscreen" />
-          <div className="absolute top-10 left-10 flex items-center gap-4 bg-black/80 p-5 rounded-2xl border border-white/10 backdrop-blur-xl">
-             <div className="w-2 h-12 bg-[#FF8A00] rounded-full" />
+          <div className="absolute top-10 left-10 flex items-center gap-4 bg-black/60 p-4 rounded-xl backdrop-blur-md">
+             <div className="w-2 h-10 bg-[#FF8A00] rounded-full" />
              <div>
-               <p className="text-xs font-black text-[#FF8A00] uppercase tracking-widest">Estás viendo Lea</p>
-               <h2 className="text-2xl font-black uppercase">Capítulo {leaEpisodes[currentIdx].id}</h2>
+               <p className="text-xs font-black text-[#FF8A00] uppercase tracking-tighter">Estás viendo</p>
+               <h2 className="text-2xl font-bold uppercase tracking-tighter">Lea — Cap. {leaEpisodes[currentIdx].id}</h2>
              </div>
           </div>
+          <div className="absolute bottom-10 right-10 text-gray-400 text-xl font-bold">Presiona ATRÁS para salir</div>
         </div>
       )}
     </div>
   );
 };
-
 export default LeaTV;
