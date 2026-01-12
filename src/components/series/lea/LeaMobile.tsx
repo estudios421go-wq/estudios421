@@ -1,9 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { IoMenuOutline, IoCloseOutline } from 'react-icons/io5';
+import { useRouter } from 'next/router';
+import { IoSearchOutline, IoMenuOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose } from 'react-icons/io5';
 import Footer from '../../Footer';
+
+const Navbar = () => {
+  const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  const navLinks = [
+    { name: 'Inicio', href: '/' },
+    { name: 'Series Bíblicas', href: '/series-biblicas' },
+    { name: 'Series TV', href: '/series-tv' },
+    { name: 'Películas', href: '/peliculas' },
+  ];
+  const languages = [
+    { name: 'ESP', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
+    { name: 'ENG', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
+    { name: 'PT', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
+  ];
+  return (
+    <>
+      <nav className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button className="text-white text-3xl z-[110]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}</button>
+          <Link href="/"><div className="relative w-[110px] h-[30px]"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
+        </div>
+        <div className="flex-grow relative group">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoSearchOutline size={16} /></div>
+          <input type="text" placeholder="Buscar..." className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" />
+        </div>
+        <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
+      </nav>
+      <div className={`fixed inset-0 bg-black/98 z-[90] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full pt-24 px-8 gap-8">
+          <div className="flex flex-col gap-6">
+            <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Navegación</p>
+            {navLinks.map((link) => (<Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className={`text-xl font-bold ${router.pathname === link.href ? 'text-[#F09800]' : 'text-white'}`}>{link.name}</Link>))}
+          </div>
+          <div className="flex flex-col gap-6 mt-4">
+            <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Idioma</p>
+            <div className="flex gap-6">
+              {languages.map((lang) => (<button key={lang.name} className="flex flex-col items-center gap-2 active:scale-95 transition-transform"><img src={lang.img} alt={lang.name} className="w-10 h-10 object-contain" /><span className="text-[10px] text-white font-bold">{lang.name}</span></button>))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "40:09", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -20,51 +72,60 @@ const leaEpisodes = [
 
 const LeaMobile = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [currentIdx, setCurrentIdx] = useState(0);
-
+  const [currentIdx, setCurrentIdx] = useState<number>(0);
   const openEpisode = (idx: number) => { setSelectedVideo(leaEpisodes[idx].url); setCurrentIdx(idx); };
 
   return (
-    <div className="bg-black min-h-screen text-white">
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800]">
       <Head><title>Lea — Móvil</title></Head>
-      <nav className="fixed top-0 w-full z-[100] px-4 py-3 flex items-center justify-between bg-black/90">
-         <Link href="/"><div className="relative w-[110px] h-[30px]"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
-         <IoMenuOutline className="text-3xl text-white" />
-      </nav>
-      <div className="relative w-full aspect-[4/3] pt-14">
-        <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Lea" />
+      <Navbar />
+      <div className="relative w-full pt-0 bg-black">
+        <div className="w-full aspect-[4/3] relative">
+          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
+        </div>
+        <div className="px-4 py-0 -mt-14 flex flex-col gap-3 relative z-20">
+          <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest shadow-2xl">
+            {currentIdx === 0 ? "▶ VER AHORA" : `▶ CONTINUAR EP. ${leaEpisodes[currentIdx].id}`}
+          </button>
+          <div className="flex gap-3">
+            <button className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">+ MI LISTA</button>
+            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">❤ DONAR</button>
+          </div>
+        </div>
       </div>
-      <div className="px-4 -mt-10 relative z-20">
-        <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-black py-4 rounded-md text-sm uppercase shadow-2xl active:scale-95 transition-all">
-          ▶ VER EPISODIO {leaEpisodes[currentIdx].id}
-        </button>
-      </div>
-      <div className="px-4 mt-12 mb-20">
-        <h2 className="text-[10px] font-black text-gray-500 tracking-[0.2em] uppercase border-b border-white/10 pb-2 mb-6">Capítulos</h2>
+      <div className="px-4 mt-10 mb-20">
+        <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Capítulos Disponibles</h2>
         <div className="grid grid-cols-2 gap-4">
           {leaEpisodes.map((ep, index) => (
-            <div key={ep.id} className="flex flex-col gap-2" onClick={() => openEpisode(index)}>
-              <div className={`relative aspect-video rounded-lg overflow-hidden border ${currentIdx === index ? 'border-[#F09800]' : 'border-white/10'}`}>
-                <img src={ep.thumb} className="w-full h-full object-cover" />
-                <span className="absolute bottom-1 right-1 bg-black/80 px-1.5 py-0.5 text-[8px] font-bold rounded">{ep.dur}</span>
+            <div key={ep.id} className="flex flex-col gap-2 active:opacity-70 transition-opacity" onClick={() => openEpisode(index)}>
+              <div className={`relative aspect-video rounded-md overflow-hidden border ${currentIdx === index ? 'border-[#F09800]' : 'border-white/5'} shadow-lg`}>
+                <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
+                <span className="absolute bottom-1 right-1 bg-black/90 px-1.5 py-0.5 text-[7px] font-black rounded uppercase">{ep.dur}</span>
               </div>
-              <h3 className="font-bold text-[10px] uppercase truncate">Cap. {ep.id} {ep.title}</h3>
+              <h3 className="font-bold text-[10px] truncate uppercase tracking-tighter">EP. {ep.id} {ep.title}</h3>
             </div>
           ))}
         </div>
       </div>
       {selectedVideo && (
         <div className="fixed inset-0 z-[2000] bg-black flex flex-col">
-          <div className="p-4 flex justify-between items-center bg-black">
-            <span className="text-[9px] font-black text-[#F09800] uppercase">Lea — Cap. {leaEpisodes[currentIdx].id}</span>
-            <button onClick={() => setSelectedVideo(null)} className="text-3xl">&times;</button>
+          <div className="p-4 flex justify-between items-center bg-black/80 backdrop-blur-md">
+            <span className="text-[9px] font-black text-[#F09800] uppercase tracking-widest">Lea — Cap. {leaEpisodes[currentIdx].id}</span>
+            <button onClick={() => setSelectedVideo(null)} className="text-3xl font-light">&times;</button>
           </div>
-          <iframe src={selectedVideo + "?autoplay=1"} className="w-full flex-grow border-none" allow="autoplay; fullscreen" />
+          <div className="flex-grow flex flex-col relative bg-[#050608]">
+            <iframe src={selectedVideo + "?autoplay=1"} className="w-full h-full border-none" allow="autoplay; fullscreen" />
+            <div className="absolute inset-x-0 bottom-6 flex justify-around px-4">
+              <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="bg-black/80 text-white text-[9px] py-3 px-5 rounded-full border border-white/10 active:bg-[#F09800] uppercase font-bold tracking-widest">Anterior</button>
+              <button onClick={() => setSelectedVideo(null)} className="bg-black/80 text-white text-[9px] py-3 px-5 rounded-full border border-white/10 active:bg-white active:text-black uppercase font-bold tracking-widest">Cerrar</button>
+              <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="bg-black/80 text-white text-[9px] py-3 px-5 rounded-full border border-white/10 active:bg-[#F09800] uppercase font-bold tracking-widest">Siguiente</button>
+            </div>
+          </div>
         </div>
       )}
       <Footer />
     </div>
   );
 };
-
 export default LeaMobile;
