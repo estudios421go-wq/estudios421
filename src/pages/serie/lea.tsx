@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-// IMPORTACIÓN DINÁMICA DE LOS TRES DISEÑOS
-const LeaPC = dynamic(() => import('../components/series/lea/LeaPC'));
-const LeaMobile = dynamic(() => import('../components/series/lea/LeaMobile'));
-const LeaTV = dynamic(() => import('../components/series/lea/LeaTV'));
+// IMPORTACIÓN DINÁMICA CON RUTAS CORREGIDAS
+const LeaPC = dynamic(() => import('../../components/series/lea/LeaPC'));
+const LeaMobile = dynamic(() => import('../../components/series/lea/LeaMobile'));
+const LeaTV = dynamic(() => import('../../components/series/lea/LeaTV'));
 
 const LeaPage = () => {
   const [deviceType, setDeviceType] = useState<'pc' | 'mobile' | 'tv' | null>(null);
