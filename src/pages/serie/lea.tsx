@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-const LeaPC = dynamic(() => import('../components/series/lea/LeaPC'));
-const LeaMobile = dynamic(() => import('../components/series/lea/LeaMobile'));
-const LeaTV = dynamic(() => import('../components/series/lea/LeaTV'));
+// IMPORTACIÓN DINÁMICA CON RUTAS EXACTAS BASADAS EN TU ESTRUCTURA
+const LeaPC = dynamic(() => import('../../components/series/lea/LeaPC'));
+const LeaMobile = dynamic(() => import('../../components/series/lea/LeaMobile'));
+const LeaTV = dynamic(() => import('../../components/series/lea/LeaTV'));
 
 const LeaPage = () => {
   const [deviceType, setDeviceType] = useState<'pc' | 'mobile' | 'tv' | null>(null);
@@ -12,6 +13,7 @@ const LeaPage = () => {
     const handleResize = () => {
       const width = window.innerWidth;
       const ua = navigator.userAgent.toLowerCase();
+      
       if (width < 768) {
         setDeviceType('mobile');
       } else if (width >= 768 && width <= 1366) {
@@ -24,6 +26,7 @@ const LeaPage = () => {
         setDeviceType('pc');
       }
     };
+
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
