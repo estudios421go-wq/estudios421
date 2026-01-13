@@ -3,8 +3,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose } from 'react-icons/io5';
+import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
+
+// Simulación de Base de Datos para el Buscador (Escalable)
+const allSeriesData = [
+  { id: 'lea', title: 'Lea', path: '/serie/lea' },
+  { id: 'genesis', title: 'Genesis', path: '/serie/genesis' }
+];
 
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "00:40:09", desc: "Lía pierde a su madre siendo aún joven y comienza a criar a su hermana menor. Raquel se convierte en una adulta fría y egoísta. Lía es rescatada por Jacob.", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -24,16 +30,44 @@ const LeaPC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [inMyList, setInMyList] = useState(false);
+  const [donated, setDonated] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    
+    // Cargar progreso y lista
     const savedEp = localStorage.getItem('lea_last_ep');
     if (savedEp) setCurrentIdx(parseInt(savedEp));
+    
+    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (myList.includes('lea')) setInMyList(true);
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = searchQuery.toLowerCase().trim();
+    const found = allSeriesData.find(s => s.title.toLowerCase().includes(query));
+    if (found) router.push(found.path);
+    else router.push('/404');
+  };
+
+  const toggleMyList = () => {
+    let myList = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (inMyList) {
+      myList = myList.filter((id: string) => id !== 'lea');
+      setInMyList(false);
+    } else {
+      myList.push('lea');
+      setInMyList(true);
+    }
+    localStorage.setItem('myList', JSON.stringify(myList));
+  };
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
@@ -41,58 +75,48 @@ const LeaPC = () => {
     localStorage.setItem('lea_last_ep', idx.toString());
   };
 
-  const addToMyList = () => {
-    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (!myList.includes('lea')) {
-      myList.push('lea');
-      localStorage.setItem('myList', JSON.stringify(myList));
-      alert("Añadido a Mi Lista");
-    }
+  const closePlayer = () => {
+    setSelectedVideo(null);
+    setTimeout(() => {
+      episodeRefs.current[currentIdx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) router.push(`/buscar?q=${encodeURIComponent(searchQuery)}`);
+  const handleDonate = () => {
+    setDonated(true);
+    window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank');
   };
-
-  const navLinks = [
-    { name: 'Inicio', href: '/' },
-    { name: 'Series Bíblicas', href: '/series-biblicas' },
-    { name: 'Series TV', href: '/series-tv' },
-    { name: 'Películas', href: '/peliculas' },
-  ];
-
-  const languages = [
-    { name: 'ESP', href: '/idioma/es', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
-    { name: 'ENG', href: '/idioma/en', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
-    { name: 'PT', href: '/idioma/pt', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
-  ];
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00] overflow-x-hidden">
       <Head><title>Lea — Estudios 421</title></Head>
 
+      {/* NAVBAR MAESTRA */}
       <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
-          <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
+          <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer hover:opacity-80 transition-opacity"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
           <div className="flex gap-8">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="relative group text-white text-[15px] font-medium tracking-wide">
-                {link.name}
-                <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name) => (
+              <Link key={name} href={name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
+                {name}
+                <span className="absolute -bottom-1 left-0 w-0 h-[3px] bg-[#FF8A00] transition-all duration-500 group-hover:w-full" />
               </Link>
             ))}
           </div>
         </div>
+
         <div className="flex items-center gap-6">
           <div className="flex gap-4 mr-4">
-            {languages.map((lang) => (
-              <Link key={lang.name} href={lang.href}>
-                <img src={lang.img} alt={lang.name} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />
+            {['', 'en', 'pt'].map((lang) => (
+              <Link key={lang} href={lang === '' ? '/serie/lea' : `/${lang}/serie/lea`}>
+                <img 
+                  src={`https://static.wixstatic.com/media/859174_${lang === '' ? '367960b11c1c44ba89cd1582fd1b5776' : lang === 'en' ? '35112d9ffe234d6f9dcef16cf8f7544e' : '830f1c20656e4d44a819bedfc13a22cc'}~mv2.png`} 
+                  className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" 
+                />
               </Link>
             ))}
           </div>
-          <form onSubmit={handleSearch} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5">
+          <form onSubmit={handleSearch} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00] transition-all">
             <IoSearchOutline className="text-white text-xl cursor-pointer" onClick={handleSearch} />
             <input 
               type="text" 
@@ -106,25 +130,34 @@ const LeaPC = () => {
         </div>
       </nav>
 
-      <div className="relative w-full h-[88vh] overflow-visible">
-        <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
+      {/* HERO SECTION */}
+      <div className="relative w-full h-[88vh]">
+        <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover select-none pointer-events-none" alt="Banner" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
-          <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
+          <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase tracking-tighter">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${leaEpisodes[currentIdx].id}`}
           </button>
-          <button onClick={addToMyList} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">+ Mi Lista</button>
+          
           <button 
-            onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} 
-            className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase"
+            onClick={toggleMyList}
+            className={`flex items-center gap-2 backdrop-blur-md border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}
           >
-            ❤ Donar
+            {inMyList ? <><IoCheckmarkCircle className="text-xl" /> En Mi Lista</> : '+ Mi Lista'}
+          </button>
+
+          <button 
+            onClick={handleDonate}
+            className={`backdrop-blur-md border py-4 px-10 rounded-sm transition-all uppercase font-bold ${donated ? 'bg-green-600 border-green-500 text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}
+          >
+            {donated ? '❤ Donado' : '❤ Donar'}
           </button>
         </div>
       </div>
 
       <div className="h-20 bg-black"></div>
 
+      {/* EPISODIOS */}
       <div className="px-16 mb-32 relative z-10">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
             <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
@@ -133,9 +166,14 @@ const LeaPC = () => {
 
         <div className="grid grid-cols-4 gap-8">
           {leaEpisodes.map((ep, index) => (
-            <div key={ep.id} ref={(el) => { episodeRefs.current[index] = el; }} className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/30'}`} onClick={() => openEpisode(index)}>
-              <div className="relative aspect-video overflow-hidden">
-                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
+            <div 
+              key={ep.id} 
+              ref={(el) => { episodeRefs.current[index] = el; }} 
+              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/30'}`} 
+              onClick={() => openEpisode(index)}
+            >
+              <div className="relative aspect-video overflow-hidden pointer-events-none">
+                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
                 <span className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[10px] font-black rounded border border-white/10 uppercase tracking-widest text-[#FF8A00]">Episodio {ep.id}</span>
                 <span className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 text-[10px] font-bold rounded border border-white/10">{ep.dur}</span>
@@ -153,6 +191,7 @@ const LeaPC = () => {
         </div>
       </div>
 
+      {/* REPRODUCTOR MAESTRO */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-black flex items-center justify-center">
           <div className="w-full h-full bg-[#050608] flex flex-col">
@@ -161,16 +200,16 @@ const LeaPC = () => {
                 <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.2em]">Serie: Lea</span>
                 <h2 className="text-xl font-bold tracking-tight uppercase">Episodio {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</h2>
               </div>
-              <button onClick={() => setSelectedVideo(null)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all group">
+              <button onClick={closePlayer} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all group">
                 <IoClose className="text-2xl group-hover:rotate-90 transition-transform duration-300" />
               </button>
             </div>
             <div className="flex-grow bg-black relative">
-              <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full" allow="autoplay; fullscreen" />
+              <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" />
             </div>
             <div className="px-8 py-6 flex items-center justify-between bg-[#050608] border-t border-white/5">
               <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-full text-xs font-bold transition-all disabled:opacity-20 uppercase tracking-widest border border-white/5"><IoChevronBack className="text-lg" /> Episodio Anterior</button>
-              <button onClick={() => setSelectedVideo(null)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-8 py-3 rounded-full text-xs font-bold transition-all uppercase tracking-widest border border-white/5"><IoList className="text-lg" /> Lista de Episodios</button>
+              <button onClick={closePlayer} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-8 py-3 rounded-full text-xs font-bold transition-all uppercase tracking-widest border border-white/5"><IoList className="text-lg" /> Lista de Episodios</button>
               <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex items-center gap-2 bg-[#FF8A00] hover:bg-[#FF8A00]/90 text-black px-6 py-3 rounded-full text-xs font-black transition-all disabled:opacity-20 uppercase tracking-widest shadow-lg">Siguiente Episodio <IoChevronForward className="text-lg" /></button>
             </div>
           </div>
