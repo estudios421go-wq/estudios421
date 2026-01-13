@@ -24,7 +24,7 @@ const LeaPC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [showQR, setShowQR] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -41,11 +41,18 @@ const LeaPC = () => {
     localStorage.setItem('lea_last_ep', idx.toString());
   };
 
-  const closePlayer = () => {
-    setSelectedVideo(null);
-    setTimeout(() => {
-      episodeRefs.current[currentIdx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
+  const addToMyList = () => {
+    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (!myList.includes('lea')) {
+      myList.push('lea');
+      localStorage.setItem('myList', JSON.stringify(myList));
+      alert("Añadido a Mi Lista");
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) router.push(`/buscar?q=${encodeURIComponent(searchQuery)}`);
   };
 
   const navLinks = [
@@ -56,9 +63,9 @@ const LeaPC = () => {
   ];
 
   const languages = [
-    { name: 'ESP', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
-    { name: 'ENG', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
-    { name: 'PT', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
+    { name: 'ESP', href: '/idioma/es', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
+    { name: 'ENG', href: '/idioma/en', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
+    { name: 'PT', href: '/idioma/pt', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
   ];
 
   return (
@@ -79,12 +86,22 @@ const LeaPC = () => {
         </div>
         <div className="flex items-center gap-6">
           <div className="flex gap-4 mr-4">
-            {languages.map((lang) => (<img key={lang.name} src={lang.img} alt={lang.name} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />))}
+            {languages.map((lang) => (
+              <Link key={lang.name} href={lang.href}>
+                <img src={lang.img} alt={lang.name} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />
+              </Link>
+            ))}
           </div>
-          <div className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5">
-            <IoSearchOutline className="text-white text-xl" />
-            <input type="text" placeholder="Buscar..." className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
-          </div>
+          <form onSubmit={handleSearch} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5">
+            <IoSearchOutline className="text-white text-xl cursor-pointer" onClick={handleSearch} />
+            <input 
+              type="text" 
+              placeholder="Buscar..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" 
+            />
+          </form>
           <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
         </div>
       </nav>
@@ -96,8 +113,13 @@ const LeaPC = () => {
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${leaEpisodes[currentIdx].id}`}
           </button>
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">+ Mi Lista</button>
-          <button onClick={() => setShowQR(true)} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">❤ Donar</button>
+          <button onClick={addToMyList} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">+ Mi Lista</button>
+          <button 
+            onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} 
+            className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase"
+          >
+            ❤ Donar
+          </button>
         </div>
       </div>
 
@@ -139,7 +161,7 @@ const LeaPC = () => {
                 <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.2em]">Serie: Lea</span>
                 <h2 className="text-xl font-bold tracking-tight uppercase">Episodio {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</h2>
               </div>
-              <button onClick={closePlayer} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all group">
+              <button onClick={() => setSelectedVideo(null)} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all group">
                 <IoClose className="text-2xl group-hover:rotate-90 transition-transform duration-300" />
               </button>
             </div>
@@ -148,19 +170,9 @@ const LeaPC = () => {
             </div>
             <div className="px-8 py-6 flex items-center justify-between bg-[#050608] border-t border-white/5">
               <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-full text-xs font-bold transition-all disabled:opacity-20 uppercase tracking-widest border border-white/5"><IoChevronBack className="text-lg" /> Episodio Anterior</button>
-              <button onClick={closePlayer} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-8 py-3 rounded-full text-xs font-bold transition-all uppercase tracking-widest border border-white/5"><IoList className="text-lg" /> Lista de Episodios</button>
+              <button onClick={() => setSelectedVideo(null)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-8 py-3 rounded-full text-xs font-bold transition-all uppercase tracking-widest border border-white/5"><IoList className="text-lg" /> Lista de Episodios</button>
               <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex items-center gap-2 bg-[#FF8A00] hover:bg-[#FF8A00]/90 text-black px-6 py-3 rounded-full text-xs font-black transition-all disabled:opacity-20 uppercase tracking-widest shadow-lg">Siguiente Episodio <IoChevronForward className="text-lg" /></button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {showQR && (
-        <div className="fixed inset-0 z-[1100] bg-black/90 flex items-center justify-center p-4">
-          <div className="bg-[#111] border border-white/10 p-10 rounded-2xl flex flex-col items-center max-w-sm text-center shadow-2xl">
-            <h3 className="text-2xl font-bold mb-4">Apoya el proyecto</h3>
-            <div className="bg-white p-4 rounded-xl mb-6 shadow-inner"><img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS')}`} alt="QR" /></div>
-            <button onClick={() => setShowQR(false)} className="bg-[#FF8A00] w-full py-3 rounded-lg font-bold text-black uppercase tracking-widest">Cerrar</button>
           </div>
         </div>
       )}
