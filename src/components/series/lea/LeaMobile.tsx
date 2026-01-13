@@ -10,22 +10,35 @@ const Navbar = () => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setIsMenuOpen(false);
+      router.push(`/buscar?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   const navLinks = [
     { name: 'Inicio', href: '/' },
     { name: 'Series Bíblicas', href: '/series-biblicas' },
     { name: 'Series TV', href: '/series-tv' },
     { name: 'Películas', href: '/peliculas' },
   ];
+
   const languages = [
-    { name: 'ESP', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
-    { name: 'ENG', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
-    { name: 'PT', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
+    { name: 'ESP', href: '/idioma/es', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
+    { name: 'ENG', href: '/idioma/en', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
+    { name: 'PT', href: '/idioma/pt', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
   ];
+
   return (
     <>
       <nav className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
@@ -33,12 +46,19 @@ const Navbar = () => {
           <button className="text-white text-3xl z-[110]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}</button>
           <Link href="/"><div className="relative w-[110px] h-[30px]"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         </div>
-        <div className="flex-grow relative group">
+        <form onSubmit={handleSearch} className="flex-grow relative group">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoSearchOutline size={16} /></div>
-          <input type="text" placeholder="Buscar..." className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" />
-        </div>
+          <input 
+            type="text" 
+            placeholder="Buscar..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" 
+          />
+        </form>
         <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
       </nav>
+
       <div className={`fixed inset-0 bg-black/98 z-[90] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8">
           <div className="flex flex-col gap-6">
@@ -48,7 +68,14 @@ const Navbar = () => {
           <div className="flex flex-col gap-6 mt-4">
             <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Idioma</p>
             <div className="flex gap-6">
-              {languages.map((lang) => (<button key={lang.name} className="flex flex-col items-center gap-2 active:scale-95 transition-transform"><img src={lang.img} alt={lang.name} className="w-10 h-10 object-contain" /><span className="text-[10px] text-white font-bold">{lang.name}</span></button>))}
+              {languages.map((lang) => (
+                <Link key={lang.name} href={lang.href} onClick={() => setIsMenuOpen(false)}>
+                  <div className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
+                    <img src={lang.img} alt={lang.name} className="w-10 h-10 object-contain" />
+                    <span className="text-[10px] text-white font-bold">{lang.name}</span>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
@@ -73,7 +100,26 @@ const leaEpisodes = [
 const LeaMobile = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
-  const openEpisode = (idx: number) => { setSelectedVideo(leaEpisodes[idx].url); setCurrentIdx(idx); };
+
+  useEffect(() => {
+    const savedEp = localStorage.getItem('lea_last_ep');
+    if (savedEp) setCurrentIdx(parseInt(savedEp));
+  }, []);
+
+  const openEpisode = (idx: number) => { 
+    setSelectedVideo(leaEpisodes[idx].url); 
+    setCurrentIdx(idx); 
+    localStorage.setItem('lea_last_ep', idx.toString());
+  };
+
+  const addToMyList = () => {
+    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (!myList.includes('lea')) {
+      myList.push('lea');
+      localStorage.setItem('myList', JSON.stringify(myList));
+      alert("Añadido a Mi Lista");
+    }
+  };
 
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800]">
@@ -81,7 +127,7 @@ const LeaMobile = () => {
       <Navbar />
       <div className="relative w-full pt-0 bg-black">
         <div className="w-full aspect-[4/3] relative">
-          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
+          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
         </div>
         <div className="px-4 py-0 -mt-14 flex flex-col gap-3 relative z-20">
@@ -89,13 +135,13 @@ const LeaMobile = () => {
             {currentIdx === 0 ? "▶ VER AHORA" : `▶ CONTINUAR EP. ${leaEpisodes[currentIdx].id}`}
           </button>
           <div className="flex gap-3">
-            <button className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">+ MI LISTA</button>
+            <button onClick={addToMyList} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">+ MI LISTA</button>
             <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">❤ DONAR</button>
           </div>
         </div>
       </div>
       <div className="px-4 mt-10 mb-20">
-        <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Capítulos Disponibles</h2>
+        <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Episodios Disponibles</h2>
         <div className="grid grid-cols-2 gap-4">
           {leaEpisodes.map((ep, index) => (
             <div key={ep.id} className="flex flex-col gap-2 active:opacity-70 transition-opacity" onClick={() => openEpisode(index)}>
