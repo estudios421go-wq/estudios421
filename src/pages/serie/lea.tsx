@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import Head from 'next/head';
 
-// IMPORTACIÓN DINÁMICA DE LOS TRES DISEÑOS
+// IMPORTACIÓN DINÁMICA MAESTRA
 const LeaPC = dynamic(() => import('../../components/series/lea/LeaPC'));
 const LeaMobile = dynamic(() => import('../../components/series/lea/LeaMobile'));
 const LeaTV = dynamic(() => import('../../components/series/lea/LeaTV'));
@@ -10,40 +11,56 @@ const LeaPage = () => {
   const [deviceType, setDeviceType] = useState<'pc' | 'mobile' | 'tv' | null>(null);
 
   useEffect(() => {
-    const detectDevice = () => {
+    // BLINDAJE: Protección contra clic derecho e inspección de elementos
+    const disableProtections = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof MouseEvent && e.button === 2) e.preventDefault(); // Clic derecho
+      if (e instanceof KeyboardEvent) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault(); // Ctrl+U, S, I, J
+        if (e.key === 'F12') e.preventDefault(); // F12
+      }
+    };
+
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('keydown', disableProtections);
+
+    // DETECCIÓN MAESTRA DE DISPOSITIVO
+    const handleResize = () => {
       const width = window.innerWidth;
       const ua = navigator.userAgent.toLowerCase();
       
-      // 1. Detección exhaustiva de Smart TV
-      const isTV = /smarttv|smart-tv|tizen|webos|hbbtv|appletv|googletv|android tv|viera|aquos|netcast|vizio|roku|sharp|philips/.test(ua);
+      // Detección Smart TV reforzada
+      const isTV = /smarttv|smart-tv|tizen|webos|hbbtv|appletv|googletv|viera|aquos|netcast|roku|sharp|philips/.test(ua);
 
-      // 2. Priorización de renderizado
       if (isTV) {
         setDeviceType('tv');
       } else if (width < 768) {
         setDeviceType('mobile');
-      } else if (width >= 768 && width <= 1366) {
-        // En tablets u ordenadores pequeños, si no es TV, es PC (o Tablet que usa versión PC)
-        setDeviceType('pc');
       } else {
         setDeviceType('pc');
       }
     };
 
-    detectDevice();
-    window.addEventListener('resize', detectDevice);
-    return () => window.removeEventListener('resize', detectDevice);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      document.removeEventListener('keydown', disableProtections);
+    };
   }, []);
 
-  // Pantalla de carga profesional mientras detecta
-  if (!deviceType) return (
-    <div className="bg-black min-h-screen flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-[#FF8A00] border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
+  if (!deviceType) return <div className="bg-black min-h-screen" />;
 
   return (
     <>
+      <Head>
+        {/* Blindaje de imágenes: evita arrastrar y soltar */}
+        <style>{`
+          img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; pointer-events: none; }
+          body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+          iframe { pointer-events: auto; }
+        `}</style>
+      </Head>
       {deviceType === 'pc' && <LeaPC />}
       {deviceType === 'mobile' && <LeaMobile />}
       {deviceType === 'tv' && <LeaTV />}
