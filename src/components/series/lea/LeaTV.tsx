@@ -24,16 +24,22 @@ const LeaTV = () => {
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    const savedEp = localStorage.getItem('lea_last_ep');
+    if (savedEp) setCurrentIdx(parseInt(savedEp));
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedVideo) {
-        if (e.key === 'Backspace' || e.key === 'Escape') setSelectedVideo(null);
+        if (e.key === 'Backspace' || e.key === 'Escape' || e.key === 'GoBack') {
+            e.preventDefault();
+            setSelectedVideo(null);
+        }
         return;
       }
       switch (e.key) {
         case 'ArrowRight': setFocusIndex((prev) => Math.min(prev + 1, leaEpisodes.length)); break;
         case 'ArrowLeft': setFocusIndex((prev) => Math.max(prev - 1, 0)); break;
-        case 'ArrowDown': setFocusIndex((prev) => Math.min(prev + 4, leaEpisodes.length)); break;
-        case 'ArrowUp': setFocusIndex((prev) => Math.max(prev - 4, 0)); break;
+        case 'ArrowDown': setFocusIndex((prev) => Math.min(prev + 5, leaEpisodes.length)); break;
+        case 'ArrowUp': setFocusIndex((prev) => Math.max(prev - 5, 0)); break;
         case 'Enter': 
           if (focusIndex === 0) openEpisode(currentIdx);
           else openEpisode(focusIndex - 1);
@@ -50,7 +56,11 @@ const LeaTV = () => {
     }
   }, [focusIndex]);
 
-  const openEpisode = (idx: number) => { setCurrentIdx(idx); setSelectedVideo(leaEpisodes[idx].url); };
+  const openEpisode = (idx: number) => { 
+    setCurrentIdx(idx); 
+    setSelectedVideo(leaEpisodes[idx].url); 
+    localStorage.setItem('lea_last_ep', idx.toString());
+  };
 
   return (
     <div className="bg-[#0a0a0a] min-h-screen text-white font-sans overflow-hidden">
@@ -82,15 +92,15 @@ const LeaTV = () => {
       </div>
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-black">
-          <iframe src={selectedVideo + "?autoplay=1"} className="w-full h-full" allow="autoplay; fullscreen" />
+          <iframe src={selectedVideo + "?autoplay=1"} className="w-full h-full border-none" allow="autoplay; fullscreen" />
           <div className="absolute top-10 left-10 flex items-center gap-4 bg-black/60 p-4 rounded-xl backdrop-blur-md">
              <div className="w-2 h-10 bg-[#FF8A00] rounded-full" />
              <div>
                <p className="text-xs font-black text-[#FF8A00] uppercase tracking-tighter">Estás viendo</p>
-               <h2 className="text-2xl font-bold uppercase tracking-tighter">Lea — Cap. {leaEpisodes[currentIdx].id}</h2>
+               <h2 className="text-2xl font-bold uppercase tracking-tighter text-white">Lea — Cap. {leaEpisodes[currentIdx].id}</h2>
              </div>
           </div>
-          <div className="absolute bottom-10 right-10 text-gray-400 text-xl font-bold">Presiona ATRÁS para salir</div>
+          <div className="absolute bottom-10 right-10 text-gray-400 text-xl font-bold bg-black/40 px-4 py-2 rounded-lg">Presiona ATRÁS para salir</div>
         </div>
       )}
     </div>
