@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle, IoPlay } from 'react-icons/io5';
+import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
 
 const leaEpisodes = [
@@ -135,91 +135,79 @@ const LeaPC = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR MODERNO PROFESIONAL */}
+      {/* REPRODUCTOR PROFESIONAL CON BARRAS DE CONTENCIÓN INDEPENDIENTES */}
       {selectedVideo && (
-        <div className="fixed inset-0 z-[1000] bg-black flex items-center justify-center animate-fade-in">
-          <div className="w-full h-full bg-[#050608] flex flex-col relative overflow-hidden">
+        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in overflow-hidden">
+          
+          {/* BARRA SUPERIOR INDEPENDIENTE (12% Altura) */}
+          <div className="h-[12vh] min-h-[80px] px-10 flex items-center justify-between bg-[#050608] border-b border-white/5">
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.4em] mb-1">Serie Maestro: Lea</span>
+                <h2 className="text-xl font-black tracking-tighter uppercase leading-none">
+                  Episodio {leaEpisodes[currentIdx].id} <span className="text-white/20 mx-2">|</span> {leaEpisodes[currentIdx].title}
+                </h2>
+              </div>
+            </div>
+            <button 
+              onClick={closePlayer} 
+              className="group flex items-center gap-4 bg-white/5 px-6 py-3 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:border-[#FF8A00] transition-all duration-300"
+            >
+              <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-black">Cerrar Reproductor</span>
+              <IoClose className="text-xl group-hover:rotate-90 group-hover:text-black transition-transform" />
+            </button>
+          </div>
+
+          {/* ÁREA DE VIDEO CENTRAL TOTALMENTE LIMPIA (76% Altura) */}
+          <div className="flex-grow bg-black relative">
+            <iframe 
+              src={selectedVideo + "?autoplay=1"} 
+              className="absolute inset-0 w-full h-full border-none" 
+              allow="autoplay; fullscreen" 
+            />
+          </div>
+
+          {/* BARRA INFERIOR INDEPENDIENTE (12% Altura) */}
+          <div className="h-[12vh] min-h-[90px] px-12 bg-[#050608] border-t border-white/5 flex items-center justify-between">
             
-            {/* Header Flotante con Glassmorphism */}
-            <div className="absolute top-0 w-full z-20 px-10 py-8 flex items-center justify-between bg-gradient-to-b from-black/90 via-black/40 to-transparent">
-              <div className="flex items-center gap-6">
-                <button onClick={closePlayer} className="group flex items-center gap-2 text-white/70 hover:text-white transition-all">
-                    <IoChevronBack className="text-3xl group-hover:-translate-x-1 transition-transform" />
-                    <span className="text-xs font-black uppercase tracking-[0.3em]">Volver</span>
-                </button>
-                <div className="w-[1px] h-8 bg-white/10 mx-2" />
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.4em] mb-1">Viendo ahora</span>
-                  <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">
-                    Episodio {leaEpisodes[currentIdx].id} <span className="text-white/30 mx-2">—</span> {leaEpisodes[currentIdx].title}
-                  </h2>
-                </div>
+            {/* Control Anterior */}
+            <button 
+              disabled={currentIdx === 0} 
+              onClick={() => openEpisode(currentIdx - 1)}
+              className="flex items-center gap-4 group disabled:opacity-10 disabled:grayscale transition-all"
+            >
+              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                <IoChevronBack className="text-lg" />
               </div>
-              <button onClick={closePlayer} className="w-12 h-12 rounded-full bg-white/5 backdrop-blur-md border border-white/10 flex items-center justify-center hover:bg-[#FF8A00] hover:border-[#FF8A00] transition-all duration-500 group">
-                <IoClose className="text-2xl group-hover:rotate-90 transition-transform duration-500" />
-              </button>
-            </div>
-
-            {/* Contenedor de Video */}
-            <div className="flex-grow bg-black relative shadow-[0_0_100px_rgba(0,0,0,1)]">
-              <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none shadow-2xl" allow="autoplay; fullscreen" />
-            </div>
-
-            {/* Footer de Controles Moderno */}
-            <div className="absolute bottom-0 w-full z-20 px-12 py-10 bg-gradient-to-t from-black via-black/80 to-transparent">
-              <div className="max-w-7xl mx-auto flex items-center justify-between">
-                
-                {/* Botón Anterior */}
-                <button 
-                  disabled={currentIdx === 0} 
-                  onClick={() => openEpisode(currentIdx - 1)} 
-                  className="flex items-center gap-4 group disabled:opacity-20 disabled:pointer-events-none"
-                >
-                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
-                    <IoChevronBack className="text-xl" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Anterior</span>
-                    <span className="text-xs font-bold uppercase tracking-tighter">Episodio {currentIdx}</span>
-                  </div>
-                </button>
-
-                {/* Botón Central: Lista */}
-                <button onClick={closePlayer} className="flex flex-col items-center group">
-                   <div className="w-14 h-14 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:border-[#FF8A00]/50 transition-all duration-500">
-                      <IoList className="text-2xl group-hover:text-[#FF8A00]" />
-                   </div>
-                   <span className="mt-3 text-[9px] font-black uppercase tracking-[0.3em] text-white/40 group-hover:text-white transition-colors">Explorar Todo</span>
-                </button>
-
-                {/* Botón Siguiente Maestro (Corregido y Mejorado) */}
-                <button 
-                  disabled={currentIdx === leaEpisodes.length - 1} 
-                  onClick={() => openEpisode(currentIdx + 1)} 
-                  className="relative flex items-center gap-5 group disabled:opacity-20 disabled:pointer-events-none"
-                >
-                  <div className="flex flex-col items-end">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-[#FF8A00]">Siguiente</span>
-                    <span className="text-xs font-bold uppercase tracking-tighter">Episodio {currentIdx + 2}</span>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-[#FF8A00] blur-xl opacity-0 group-hover:opacity-30 transition-opacity" />
-                    <div className="w-16 h-16 rounded-2xl bg-[#FF8A00] flex items-center justify-center text-black shadow-[0_10px_30px_rgba(255,138,0,0.3)] group-hover:translate-y-[-5px] group-hover:rotate-[5deg] transition-all duration-500">
-                        <IoChevronForward className="text-3xl" />
-                    </div>
-                  </div>
-                </button>
-
+              <div className="flex flex-col items-start">
+                <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Anterior</span>
+                <span className="text-xs font-bold uppercase tracking-tighter">Capítulo {currentIdx}</span>
               </div>
+            </button>
 
-              {/* Barra de progreso visual decorativa */}
-              <div className="max-w-7xl mx-auto mt-8 h-[2px] bg-white/5 rounded-full overflow-hidden">
-                 <div 
-                   className="h-full bg-[#FF8A00] transition-all duration-1000 shadow-[0_0_15px_#FF8A00]" 
-                   style={{ width: `${((currentIdx + 1) / leaEpisodes.length) * 100}%` }}
-                 />
+            {/* Control Central: Lista */}
+            <button 
+              onClick={closePlayer} 
+              className="flex items-center gap-3 bg-white/5 px-8 py-3 rounded-xl border border-white/10 hover:bg-white/10 transition-all group"
+            >
+              <IoList className="text-xl text-[#FF8A00]" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Lista de Episodios</span>
+            </button>
+
+            {/* Control Siguiente Maestro */}
+            <button 
+              disabled={currentIdx === leaEpisodes.length - 1} 
+              onClick={() => openEpisode(currentIdx + 1)}
+              className="flex items-center gap-5 group disabled:opacity-10 disabled:grayscale transition-all"
+            >
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[9px] font-black uppercase tracking-widest text-[#FF8A00]">Siguiente</span>
+                <span className="text-xs font-bold uppercase tracking-tighter">Capítulo {currentIdx + 2}</span>
               </div>
-            </div>
+              <div className="w-14 h-14 rounded-2xl bg-[#FF8A00] flex items-center justify-center text-black shadow-[0_0_20px_rgba(255,138,0,0.2)] group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(255,138,0,0.4)] transition-all">
+                <IoChevronForward className="text-3xl" />
+              </div>
+            </button>
 
           </div>
         </div>
