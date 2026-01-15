@@ -107,27 +107,52 @@ const LeaPC = () => {
 
       <div className="h-20 bg-black"></div>
 
+      {/* SECCIÓN DE EPISODIOS PREMIUM PLUS */}
       <div className="px-16 mb-32 relative z-10">
-        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
-          <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
-          <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
+        <header className="flex items-center gap-5 mb-12 border-b border-white/5 pb-6">
+          <div className="w-2 h-10 bg-[#FF8A00] rounded-full shadow-[0_0_15px_rgba(255,138,0,0.5)]" />
+          <div className="flex flex-col">
+            <h2 className="text-3xl font-black tracking-tighter uppercase leading-none">Episodios Disponibles</h2>
+            <span className="text-[10px] text-gray-500 font-bold tracking-[0.3em] mt-2 uppercase">Temporada 1 — Completa</span>
+          </div>
         </header>
 
-        <div className="grid grid-cols-4 gap-8">
+        <div className="grid grid-cols-4 gap-10">
           {leaEpisodes.map((ep, index) => (
-            <div key={ep.id} ref={(el) => { episodeRefs.current[index] = el; }} className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/30'}`} onClick={() => openEpisode(index)}>
+            <div 
+              key={ep.id} 
+              ref={(el) => { episodeRefs.current[index] = el; }} 
+              className={`group relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-500 bg-[#2C2F33] border border-white/5 shadow-2xl ${currentIdx === index ? 'ring-2 ring-[#FF8A00] scale-[1.02]' : 'hover:scale-[1.05] hover:border-white/20'}`} 
+              onClick={() => openEpisode(index)}
+            >
               <div className="relative aspect-video overflow-hidden">
-                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
-                <span className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[10px] font-black rounded border border-white/10 uppercase tracking-widest text-[#FF8A00]">Episodio {ep.id}</span>
-                <span className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 text-[10px] font-bold rounded border border-white/10">{ep.dur}</span>
+                <img src={ep.thumb} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-80" />
+                
+                {/* Badge de Episodio Premium */}
+                <div className="absolute bottom-3 left-3 bg-black/40 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 flex items-center gap-2">
+                   <div className={`w-1.5 h-1.5 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-white/40'}`} />
+                   <span className="text-[10px] font-black uppercase tracking-widest text-white/90">Ep. {ep.id}</span>
+                </div>
+
+                <span className="absolute bottom-3 right-3 bg-white/5 backdrop-blur-md px-2 py-1 text-[9px] font-bold rounded border border-white/10 text-white/60">{ep.dur}</span>
+                
+                {/* Play Icon Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-black/20">
+                    <div className="w-14 h-14 rounded-full bg-[#FF8A00] flex items-center justify-center text-black shadow-2xl scale-75 group-hover:scale-100 transition-transform duration-500">
+                        <IoChevronForward className="text-3xl ml-1" />
+                    </div>
+                </div>
               </div>
-              <div className="p-5 flex flex-col gap-1">
-                <h3 className="font-bold text-base truncate tracking-tight uppercase">{ep.title}</h3>
-                <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">{ep.desc}</p>
-                <div className="mt-4 flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-gray-600'}`}></div>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Disponible ahora</span>
+
+              <div className="p-6 flex flex-col gap-2">
+                <h3 className="font-black text-lg truncate tracking-tight uppercase group-hover:text-[#FF8A00] transition-colors duration-300">{ep.title}</h3>
+                <p className="text-[12px] text-gray-400 line-clamp-2 leading-relaxed h-10 font-medium">{ep.desc}</p>
+                <div className="mt-2 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Estudios 421</span>
+                    {currentIdx === index && (
+                       <span className="text-[9px] font-black uppercase text-[#FF8A00] animate-pulse">Reproduciendo</span>
+                    )}
                 </div>
               </div>
             </div>
@@ -135,12 +160,10 @@ const LeaPC = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR PROFESIONAL DE ÚLTIMA GENERACIÓN */}
+      {/* REPRODUCTOR PROFESIONAL DE BARRAS DE CONTENCIÓN */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in overflow-hidden">
-          
-          {/* BARRA SUPERIOR REFINADA */}
-          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 shadow-2xl relative">
+          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 relative shadow-2xl">
             <div className="flex items-center gap-8">
               <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1">
                 <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Serie: Lea</span>
@@ -149,73 +172,44 @@ const LeaPC = () => {
                 </h2>
               </div>
             </div>
-            <button 
-              onClick={closePlayer} 
-              className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:border-[#FF8A00] hover:scale-105 transition-all duration-500"
-            >
+            <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:border-[#FF8A00] hover:scale-105 transition-all duration-500">
               <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black transition-colors">Salir del video</span>
               <div className="w-px h-4 bg-white/20 group-hover:bg-black/20" />
               <IoClose className="text-2xl group-hover:rotate-90 group-hover:text-black transition-all" />
             </button>
           </div>
 
-          {/* ÁREA DE VIDEO CENTRAL (IMÁGEN LIMPIA) */}
           <div className="flex-grow bg-black relative flex items-center justify-center">
-            {/* Sutil sombra interna para dar profundidad */}
             <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]" />
-            <iframe 
-              src={selectedVideo + "?autoplay=1"} 
-              className="absolute inset-0 w-full h-full border-none" 
-              allow="autoplay; fullscreen" 
-            />
+            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" />
           </div>
 
-          {/* BARRA INFERIOR REFINADA */}
           <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] to-[#050608] border-t border-white/5 flex items-center justify-between shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
-            
-            {/* Botón Anterior con Hover Animado */}
-            <button 
-              disabled={currentIdx === 0} 
-              onClick={() => openEpisode(currentIdx - 1)}
-              className="group flex items-center gap-5 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500"
-            >
+            <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
               <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all shadow-xl">
                 <IoChevronBack className="text-xl" />
               </div>
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col items-start text-left">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60 group-hover:text-[#FF8A00] transition-colors">Anterior</span>
                 <span className="text-sm font-bold uppercase tracking-tight text-white/80 group-hover:text-white">Episodio {currentIdx}</span>
               </div>
             </button>
-
-            {/* Explorar con Estilo Premium */}
-            <button 
-              onClick={closePlayer} 
-              className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] hover:border-white/20 transition-all group scale-95 hover:scale-100"
-            >
+            <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] hover:border-white/20 transition-all group scale-95 hover:scale-100">
               <IoList className="text-2xl text-[#FF8A00] group-hover:scale-125 transition-transform" />
               <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60 group-hover:text-white transition-colors">Ver todos los capítulos</span>
             </button>
-
-            {/* Botón Siguiente con Glow Naranja */}
-            <button 
-              disabled={currentIdx === leaEpisodes.length - 1} 
-              onClick={() => openEpisode(currentIdx + 1)}
-              className="group flex items-center gap-6 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500"
-            >
+            <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
               <div className="flex flex-col items-end text-right">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
                 <span className="text-sm font-bold uppercase tracking-tight text-white/80 group-hover:text-white">Episodio {currentIdx + 2}</span>
               </div>
               <div className="relative">
-                {/* Glow decorativo detrás del botón */}
                 <div className="absolute inset-0 bg-[#FF8A00] blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
                 <div className="w-16 h-16 rounded-[22px] bg-[#FF8A00] flex items-center justify-center text-black shadow-[0_15px_35px_rgba(255,138,0,0.2)] group-hover:scale-110 group-hover:shadow-[0_20px_45px_rgba(255,138,0,0.4)] transition-all duration-500 relative z-10">
                   <IoChevronForward className="text-4xl group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </button>
-
           </div>
         </div>
       )}
@@ -223,4 +217,5 @@ const LeaPC = () => {
     </div>
   );
 };
+
 export default LeaPC;
