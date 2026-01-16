@@ -29,27 +29,23 @@ const LeaMobile = () => {
   ];
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    const handleScroll = () => { if (!selectedVideo) setIsScrolled(window.scrollY > 10); };
     window.addEventListener('scroll', handleScroll);
     const saved = localStorage.getItem('lea_last_ep');
     if (saved) setCurrentIdx(parseInt(saved));
     const list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (list.includes('lea')) setInMyList(true);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [selectedVideo]);
 
   const openEpisode = (idx: number) => { 
     setSelectedVideo(leaEpisodes[idx].url); 
     setCurrentIdx(idx); 
     localStorage.setItem('lea_last_ep', idx.toString());
+    window.scrollTo(0, 0); // Reset de vista para el reproductor
   };
 
-  const toggleMyList = () => {
-    let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) { list = list.filter((id: string) => id !== 'lea'); setInMyList(false); }
-    else { list.push('lea'); setInMyList(true); }
-    localStorage.setItem('myList', JSON.stringify(list));
-  };
+  const closePlayer = () => { setSelectedVideo(null); };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +54,53 @@ const LeaMobile = () => {
     else if (q === "genesis") router.push('/serie/genesis');
   };
 
+  // VISTA 1: REPRODUCTOR (REEMPLAZA TODA LA PÁGINA)
+  if (selectedVideo) {
+    return (
+      <div className="bg-black min-h-screen w-full flex flex-col overflow-hidden">
+        <Head><title>Viendo: {leaEpisodes[currentIdx].title}</title></Head>
+        
+        {/* Header Superior del Reproductor */}
+        <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black">
+          <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
+            <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">Estudios 421</span>
+            <span className="text-xs font-bold uppercase truncate">Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</span>
+          </div>
+          <button onClick={closePlayer} className="text-4xl leading-none p-2">&times;</button>
+        </div>
+
+        {/* Zona de Video Pura */}
+        <div className="flex-grow flex items-center justify-center bg-black">
+          <iframe 
+            src={selectedVideo + "?autoplay=1"} 
+            className="w-full aspect-video border-none" 
+            allow="autoplay; fullscreen" 
+            allowFullScreen 
+          />
+        </div>
+
+        {/* Controles Inferiores */}
+        <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8">
+          <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
+            <IoChevronBack size={26} className="text-[#F09800]" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Anterior</span>
+          </button>
+
+          <button onClick={closePlayer} className="flex flex-col items-center gap-1 active:scale-90 transition-transform text-white">
+            <div className="p-3 bg-white/10 rounded-xl border border-white/10"><IoList size={22} /></div>
+            <span className="text-[8px] font-black uppercase tracking-widest mt-1">Episodios</span>
+          </button>
+
+          <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
+            <IoChevronForward size={26} className="text-[#F09800]" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-[#F09800]">Siguiente</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // VISTA 2: PÁGINA DE LA SERIE (ORIGINAL)
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] overflow-x-hidden">
       <Head><title>Lea — Estudios 421</title></Head>
@@ -71,13 +114,7 @@ const LeaMobile = () => {
         </div>
         <form onSubmit={handleSearch} className="flex-grow relative group">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoSearchOutline size={16} /></div>
-          <input 
-            type="text" 
-            placeholder="Buscar..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" 
-          />
+          <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" />
         </form>
         <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
       </nav>
@@ -123,7 +160,7 @@ const LeaMobile = () => {
       </div>
 
       <div className="px-4 mt-10 mb-20">
-        <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Episodios Disponibles</h2>
+        <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2 text-left">Episodios Disponibles</h2>
         <div className="grid grid-cols-2 gap-4">
           {leaEpisodes.map((ep, index) => (
             <div key={ep.id} className="flex flex-col gap-2 active:opacity-70 transition-opacity" onClick={() => openEpisode(index)}>
@@ -136,35 +173,6 @@ const LeaMobile = () => {
           ))}
         </div>
       </div>
-
-      {selectedVideo && (
-        <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden">
-          <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black">
-             <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3 text-left">
-                <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">Viendo</span>
-                <span className="text-xs font-bold uppercase truncate">Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</span>
-             </div>
-             <button onClick={() => setSelectedVideo(null)} className="text-3xl">&times;</button>
-          </div>
-          <div className="flex-grow flex items-center justify-center bg-black relative">
-             <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none" allow="autoplay; fullscreen" allowFullScreen />
-          </div>
-          <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-6">
-             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
-                <IoChevronBack size={26} className="text-[#F09800]" />
-                <span className="text-[9px] font-black uppercase tracking-widest">Anterior</span>
-             </button>
-             <button onClick={() => setSelectedVideo(null)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
-                <div className="p-3 bg-white/5 rounded-xl border border-white/10"><IoList size={22} /></div>
-                <span className="text-[8px] font-black uppercase tracking-widest mt-1">Explorar</span>
-             </button>
-             <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
-                <IoChevronForward size={26} className="text-[#F09800]" />
-                <span className="text-[9px] font-black uppercase tracking-widest">Siguiente</span>
-             </button>
-          </div>
-        </div>
-      )}
       <Footer />
     </div>
   );
