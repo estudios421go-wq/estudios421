@@ -1,259 +1,376 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import {
-  IoSearchOutline,
-  IoMenuOutline,
-  IoCloseOutline,
   IoChevronBack,
   IoChevronForward,
   IoList,
+  IoClose,
+  IoMenuOutline,
+  IoCloseOutline,
+  IoSearchOutline,
   IoCheckmarkCircle,
-} from 'react-icons/io5';
-import Footer from '../../Footer';
+} from "react-icons/io5";
 
 type Episode = {
   id: number;
   title: string;
+  desc: string;
   dur: string;
   thumb: string;
-  url: string;
+  // video page URL (ok.ru/video/...)
+  pageUrl: string;
+  // embed URL (ok.ru/videoembed/...)
+  embedUrl: string;
 };
 
-type PlayerState = {
-  url: string;     // url base
-  src: string;     // url final con autoplay, calculada 1 vez
-  epId: number;    // para mostrar titulo y navegación
-};
+const BRAND_ORANGE = "#F09800";
 
-const LeaMobile = () => {
+const STORAGE_LAST_IDX = "lea_nf_last_idx";
+const STORAGE_MYLIST = "myList";
+const STORAGE_PLAYER = "lea_nf_player_state_v1";
+
+const bannerUrl =
+  "https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg";
+
+const episodes: Episode[] = [
+  {
+    id: 1,
+    title: "Hermanas del destino",
+    desc: "Lía pierde a su madre siendo aún joven y comienza a criar a su hermana menor. Raquel se convierte en una adulta fría y egoísta. Lía es rescatada por Jacob.",
+    dur: "00:40:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199373957632",
+    embedUrl: "https://ok.ru/videoembed/14199373957632",
+  },
+  {
+    id: 2,
+    title: "El voto sagrado",
+    desc: "Jacó conhece Lia e é observado por Saul. Jacó fala a todos sobre o voto que fez com Deus. Lia e Raquel se desentendem.",
+    dur: "00:40:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199375071744",
+    embedUrl: "https://ok.ru/videoembed/14199375071744",
+  },
+  {
+    id: 3,
+    title: "El engaño de Labán",
+    desc: "Jacob se acerca a Lía, pero pide a Raquel en casamiento. Para que Jacob no se vaya, Labán obliga a Lía a casarse en lugar de Raquel.",
+    dur: "00:42:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_d7cfc67255f04256a593c369119ed86c~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199375989248",
+    embedUrl: "https://ok.ru/videoembed/14199375989248",
+  },
+  {
+    id: 4,
+    title: "La boda equivocada",
+    desc: "Lía es obligada a seguir los planes de Labán. La joven termina casándose con Jacob en lugar de Raquel.",
+    dur: "00:41:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_7e9da0e84f384be2ae32c853dbdeedcc~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199376972288",
+    embedUrl: "https://ok.ru/videoembed/14199376972288",
+  },
+  {
+    id: 5,
+    title: "Solo para Raquel",
+    desc: "Jacob le dice a Raquel que solo tendrá ojos para ella y, en la primera noche de casados, rechaza a Lía.",
+    dur: "00:43:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_58e073319d26466a86e306f4691c9d96~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199377562112",
+    embedUrl: "https://ok.ru/videoembed/14199377562112",
+  },
+  {
+    id: 6,
+    title: "Amor dividido",
+    desc: "Las dos esposas quedan embarazadas, pero Jacob solo le da atención a Raquel, y Lía se siente desamparada.",
+    dur: "00:40:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_eb250911b0bb4614b9deeb1b78769c02~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199378283008",
+    embedUrl: "https://ok.ru/videoembed/14199378283008",
+  },
+  {
+    id: 7,
+    title: "El dolor de la primogénita",
+    desc: "El nacimiento del hijo de Raquel hace que Jacob rechace aún más a Lía, quien da a luz a una niña.",
+    dur: "00:42:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_7a07cdbacf0b4cf2a538a4a8058215e5~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199379134976",
+    embedUrl: "https://ok.ru/videoembed/14199379134976",
+  },
+  {
+    id: 8,
+    title: "Bendecido para partir",
+    desc: "Jacob es ayudado por Dios y logra tener su propio rebaño. Poco después, decide irse con su familia.",
+    dur: "00:40:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_192e07b145414120854d08fdfa103e40~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199380380160",
+    embedUrl: "https://ok.ru/videoembed/14199380380160",
+  },
+  {
+    id: 9,
+    title: "La noche del encuentro",
+    desc: "Un encuentro con Dios cambia la vida de Jacob, que planea reencontrarse con Esaú. Dina intenta resistir, pero termina entregándose a Siquem.",
+    dur: "00:41:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_02f250b13a77498c8de22760af9bb7b8~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199397812736",
+    embedUrl: "https://ok.ru/videoembed/14199397812736",
+  },
+  {
+    id: 10,
+    title: "Juicio en la familia",
+    desc: "Jacob y Lía cuidan de Dina después de que sus hijos cometieran una masacre. Jacob descubre que Raquel adoraba ídolos y la condena.",
+    dur: "00:41:09",
+    thumb:
+      "https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg",
+    pageUrl: "https://ok.ru/video/14199398861312",
+    embedUrl: "https://ok.ru/videoembed/14199398861312",
+  },
+];
+
+function safeParseJSON<T>(v: string | null, fallback: T): T {
+  if (!v) return fallback;
+  try {
+    return JSON.parse(v) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+export default function LeaNetflixMobile() {
   const router = useRouter();
 
-  const [player, setPlayer] = useState<PlayerState | null>(null);
-  const [currentIdx, setCurrentIdx] = useState<number>(0);
-
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [inMyList, setInMyList] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const playerWrapRef = useRef<HTMLDivElement | null>(null);
+  // Player state: idx + src (calculado 1 vez) para que no se resetee al rotar
+  const [playerOpen, setPlayerOpen] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [playerSrc, setPlayerSrc] = useState<string>("");
+
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  const leaEpisodes: Episode[] = [
-    { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
-    { id: 2, title: "El voto sagrado", dur: "00:39:26", thumb: "https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg", url: "https://ok.ru/videoembed/14199375071744" },
-    { id: 3, title: "El engaño de Labán", dur: "00:41:00", thumb: "https://static.wixstatic.com/media/859174_d7cfc67255f04256a593c369119ed86c~mv2.jpg", url: "https://ok.ru/videoembed/14199375989248" },
-    { id: 4, title: "La boda equivocada", dur: "00:41:22", thumb: "https://static.wixstatic.com/media/859174_7e9da0e84f384be2ae32c853dbdeedcc~mv2.jpg", url: "https://ok.ru/videoembed/14199376972288" },
-    { id: 5, title: "Solo para Raquel", dur: "00:42:42", thumb: "https://static.wixstatic.com/media/859174_58e073319d26466a86e306f4691c9d96~mv2.jpg", url: "https://ok.ru/videoembed/14199377562112" },
-    { id: 6, title: "Amor dividido", dur: "00:40:34", thumb: "https://static.wixstatic.com/media/859174_eb250911b0bb4614b9deeb1b78769c02~mv2.jpg", url: "https://ok.ru/videoembed/14199378283008" },
-    { id: 7, title: "El dolor de la primogénita", dur: "00:42:16", thumb: "https://static.wixstatic.com/media/859174_7a07cdbacf0b4cf2a538a4a8058215e5~mv2.jpg", url: "https://ok.ru/videoembed/14199379134976" },
-    { id: 8, title: "Bendecido para partir", dur: "00:40:14", thumb: "https://static.wixstatic.com/media/859174_192e07b145414120854d08fdfa103e40~mv2.jpg", url: "https://ok.ru/videoembed/14199380380160" },
-    { id: 9, title: "La noche del encuentro", dur: "00:40:36", thumb: "https://static.wixstatic.com/media/859174_02f250b13a77498c8de22760af9bb7b8~mv2.jpg", url: "https://ok.ru/videoembed/14199397812736" },
-    { id: 10, title: "Juicio en la familia", dur: "00:40:38", thumb: "https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg", url: "https://ok.ru/videoembed/14199398861312" }
-  ];
+  // Landscape mode: ocultar UI y verse “app”
+  const [isLandscape, setIsLandscape] = useState(false);
 
-  // Scroll navbar
+  const current = episodes[idx];
+
+  // Load last idx + my list + restore player if needed
   useEffect(() => {
-    const handleScroll = () => {
-      if (!player) setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [player]);
+    const savedIdx = Number(localStorage.getItem(STORAGE_LAST_IDX));
+    if (!Number.isNaN(savedIdx) && savedIdx >= 0 && savedIdx < episodes.length) {
+      setIdx(savedIdx);
+    }
 
-  // Persistencia: ep último + mi lista
-  useEffect(() => {
-    const saved = localStorage.getItem('lea_last_ep');
-    if (saved && !Number.isNaN(parseInt(saved))) setCurrentIdx(parseInt(saved));
+    const list = safeParseJSON<string[]>(localStorage.getItem(STORAGE_MYLIST), []);
+    if (Array.isArray(list) && list.includes("lea")) setInMyList(true);
 
-    const list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (Array.isArray(list) && list.includes('lea')) setInMyList(true);
+    // Restore player if browser “resets” on rotate
+    const p = safeParseJSON<{ open: boolean; idx: number; src: string }>(
+      sessionStorage.getItem(STORAGE_PLAYER),
+      { open: false, idx: 0, src: "" }
+    );
+    if (p?.open && typeof p.idx === "number" && typeof p.src === "string") {
+      setIdx(p.idx);
+      setPlayerSrc(p.src);
+      setPlayerOpen(true);
+    }
   }, []);
 
-  // Bloqueo scroll cuando player está abierto
   useEffect(() => {
-    if (!player) return;
+    localStorage.setItem(STORAGE_LAST_IDX, String(idx));
+  }, [idx]);
 
+  useEffect(() => {
+    // Navbar scroll effect (solo cuando player está cerrado)
+    const onScroll = () => {
+      if (!playerOpen) setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [playerOpen]);
+
+  useEffect(() => {
+    // lock body scroll when player open
+    if (!playerOpen) return;
     const prevOverflow = document.body.style.overflow;
     const prevOverscroll = (document.body.style as any).overscrollBehavior;
-    document.body.style.overflow = 'hidden';
-    (document.body.style as any).overscrollBehavior = 'none';
-
+    document.body.style.overflow = "hidden";
+    (document.body.style as any).overscrollBehavior = "none";
     return () => {
       document.body.style.overflow = prevOverflow;
       (document.body.style as any).overscrollBehavior = prevOverscroll;
     };
-  }, [player]);
+  }, [playerOpen]);
 
-  // Atributos vendor para fullscreen (sin romper TS)
   useEffect(() => {
-    if (!player) return;
+    // orientation detection
+    const update = () => setIsLandscape(window.innerWidth > window.innerHeight);
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+    };
+  }, []);
+
+  useEffect(() => {
+    // vendor fullscreen attrs for iframe (no rompe TS)
+    if (!playerOpen) return;
     const iframe = iframeRef.current;
     if (!iframe) return;
+    iframe.setAttribute("webkitallowfullscreen", "true");
+    iframe.setAttribute("mozallowfullscreen", "true");
+  }, [playerOpen, idx]);
 
-    iframe.setAttribute('webkitallowfullscreen', 'true');
-    iframe.setAttribute('mozallowfullscreen', 'true');
-  }, [player]);
+  useEffect(() => {
+    // persist player state for “anti-reset”
+    if (!playerOpen) {
+      sessionStorage.removeItem(STORAGE_PLAYER);
+      return;
+    }
+    sessionStorage.setItem(
+      STORAGE_PLAYER,
+      JSON.stringify({ open: true, idx, src: playerSrc })
+    );
+  }, [playerOpen, idx, playerSrc]);
 
-  const buildSrcOnce = (baseUrl: string) => {
-    // NO recalcular en cada render: eso evita que el iframe “cambie” cuando el navegador resizea
-    return baseUrl.includes('?') ? `${baseUrl}&autoplay=1` : `${baseUrl}?autoplay=1`;
+  const buildEmbedSrc = (embedUrl: string) => {
+    // autoplay + start=0; OK.ru maneja su propio progreso interno
+    return embedUrl.includes("?") ? `${embedUrl}&autoplay=1` : `${embedUrl}?autoplay=1`;
   };
 
-  const openEpisode = (idx: number) => {
-    if (idx < 0 || idx >= leaEpisodes.length) return;
+  const openEpisode = (nextIdx: number) => {
+    if (nextIdx < 0 || nextIdx >= episodes.length) return;
+    setIdx(nextIdx);
 
-    const ep = leaEpisodes[idx];
+    // clave: src se calcula SOLO al abrir (no en render)
+    const src = buildEmbedSrc(episodes[nextIdx].embedUrl);
+    setPlayerSrc(src);
+    setPlayerOpen(true);
 
-    setCurrentIdx(idx);
-    localStorage.setItem('lea_last_ep', idx.toString());
-
-    // La clave: src se define una sola vez aquí
-    setPlayer({
-      url: ep.url,
-      src: buildSrcOnce(ep.url),
-      epId: ep.id,
-    });
-
-    window.scrollTo({ top: 0, behavior: 'auto' });
+    window.scrollTo({ top: 0, behavior: "auto" });
   };
 
   const closePlayer = () => {
-    // Salimos de fullscreen si el contenedor está en fullscreen
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(() => {});
-    }
-    setPlayer(null);
+    setPlayerOpen(false);
+    setPlayerSrc("");
   };
 
   const toggleMyList = () => {
-    let list = JSON.parse(localStorage.getItem('myList') || '[]');
+    let list = safeParseJSON<string[]>(localStorage.getItem(STORAGE_MYLIST), []);
     if (!Array.isArray(list)) list = [];
 
     if (inMyList) {
-      list = list.filter((id: string) => id !== 'lea');
+      list = list.filter((x) => x !== "lea");
       setInMyList(false);
     } else {
-      list.push('lea');
+      list.push("lea");
       setInMyList(true);
     }
-    localStorage.setItem('myList', JSON.stringify(list));
+    localStorage.setItem(STORAGE_MYLIST, JSON.stringify(list));
   };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = searchQuery.toLowerCase().trim();
-    if (q === 'lea') router.push('/serie/lea');
-    else if (q === 'genesis') router.push('/serie/genesis');
+    if (q === "lea") router.push("/serie/lea");
+    else if (q === "genesis") router.push("/serie/genesis");
   };
 
-  // Fullscreen propio (más estable que depender del fullscreen interno del iframe)
-  const requestFullScreen = async () => {
-    const el = playerWrapRef.current;
-    if (!el) return;
-
-    try {
-      if (!document.fullscreenElement) {
-        await el.requestFullscreen();
-      }
-    } catch {
-      // Si falla, no rompemos nada: el overlay ya está “a pantalla completa” visualmente.
-    }
-  };
-
-  // ----------- VISTA PLAYER -----------
-  if (player) {
-    const ep = leaEpisodes[currentIdx];
-    const title = `Ep. ${ep.id} — ${ep.title}`;
+  // -------- PLAYER OVERLAY --------
+  if (playerOpen) {
+    const hideUI = isLandscape; // modo landscape: “pro player”
 
     return (
-      <div
-        ref={playerWrapRef}
-        className="fixed inset-0 bg-black z-[9999] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchEnd={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black flex-shrink-0">
-          <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
-            <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">
-              Estudios 421
-            </span>
-            <span className="text-xs font-bold uppercase truncate">{title}</span>
-          </div>
+      <div className="fixed inset-0 bg-black z-[9999] flex flex-col">
+        <Head>
+          <title>Lea — Reproducción</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        </Head>
 
-          <div className="flex items-center gap-2">
-            {/* Botón “fullscreen propio” */}
-            <button
-              onClick={requestFullScreen}
-              className="text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-md bg-white/10 border border-white/10 active:scale-95"
-            >
-              Pantalla completa
-            </button>
+        {!hideUI && (
+          <div className="h-[10vh] min-h-[60px] px-4 flex items-center justify-between border-b border-white/5 bg-black flex-shrink-0">
+            <div className="flex flex-col max-w-[72%] border-l-2 pl-3" style={{ borderColor: BRAND_ORANGE }}>
+              <span className="text-[8px] font-black uppercase tracking-widest" style={{ color: BRAND_ORANGE }}>
+                Estudios 421
+              </span>
+              <span className="text-xs font-bold uppercase truncate">
+                Ep. {current.id} — {current.title}
+              </span>
+            </div>
 
-            <button onClick={closePlayer} className="text-4xl p-2" aria-label="Cerrar reproductor">
+            <button onClick={closePlayer} className="text-4xl p-2" aria-label="Cerrar">
               &times;
             </button>
           </div>
-        </div>
+        )}
 
-        {/* Player */}
         <div className="flex-1 bg-black">
           <iframe
             ref={iframeRef}
-            // CLAVE: no uses key aquí (evita remount por resize/orientación)
-            src={player.src}
+            src={playerSrc}
             className="w-full h-full border-none"
             allow="autoplay; fullscreen; picture-in-picture"
             allowFullScreen
           />
         </div>
 
-        {/* Controles inferiores */}
-        <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8 flex-shrink-0">
-          <button
-            disabled={currentIdx === 0}
-            onClick={() => openEpisode(currentIdx - 1)}
-            className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
-          >
-            <IoChevronBack size={26} className="text-[#F09800]" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
-              Anterior
-            </span>
-          </button>
+        {!hideUI && (
+          <div className="h-[15vh] min-h-[96px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8 flex-shrink-0">
+            <button
+              disabled={idx === 0}
+              onClick={() => openEpisode(idx - 1)}
+              className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
+            >
+              <IoChevronBack size={26} style={{ color: BRAND_ORANGE }} />
+              <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+                Anterior
+              </span>
+            </button>
 
-          <button
-            onClick={closePlayer}
-            className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
-          >
-            <div className="p-3 bg-white/10 rounded-xl border border-white/10">
-              <IoList size={22} />
-            </div>
-            <span className="text-[8px] font-black uppercase tracking-widest mt-1">
-              Episodios
-            </span>
-          </button>
+            <button
+              onClick={closePlayer}
+              className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
+            >
+              <div className="p-3 bg-white/10 rounded-xl border border-white/10">
+                <IoList size={22} />
+              </div>
+              <span className="text-[8px] font-black uppercase tracking-widest mt-1">
+                Episodios
+              </span>
+            </button>
 
-          <button
-            disabled={currentIdx === leaEpisodes.length - 1}
-            onClick={() => openEpisode(currentIdx + 1)}
-            className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
-          >
-            <IoChevronForward size={26} className="text-[#F09800]" />
-            <span className="text-[9px] font-black uppercase tracking-widest text-[#F09800]">
-              Siguiente
-            </span>
-          </button>
-        </div>
+            <button
+              disabled={idx === episodes.length - 1}
+              onClick={() => openEpisode(idx + 1)}
+              className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
+            >
+              <IoChevronForward size={26} style={{ color: BRAND_ORANGE }} />
+              <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: BRAND_ORANGE }}>
+                Siguiente
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     );
   }
 
-  // ----------- VISTA NORMAL -----------
+  // -------- HOME UI (Netflix-like) --------
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] overflow-x-hidden">
       <Head>
@@ -261,9 +378,10 @@ const LeaMobile = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
 
+      {/* Top Nav */}
       <nav
         className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${
-          isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'
+          isScrolled ? "bg-black shadow-lg" : "bg-gradient-to-b from-black/90 to-transparent"
         }`}
       >
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -312,9 +430,10 @@ const LeaMobile = () => {
         </div>
       </nav>
 
+      {/* Side Menu */}
       <div
         className={`fixed inset-0 bg-black/98 z-[90] transition-transform duration-500 ${
-          isMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          isMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full pt-24 px-8 gap-8 text-left">
@@ -323,10 +442,10 @@ const LeaMobile = () => {
           </p>
 
           {[
-            { n: 'Inicio', h: '/' },
-            { n: 'Series Bíblicas', h: '/series-biblicas' },
-            { n: 'Series TV', h: '/series-tv' },
-            { n: 'Películas', h: '/peliculas' },
+            { n: "Inicio", h: "/" },
+            { n: "Series Bíblicas", h: "/series-biblicas" },
+            { n: "Series TV", h: "/series-tv" },
+            { n: "Películas", h: "/peliculas" },
           ].map((link) => (
             <Link
               key={link.n}
@@ -339,58 +458,49 @@ const LeaMobile = () => {
           ))}
 
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mt-4">
-            Idioma
+            Acciones
           </p>
 
-          <div className="flex gap-6">
-            {[
-              { l: 'ESP', r: '/serie/lea', i: '367960b11c1c44ba89cd1582fd1b5776' },
-              { l: 'ENG', r: '/en/serie/lea', i: '35112d9ffe234d6f9dcef16cf8f7544e' },
-              { l: 'PT', r: '/pt/serie/lea', i: '830f1c20656e4d44a819bedfc13a22cc' },
-            ].map((lang) => (
-              <button
-                key={lang.l}
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  router.push(lang.r);
-                }}
-                className="flex flex-col items-center gap-2 active:scale-95 transition-transform"
-              >
-                <img
-                  src={`https://static.wixstatic.com/media/859174_${lang.i}~mv2.png`}
-                  alt={lang.l}
-                  className="w-10 h-10 object-contain"
-                />
-                <span className="text-[10px] text-white font-bold">{lang.l}</span>
-              </button>
-            ))}
-          </div>
+          <button
+            onClick={() => {
+              setIsMenuOpen(false);
+              toggleMyList();
+            }}
+            className={`w-full text-left text-base font-bold py-3 rounded-md border ${
+              inMyList ? "bg-white/10 border-white/10" : "bg-transparent border-white/10"
+            }`}
+          >
+            {inMyList ? (
+              <>
+                <IoCheckmarkCircle className="inline mr-2" /> En mi lista
+              </>
+            ) : (
+              "+ Agregar a mi lista"
+            )}
+          </button>
         </div>
       </div>
 
-      <div className="relative w-full bg-black">
+      {/* Hero / Banner */}
+      <div className="relative w-full bg-black pt-[56px]">
         <div className="w-full aspect-[4/3] relative pointer-events-none">
-          <img
-            src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg"
-            className="w-full h-full object-contain"
-            alt="Banner"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
+          <img src={bannerUrl} className="w-full h-full object-cover" alt="Banner" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
         </div>
 
         <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20">
           <button
-            onClick={() => openEpisode(currentIdx)}
+            onClick={() => openEpisode(idx)}
             className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest shadow-2xl"
           >
-            {currentIdx === 0 ? '▶ VER AHORA' : `▶ CONTINUAR EP. ${leaEpisodes[currentIdx].id}`}
+            {idx === 0 ? "▶ VER AHORA" : `▶ CONTINUAR EP. ${episodes[idx].id}`}
           </button>
 
           <div className="flex gap-3">
             <button
               onClick={toggleMyList}
               className={`flex-1 py-3 rounded-md text-[10px] font-bold border transition-all ${
-                inMyList ? 'bg-[#F09800] border-[#F09800]' : 'bg-white/10 border-white/5'
+                inMyList ? "bg-[#F09800] border-[#F09800]" : "bg-white/10 border-white/5"
               }`}
             >
               {inMyList ? (
@@ -398,13 +508,13 @@ const LeaMobile = () => {
                   <IoCheckmarkCircle className="inline mr-1" /> EN MI LISTA
                 </>
               ) : (
-                '+ MI LISTA'
+                "+ MI LISTA"
               )}
             </button>
 
             <button
               onClick={() =>
-                window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')
+                window.open("https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS", "_blank")
               }
               className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest"
             >
@@ -414,33 +524,48 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      <div className="px-4 mt-10 mb-20 text-left">
+      {/* Episodes List */}
+      <div className="px-4 mt-10 mb-24 text-left">
         <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">
           Episodios Disponibles
         </h2>
 
-        <div className="grid grid-cols-2 gap-4">
-          {leaEpisodes.map((ep, index) => (
-            <div
+        <div className="grid grid-cols-1 gap-4">
+          {episodes.map((ep, i) => (
+            <button
               key={ep.id}
-              className="flex flex-col gap-2 active:opacity-70 transition-opacity"
-              onClick={() => openEpisode(index)}
+              onClick={() => openEpisode(i)}
+              className="w-full text-left active:opacity-80 transition-opacity"
             >
-              <div
-                className={`relative aspect-video rounded-md overflow-hidden border ${
-                  currentIdx === index ? 'border-[#F09800]' : 'border-white/5'
-                } shadow-lg`}
-              >
-                <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
-                <span className="absolute bottom-1 right-1 bg-black text-white px-2 py-0.5 text-[8px] font-black rounded uppercase">
-                  {ep.dur}
-                </span>
-              </div>
+              <div className="flex gap-3">
+                <div
+                  className={`relative w-[46%] aspect-video rounded-md overflow-hidden border ${
+                    idx === i ? "border-[#F09800]" : "border-white/5"
+                  } shadow-lg flex-shrink-0`}
+                >
+                  <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
+                  <span className="absolute bottom-1 right-1 bg-black/90 text-white px-2 py-0.5 text-[9px] font-black rounded uppercase">
+                    {ep.dur}
+                  </span>
+                </div>
 
-              <h3 className="font-bold text-[10px] truncate uppercase tracking-tighter">
-                EP. {ep.id} {ep.title}
-              </h3>
-            </div>
+                <div className="flex-1 pr-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-black text-[12px] uppercase tracking-tight">
+                      EP. {ep.id} — {ep.title}
+                    </h3>
+                    {idx === i && (
+                      <span className="text-[9px] font-black uppercase tracking-widest" style={{ color: BRAND_ORANGE }}>
+                        Continuar
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-white/70 leading-snug mt-1 line-clamp-3">
+                    {ep.desc}
+                  </p>
+                </div>
+              </div>
+            </button>
           ))}
         </div>
       </div>
@@ -448,6 +573,4 @@ const LeaMobile = () => {
       <Footer />
     </div>
   );
-};
-
-export default LeaMobile;
+}
