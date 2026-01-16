@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,154 +22,25 @@ type Episode = {
   url: string;
 };
 
-type PlayerViewProps = {
-  title: string;
-  videoUrl: string;
-  episodeKey: string;
-  onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-  disablePrev: boolean;
-  disableNext: boolean;
-};
-
-const PlayerView: React.FC<PlayerViewProps> = ({
-  title,
-  videoUrl,
-  episodeKey,
-  onClose,
-  onPrev,
-  onNext,
-  disablePrev,
-  disableNext,
-}) => {
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-
-  // Bloquea scroll del body mientras el reproductor está abierto (importante en móvil)
-  useEffect(() => {
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-    };
-  }, []);
-
-  // Añade atributos "webkitallowfullscreen" y "mozallowfullscreen" sin romper TypeScript
-  useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-
-    iframe.setAttribute('webkitallowfullscreen', 'true');
-    iframe.setAttribute('mozallowfullscreen', 'true');
-  }, [episodeKey]);
-
-  // Listener de fullscreen (no cerramos el reproductor)
-  useEffect(() => {
-    const handleFs = () => {
-      // Intencionalmente vacío
-    };
-
-    document.addEventListener('fullscreenchange', handleFs);
-    document.addEventListener('webkitfullscreenchange', handleFs as any);
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFs);
-      document.removeEventListener('webkitfullscreenchange', handleFs as any);
-    };
-  }, []);
-
-  // URL autoplay robusta
-  const src = videoUrl.includes('?')
-    ? `${videoUrl}&autoplay=1`
-    : `${videoUrl}?autoplay=1`;
-
-  return (
-    <div
-      className="fixed inset-0 bg-black z-[9999] flex flex-col"
-      // Evita “click-through” en Android
-      onClick={(e) => e.stopPropagation()}
-      onTouchStart={(e) => e.stopPropagation()}
-      onTouchEnd={(e) => e.stopPropagation()}
-    >
-      {/* Header */}
-      <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black flex-shrink-0">
-        <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
-          <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">
-            Estudios 421
-          </span>
-          <span className="text-xs font-bold uppercase truncate">{title}</span>
-        </div>
-
-        <button
-          onClick={onClose}
-          className="text-4xl p-2"
-          aria-label="Cerrar reproductor"
-        >
-          &times;
-        </button>
-      </div>
-
-      {/* Player estable: ocupa TODO el alto disponible */}
-      <div className="flex-1 bg-black">
-        <iframe
-          key={episodeKey}
-          ref={iframeRef}
-          src={src}
-          className="w-full h-full border-none"
-          allow="autoplay; fullscreen; picture-in-picture"
-          allowFullScreen
-        />
-      </div>
-
-      {/* Controles */}
-      <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8 flex-shrink-0">
-        <button
-          disabled={disablePrev}
-          onClick={onPrev}
-          className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
-        >
-          <IoChevronBack size={26} className="text-[#F09800]" />
-          <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
-            Anterior
-          </span>
-        </button>
-
-        <button
-          onClick={onClose}
-          className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
-        >
-          <div className="p-3 bg-white/10 rounded-xl border border-white/10">
-            <IoList size={22} />
-          </div>
-          <span className="text-[8px] font-black uppercase tracking-widest mt-1">
-            Episodios
-          </span>
-        </button>
-
-        <button
-          disabled={disableNext}
-          onClick={onNext}
-          className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
-        >
-          <IoChevronForward size={26} className="text-[#F09800]" />
-          <span className="text-[9px] font-black uppercase tracking-widest text-[#F09800]">
-            Siguiente
-          </span>
-        </button>
-      </div>
-    </div>
-  );
+type PlayerState = {
+  url: string;     // url base
+  src: string;     // url final con autoplay, calculada 1 vez
+  epId: number;    // para mostrar titulo y navegación
 };
 
 const LeaMobile = () => {
   const router = useRouter();
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const [player, setPlayer] = useState<PlayerState | null>(null);
   const [currentIdx, setCurrentIdx] = useState<number>(0);
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const playerWrapRef = useRef<HTMLDivElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const leaEpisodes: Episode[] = [
     { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -184,30 +55,78 @@ const LeaMobile = () => {
     { id: 10, title: "Juicio en la familia", dur: "00:40:38", thumb: "https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg", url: "https://ok.ru/videoembed/14199398861312" }
   ];
 
+  // Scroll navbar
   useEffect(() => {
     const handleScroll = () => {
-      if (!selectedVideo) setIsScrolled(window.scrollY > 10);
+      if (!player) setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [player]);
 
+  // Persistencia: ep último + mi lista
+  useEffect(() => {
     const saved = localStorage.getItem('lea_last_ep');
     if (saved && !Number.isNaN(parseInt(saved))) setCurrentIdx(parseInt(saved));
 
     const list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (Array.isArray(list) && list.includes('lea')) setInMyList(true);
+  }, []);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [selectedVideo]);
+  // Bloqueo scroll cuando player está abierto
+  useEffect(() => {
+    if (!player) return;
+
+    const prevOverflow = document.body.style.overflow;
+    const prevOverscroll = (document.body.style as any).overscrollBehavior;
+    document.body.style.overflow = 'hidden';
+    (document.body.style as any).overscrollBehavior = 'none';
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      (document.body.style as any).overscrollBehavior = prevOverscroll;
+    };
+  }, [player]);
+
+  // Atributos vendor para fullscreen (sin romper TS)
+  useEffect(() => {
+    if (!player) return;
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    iframe.setAttribute('webkitallowfullscreen', 'true');
+    iframe.setAttribute('mozallowfullscreen', 'true');
+  }, [player]);
+
+  const buildSrcOnce = (baseUrl: string) => {
+    // NO recalcular en cada render: eso evita que el iframe “cambie” cuando el navegador resizea
+    return baseUrl.includes('?') ? `${baseUrl}&autoplay=1` : `${baseUrl}?autoplay=1`;
+  };
 
   const openEpisode = (idx: number) => {
     if (idx < 0 || idx >= leaEpisodes.length) return;
 
-    setSelectedVideo(leaEpisodes[idx].url);
+    const ep = leaEpisodes[idx];
+
     setCurrentIdx(idx);
     localStorage.setItem('lea_last_ep', idx.toString());
 
+    // La clave: src se define una sola vez aquí
+    setPlayer({
+      url: ep.url,
+      src: buildSrcOnce(ep.url),
+      epId: ep.id,
+    });
+
     window.scrollTo({ top: 0, behavior: 'auto' });
+  };
+
+  const closePlayer = () => {
+    // Salimos de fullscreen si el contenedor está en fullscreen
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+    setPlayer(null);
   };
 
   const toggleMyList = () => {
@@ -231,23 +150,110 @@ const LeaMobile = () => {
     else if (q === 'genesis') router.push('/serie/genesis');
   };
 
-  // Vista reproductor
-  if (selectedVideo) {
+  // Fullscreen propio (más estable que depender del fullscreen interno del iframe)
+  const requestFullScreen = async () => {
+    const el = playerWrapRef.current;
+    if (!el) return;
+
+    try {
+      if (!document.fullscreenElement) {
+        await el.requestFullscreen();
+      }
+    } catch {
+      // Si falla, no rompemos nada: el overlay ya está “a pantalla completa” visualmente.
+    }
+  };
+
+  // ----------- VISTA PLAYER -----------
+  if (player) {
+    const ep = leaEpisodes[currentIdx];
+    const title = `Ep. ${ep.id} — ${ep.title}`;
+
     return (
-      <PlayerView
-        title={`Ep. ${leaEpisodes[currentIdx].id} — ${leaEpisodes[currentIdx].title}`}
-        videoUrl={selectedVideo}
-        episodeKey={`lea-ep-${leaEpisodes[currentIdx].id}`}
-        onClose={() => setSelectedVideo(null)}
-        onPrev={() => openEpisode(currentIdx - 1)}
-        onNext={() => openEpisode(currentIdx + 1)}
-        disablePrev={currentIdx === 0}
-        disableNext={currentIdx === leaEpisodes.length - 1}
-      />
+      <div
+        ref={playerWrapRef}
+        className="fixed inset-0 bg-black z-[9999] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black flex-shrink-0">
+          <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
+            <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">
+              Estudios 421
+            </span>
+            <span className="text-xs font-bold uppercase truncate">{title}</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Botón “fullscreen propio” */}
+            <button
+              onClick={requestFullScreen}
+              className="text-[10px] font-black uppercase tracking-widest px-3 py-2 rounded-md bg-white/10 border border-white/10 active:scale-95"
+            >
+              Pantalla completa
+            </button>
+
+            <button onClick={closePlayer} className="text-4xl p-2" aria-label="Cerrar reproductor">
+              &times;
+            </button>
+          </div>
+        </div>
+
+        {/* Player */}
+        <div className="flex-1 bg-black">
+          <iframe
+            ref={iframeRef}
+            // CLAVE: no uses key aquí (evita remount por resize/orientación)
+            src={player.src}
+            className="w-full h-full border-none"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+
+        {/* Controles inferiores */}
+        <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8 flex-shrink-0">
+          <button
+            disabled={currentIdx === 0}
+            onClick={() => openEpisode(currentIdx - 1)}
+            className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
+          >
+            <IoChevronBack size={26} className="text-[#F09800]" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+              Anterior
+            </span>
+          </button>
+
+          <button
+            onClick={closePlayer}
+            className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
+          >
+            <div className="p-3 bg-white/10 rounded-xl border border-white/10">
+              <IoList size={22} />
+            </div>
+            <span className="text-[8px] font-black uppercase tracking-widest mt-1">
+              Episodios
+            </span>
+          </button>
+
+          <button
+            disabled={currentIdx === leaEpisodes.length - 1}
+            onClick={() => openEpisode(currentIdx + 1)}
+            className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5"
+          >
+            <IoChevronForward size={26} className="text-[#F09800]" />
+            <span className="text-[9px] font-black uppercase tracking-widest text-[#F09800]">
+              Siguiente
+            </span>
+          </button>
+        </div>
+      </div>
     );
   }
 
-  // Vista normal
+  // ----------- VISTA NORMAL -----------
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] overflow-x-hidden">
       <Head>
