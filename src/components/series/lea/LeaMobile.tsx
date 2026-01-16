@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,6 +14,7 @@ const LeaMobile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const leaEpisodes = [
     { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -62,7 +63,6 @@ const LeaMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] overflow-x-hidden">
       <Head><title>Lea — Estudios 421</title></Head>
 
-      {/* NAVBAR ESTILO GÉNESIS CON FUNCIONALIDAD LEA */}
       <nav className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl z-[110]" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -83,7 +83,6 @@ const LeaMobile = () => {
         <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
       </nav>
 
-      {/* MENU LATERAL ESTILO GÉNESIS */}
       <div className={`fixed inset-0 bg-black/98 z-[90] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8">
           <div className="flex flex-col gap-6">
@@ -115,10 +114,9 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      {/* BANNER */}
       <div className="relative w-full pt-0 bg-black">
         <div className="w-full aspect-[4/3] relative pointer-events-none">
-          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
+          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
         </div>
         <div className="px-4 py-0 -mt-14 flex flex-col gap-3 relative z-20">
@@ -134,7 +132,6 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      {/* EPISODIOS - TEXTO CORREGIDO Y TIEMPOS BLANCO/NEGRO */}
       <div className="px-4 mt-10 mb-20">
         <h2 className="text-xs font-bold mb-4 text-gray-500 tracking-widest uppercase border-b border-white/10 pb-2">Episodios Disponibles</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -150,22 +147,23 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR PROFESIONAL (SOLUCIÓN FULLSCREEN MÓVIL) */}
+      {/* REPRODUCTOR MÓVIL BLINDADO - INTENTO 2 */}
       {selectedVideo && (
-        <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden animate-fade-in">
+        <div className="fixed inset-0 z-[2000] bg-black flex flex-col">
           <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black">
              <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
                 <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">Viendo</span>
                 <span className="text-xs font-bold uppercase truncate">Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</span>
              </div>
-             <button onClick={() => setSelectedVideo(null)} className="text-3xl">&times;</button>
+             <button onClick={() => setSelectedVideo(null)} className="text-4xl leading-none">&times;</button>
           </div>
 
-          <div className="flex-grow flex items-center justify-center bg-[#050608] relative">
+          <div className="flex-grow flex items-center justify-center bg-black relative">
              <iframe 
+               ref={iframeRef}
                src={selectedVideo + "?autoplay=1"} 
-               className="w-full aspect-video border-none z-10" 
-               allow="autoplay; fullscreen" 
+               className="w-full h-full border-none shadow-none" 
+               allow="autoplay; fullscreen; picture-in-picture" 
                allowFullScreen
              />
           </div>
@@ -175,10 +173,12 @@ const LeaMobile = () => {
                 <IoChevronBack size={26} className="text-[#F09800]" />
                 <span className="text-[9px] font-black uppercase tracking-widest">Anterior</span>
              </button>
+
              <button onClick={() => setSelectedVideo(null)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10"><IoList size={22} /></div>
                 <span className="text-[8px] font-black uppercase tracking-widest mt-1">Explorar</span>
              </button>
+
              <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
                 <IoChevronForward size={26} className="text-[#F09800]" />
                 <span className="text-[9px] font-black uppercase tracking-widest">Siguiente</span>
