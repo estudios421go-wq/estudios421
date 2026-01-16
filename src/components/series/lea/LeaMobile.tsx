@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { IoSearchOutline, IoMenuOutline, IoCloseOutline, IoCheckmarkCircle, IoChevronBack, IoChevronForward, IoClose, IoList } from 'react-icons/io5';
 import Footer from '../../Footer';
 
-// Definición de episodios con TIEMPOS CORREGIDOS de la versión PC
+// La definición debe estar AQUÍ, fuera del componente pero dentro del archivo
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
   { id: 2, title: "El voto sagrado", dur: "00:39:26", thumb: "https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg", url: "https://ok.ru/videoembed/14199375071744" },
@@ -115,7 +115,7 @@ const LeaMobile = () => {
             <button onClick={toggleMyList} className={`flex-1 py-3 rounded-md text-[10px] font-bold border transition-all ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00]' : 'bg-white/10 border-white/5'}`}>
               {inMyList ? <><IoCheckmarkCircle className="inline mr-1" />MI LISTA</> : '+ MI LISTA'}
             </button>
-            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest">❤ DONAR</button>
+            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 uppercase tracking-widest">❤ DONAR</button>
           </div>
         </div>
       </div>
@@ -136,11 +136,9 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR MÓVIL PROFESIONAL CON FULLSCREEN BLINDADO */}
+      {/* REPRODUCTOR MÓVIL PROFESIONAL */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden animate-fade-in">
-          
-          {/* Barra Superior Independiente */}
           <div className="h-[10vh] min-h-[60px] px-4 flex items-center justify-between border-b border-white/5 bg-black">
              <div className="flex flex-col max-w-[70%]">
                 <span className="text-[8px] font-black text-[#FF8A00] uppercase tracking-widest">Estudios 421 — Viendo</span>
@@ -154,7 +152,6 @@ const LeaMobile = () => {
              </button>
           </div>
 
-          {/* Área del Video Limpia con Soporte de Pantalla Completa Nativo */}
           <div className="flex-grow flex items-center justify-center bg-black relative">
              <iframe 
                src={selectedVideo + "?autoplay=1"} 
@@ -166,7 +163,6 @@ const LeaMobile = () => {
              />
           </div>
 
-          {/* Barra Inferior Independiente */}
           <div className="h-[15vh] min-h-[80px] px-6 flex items-center justify-between border-t border-white/5 pb-6 bg-black">
              <button 
                disabled={currentIdx === 0} 
