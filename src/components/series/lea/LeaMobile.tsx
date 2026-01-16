@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,7 +14,6 @@ const LeaMobile = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const leaEpisodes = [
     { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -85,25 +84,16 @@ const LeaMobile = () => {
 
       <div className={`fixed inset-0 bg-black/98 z-[90] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 text-left">
             <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Navegación</p>
-            {[
-              { n: 'Inicio', h: '/' },
-              { n: 'Series Bíblicas', h: '/series-biblicas' },
-              { n: 'Series TV', h: '/series-tv' },
-              { n: 'Películas', h: '/peliculas' }
-            ].map((link) => (
+            {[{ n: 'Inicio', h: '/' }, { n: 'Series Bíblicas', h: '/series-biblicas' }, { n: 'Series TV', h: '/series-tv' }, { n: 'Películas', h: '/peliculas' }].map((link) => (
               <Link key={link.n} href={link.h} onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">{link.n}</Link>
             ))}
           </div>
           <div className="flex flex-col gap-6 mt-4">
-            <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Idioma</p>
+            <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 text-left">Idioma</p>
             <div className="flex gap-6">
-              {[
-                { l: 'ESP', r: '/serie/lea', i: '367960b11c1c44ba89cd1582fd1b5776' },
-                { l: 'ENG', r: '/en/serie/lea', i: '35112d9ffe234d6f9dcef16cf8f7544e' },
-                { l: 'PT', r: '/pt/serie/lea', i: '830f1c20656e4d44a819bedfc13a22cc' }
-              ].map((lang) => (
+              {[{ l: 'ESP', r: '/serie/lea', i: '367960b11c1c44ba89cd1582fd1b5776' }, { l: 'ENG', r: '/en/serie/lea', i: '35112d9ffe234d6f9dcef16cf8f7544e' }, { l: 'PT', r: '/pt/serie/lea', i: '830f1c20656e4d44a819bedfc13a22cc' }].map((lang) => (
                 <button key={lang.l} onClick={() => { setIsMenuOpen(false); router.push(lang.r); }} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
                   <img src={`https://static.wixstatic.com/media/859174_${lang.i}~mv2.png`} alt={lang.l} className="w-10 h-10 object-contain" />
                   <span className="text-[10px] text-white font-bold">{lang.l}</span>
@@ -116,7 +106,7 @@ const LeaMobile = () => {
 
       <div className="relative w-full pt-0 bg-black">
         <div className="w-full aspect-[4/3] relative pointer-events-none">
-          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
+          <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-50" />
         </div>
         <div className="px-4 py-0 -mt-14 flex flex-col gap-3 relative z-20">
@@ -141,44 +131,33 @@ const LeaMobile = () => {
                 <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
                 <span className="absolute bottom-1 right-1 bg-black text-white px-2 py-0.5 text-[8px] font-black rounded uppercase">{ep.dur}</span>
               </div>
-              <h3 className="font-bold text-[10px] truncate uppercase tracking-tighter">EP. {ep.id} {ep.title}</h3>
+              <h3 className="font-bold text-[10px] truncate uppercase tracking-tighter text-left">EP. {ep.id} {ep.title}</h3>
             </div>
           ))}
         </div>
       </div>
 
-      {/* REPRODUCTOR MÓVIL BLINDADO - INTENTO 2 */}
       {selectedVideo && (
-        <div className="fixed inset-0 z-[2000] bg-black flex flex-col">
+        <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden">
           <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black">
-             <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
+             <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3 text-left">
                 <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">Viendo</span>
                 <span className="text-xs font-bold uppercase truncate">Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}</span>
              </div>
-             <button onClick={() => setSelectedVideo(null)} className="text-4xl leading-none">&times;</button>
+             <button onClick={() => setSelectedVideo(null)} className="text-3xl">&times;</button>
           </div>
-
           <div className="flex-grow flex items-center justify-center bg-black relative">
-             <iframe 
-               ref={iframeRef}
-               src={selectedVideo + "?autoplay=1"} 
-               className="w-full h-full border-none shadow-none" 
-               allow="autoplay; fullscreen; picture-in-picture" 
-               allowFullScreen
-             />
+             <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none" allow="autoplay; fullscreen" allowFullScreen />
           </div>
-
           <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-6">
              <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
                 <IoChevronBack size={26} className="text-[#F09800]" />
                 <span className="text-[9px] font-black uppercase tracking-widest">Anterior</span>
              </button>
-
              <button onClick={() => setSelectedVideo(null)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform">
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10"><IoList size={22} /></div>
                 <span className="text-[8px] font-black uppercase tracking-widest mt-1">Explorar</span>
              </button>
-
              <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
                 <IoChevronForward size={26} className="text-[#F09800]" />
                 <span className="text-[9px] font-black uppercase tracking-widest">Siguiente</span>
@@ -186,7 +165,6 @@ const LeaMobile = () => {
           </div>
         </div>
       )}
-
       <Footer />
     </div>
   );
