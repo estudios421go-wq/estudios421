@@ -7,7 +7,6 @@ import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCh
 import Footer from '../../Footer';
 
 const LeaPC = () => {
-  // Lista de episodios integrada para evitar errores de compilación
   const leaEpisodes = [
     { id: 1, title: "Hermanas del destino", dur: "00:40:09", desc: "Lía pierde a su madre siendo aún joven y comienza a criar a su hermana menor. Raquel se convierte en una adulta fría y egoísta. Lía es rescatada por Jacob.", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
     { id: 2, title: "El voto sagrado", dur: "00:40:09", desc: "Jacó conhece Lia e é observado por Saul. Jacó fala a todos sobre o voto que fez com Deus. Lia e Raquel se desentendem.", thumb: "https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg", url: "https://ok.ru/videoembed/14199375071744" },
@@ -125,9 +124,24 @@ const LeaPC = () => {
               <div className="relative aspect-video overflow-hidden">
                 <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
-                <span className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[10px] font-black rounded border border-white/10 uppercase tracking-widest text-[#FF8A00]">Episodio {ep.id}</span>
-                <span className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 text-[10px] font-bold rounded border border-white/10">{ep.dur}</span>
+                
+                {/* DISEÑO MEJORADO: NÚMERO DE EPISODIO */}
+                <div className="absolute bottom-2 left-2 flex items-center">
+                  <div className="bg-gradient-to-r from-[#FF8A00] to-[#FF5C00] px-3 py-1 rounded-md shadow-lg border border-[#FF8A00]/50 transform transition-transform group-hover:scale-110">
+                    <span className="text-[11px] font-black uppercase tracking-tighter text-black">
+                      Episodio {ep.id}
+                    </span>
+                  </div>
+                </div>
+
+                {/* DISEÑO MEJORADO: TIEMPO DE DURACIÓN */}
+                <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 shadow-lg">
+                  <span className="text-[10px] font-bold text-white/90 tracking-widest tabular-nums">
+                    {ep.dur}
+                  </span>
+                </div>
               </div>
+              
               <div className="p-5 flex flex-col gap-1">
                 <h3 className="font-bold text-base truncate tracking-tight uppercase transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
                 <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">{ep.desc}</p>
@@ -141,6 +155,7 @@ const LeaPC = () => {
         </div>
       </div>
 
+      {/* REPRODUCTOR PROFESIONAL (SIN CAMBIOS) */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in overflow-hidden">
           <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 relative shadow-2xl">
@@ -153,19 +168,20 @@ const LeaPC = () => {
               </div>
             </div>
             <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:border-[#FF8A00] hover:scale-105 transition-all duration-500">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Salir del video</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black transition-colors">Salir del video</span>
               <div className="w-px h-4 bg-white/20 group-hover:bg-black/20" />
               <IoClose className="text-2xl group-hover:rotate-90 group-hover:text-black transition-all" />
             </button>
           </div>
 
-          <div className="flex-grow bg-black relative">
+          <div className="flex-grow bg-black relative flex items-center justify-center">
+            <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]" />
             <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" />
           </div>
 
           <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] to-[#050608] border-t border-white/5 flex items-center justify-between shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
-              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black group-hover:scale-110 shadow-xl transition-all">
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all shadow-xl">
                 <IoChevronBack className="text-xl" />
               </div>
               <div className="flex flex-col items-start text-left">
@@ -174,8 +190,8 @@ const LeaPC = () => {
               </div>
             </button>
             <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] hover:border-white/20 transition-all group scale-95 hover:scale-100">
-              <IoList className="text-2xl text-[#FF8A00]" />
-              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60 group-hover:text-white">Lista de Capítulos</span>
+              <IoList className="text-2xl text-[#FF8A00] group-hover:scale-125 transition-transform" />
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60 group-hover:text-white transition-colors">Ver todos los capítulos</span>
             </button>
             <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
               <div className="flex flex-col items-end text-right">
