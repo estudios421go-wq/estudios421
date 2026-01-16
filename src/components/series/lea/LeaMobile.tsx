@@ -45,26 +45,34 @@ const PlayerView: React.FC<PlayerViewProps> = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  // Bloquea scroll del body mientras el reproductor está abierto (muy importante en móvil)
+  // Bloquea scroll del body mientras el reproductor está abierto (importante en móvil)
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
-    const prevOverscroll = (document.body.style as any).overscrollBehavior;
     document.body.style.overflow = 'hidden';
-    (document.body.style as any).overscrollBehavior = 'none';
 
     return () => {
       document.body.style.overflow = prevOverflow;
-      (document.body.style as any).overscrollBehavior = prevOverscroll;
     };
   }, []);
 
-  // No cerramos el reproductor en eventos de fullscreen: solo evitamos efectos colaterales.
+  // Añade atributos "webkitallowfullscreen" y "mozallowfullscreen" sin romper TypeScript
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
+
+    iframe.setAttribute('webkitallowfullscreen', 'true');
+    iframe.setAttribute('mozallowfullscreen', 'true');
+  }, [episodeKey]);
+
+  // Listener de fullscreen (no cerramos el reproductor)
   useEffect(() => {
     const handleFs = () => {
       // Intencionalmente vacío
     };
+
     document.addEventListener('fullscreenchange', handleFs);
     document.addEventListener('webkitfullscreenchange', handleFs as any);
+
     return () => {
       document.removeEventListener('fullscreenchange', handleFs);
       document.removeEventListener('webkitfullscreenchange', handleFs as any);
@@ -79,7 +87,7 @@ const PlayerView: React.FC<PlayerViewProps> = ({
   return (
     <div
       className="fixed inset-0 bg-black z-[9999] flex flex-col"
-      // Evita que taps dentro del overlay hagan “click-through” al contenido de atrás (Android)
+      // Evita “click-through” en Android
       onClick={(e) => e.stopPropagation()}
       onTouchStart={(e) => e.stopPropagation()}
       onTouchEnd={(e) => e.stopPropagation()}
@@ -102,7 +110,7 @@ const PlayerView: React.FC<PlayerViewProps> = ({
         </button>
       </div>
 
-      {/* Player estable: ocupa TODO el alto disponible, sin aspect-video (evita reflow en fullscreen) */}
+      {/* Player estable: ocupa TODO el alto disponible */}
       <div className="flex-1 bg-black">
         <iframe
           key={episodeKey}
@@ -111,12 +119,6 @@ const PlayerView: React.FC<PlayerViewProps> = ({
           className="w-full h-full border-none"
           allow="autoplay; fullscreen; picture-in-picture"
           allowFullScreen
-          // Compatibilidad adicional (Safari / algunos navegadores)
-          webkitallowfullscreen="true"
-          mozallowfullscreen="true"
-          // Ayuda en iOS para evitar comportamientos raros cuando el video quiere ir inline
-          // (no siempre aplica a iframes, pero no perjudica)
-          playsInline
         />
       </div>
 
@@ -170,76 +172,16 @@ const LeaMobile = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const leaEpisodes: Episode[] = [
-    {
-      id: 1,
-      title: 'Hermanas del destino',
-      dur: '00:40:06',
-      thumb: 'https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199373957632',
-    },
-    {
-      id: 2,
-      title: 'El voto sagrado',
-      dur: '00:39:26',
-      thumb: 'https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199375071744',
-    },
-    {
-      id: 3,
-      title: 'El engaño de Labán',
-      dur: '00:41:00',
-      thumb: 'https://static.wixstatic.com/media/859174_d7cfc67255f04256a593c369119ed86c~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199375989248',
-    },
-    {
-      id: 4,
-      title: 'La boda equivocada',
-      dur: '00:41:22',
-      thumb: 'https://static.wixstatic.com/media/859174_7e9da0e84f384be2ae32c853dbdeedcc~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199376972288',
-    },
-    {
-      id: 5,
-      title: 'Solo para Raquel',
-      dur: '00:42:42',
-      thumb: 'https://static.wixstatic.com/media/859174_58e073319d26466a86e306f4691c9d96~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199377562112',
-    },
-    {
-      id: 6,
-      title: 'Amor dividido',
-      dur: '00:40:34',
-      thumb: 'https://static.wixstatic.com/media/859174_eb250911b0bb4614b9deeb1b78769c02~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199378283008',
-    },
-    {
-      id: 7,
-      title: 'El dolor de la primogénita',
-      dur: '00:42:16',
-      thumb: 'https://static.wixstatic.com/media/859174_7a07cdbacf0b4cf2a538a4a8058215e5~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199379134976',
-    },
-    {
-      id: 8,
-      title: 'Bendecido para partir',
-      dur: '00:40:14',
-      thumb: 'https://static.wixstatic.com/media/859174_192e07b145414120854d08fdfa103e40~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199380380160',
-    },
-    {
-      id: 9,
-      title: 'La noche del encuentro',
-      dur: '00:40:36',
-      thumb: 'https://static.wixstatic.com/media/859174_02f250b13a77498c8de22760af9bb7b8~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199397812736',
-    },
-    {
-      id: 10,
-      title: 'Juicio en la familia',
-      dur: '00:40:38',
-      thumb: 'https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg',
-      url: 'https://ok.ru/videoembed/14199398861312',
-    },
+    { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
+    { id: 2, title: "El voto sagrado", dur: "00:39:26", thumb: "https://static.wixstatic.com/media/859174_b2866dfb10364a52a6f6c4b1d0bd36b5~mv2.jpg", url: "https://ok.ru/videoembed/14199375071744" },
+    { id: 3, title: "El engaño de Labán", dur: "00:41:00", thumb: "https://static.wixstatic.com/media/859174_d7cfc67255f04256a593c369119ed86c~mv2.jpg", url: "https://ok.ru/videoembed/14199375989248" },
+    { id: 4, title: "La boda equivocada", dur: "00:41:22", thumb: "https://static.wixstatic.com/media/859174_7e9da0e84f384be2ae32c853dbdeedcc~mv2.jpg", url: "https://ok.ru/videoembed/14199376972288" },
+    { id: 5, title: "Solo para Raquel", dur: "00:42:42", thumb: "https://static.wixstatic.com/media/859174_58e073319d26466a86e306f4691c9d96~mv2.jpg", url: "https://ok.ru/videoembed/14199377562112" },
+    { id: 6, title: "Amor dividido", dur: "00:40:34", thumb: "https://static.wixstatic.com/media/859174_eb250911b0bb4614b9deeb1b78769c02~mv2.jpg", url: "https://ok.ru/videoembed/14199378283008" },
+    { id: 7, title: "El dolor de la primogénita", dur: "00:42:16", thumb: "https://static.wixstatic.com/media/859174_7a07cdbacf0b4cf2a538a4a8058215e5~mv2.jpg", url: "https://ok.ru/videoembed/14199379134976" },
+    { id: 8, title: "Bendecido para partir", dur: "00:40:14", thumb: "https://static.wixstatic.com/media/859174_192e07b145414120854d08fdfa103e40~mv2.jpg", url: "https://ok.ru/videoembed/14199380380160" },
+    { id: 9, title: "La noche del encuentro", dur: "00:40:36", thumb: "https://static.wixstatic.com/media/859174_02f250b13a77498c8de22760af9bb7b8~mv2.jpg", url: "https://ok.ru/videoembed/14199397812736" },
+    { id: 10, title: "Juicio en la familia", dur: "00:40:38", thumb: "https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg", url: "https://ok.ru/videoembed/14199398861312" }
   ];
 
   useEffect(() => {
@@ -265,8 +207,7 @@ const LeaMobile = () => {
     setCurrentIdx(idx);
     localStorage.setItem('lea_last_ep', idx.toString());
 
-    // Lleva arriba pero sin interferir con el overlay fijo
-    window.scrollTo({ top: 0, behavior: 'instant' as any });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   };
 
   const toggleMyList = () => {
@@ -311,18 +252,12 @@ const LeaMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] overflow-x-hidden">
       <Head>
         <title>Lea — Estudios 421</title>
-        {/* Sugerencia útil para iPhone: viewport estable */}
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, viewport-fit=cover"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
 
       <nav
         className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-black shadow-lg'
-            : 'bg-gradient-to-b from-black/90 to-transparent'
+          isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'
         }`}
       >
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -442,18 +377,14 @@ const LeaMobile = () => {
             onClick={() => openEpisode(currentIdx)}
             className="w-full bg-white text-black font-bold py-3.5 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-widest shadow-2xl"
           >
-            {currentIdx === 0
-              ? '▶ VER AHORA'
-              : `▶ CONTINUAR EP. ${leaEpisodes[currentIdx].id}`}
+            {currentIdx === 0 ? '▶ VER AHORA' : `▶ CONTINUAR EP. ${leaEpisodes[currentIdx].id}`}
           </button>
 
           <div className="flex gap-3">
             <button
               onClick={toggleMyList}
               className={`flex-1 py-3 rounded-md text-[10px] font-bold border transition-all ${
-                inMyList
-                  ? 'bg-[#F09800] border-[#F09800]'
-                  : 'bg-white/10 border-white/5'
+                inMyList ? 'bg-[#F09800] border-[#F09800]' : 'bg-white/10 border-white/5'
               }`}
             >
               {inMyList ? (
@@ -467,10 +398,7 @@ const LeaMobile = () => {
 
             <button
               onClick={() =>
-                window.open(
-                  'https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS',
-                  '_blank'
-                )
+                window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')
               }
               className="flex-1 bg-white/10 backdrop-blur-md py-3 rounded-md text-[10px] font-bold border border-white/5 active:bg-white/20 uppercase tracking-widest"
             >
