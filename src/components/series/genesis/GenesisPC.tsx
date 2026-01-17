@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
 
-// ESTRUCTURA CON EPISODIO 1 Y 221
 const genesisEpisodes = [
   { id: 1, title: "El Edén", dur: "00:43:16", desc: "Esta es la historia de como todo fue creado por Dios y el inicio de la humanidad con Adán y Eva, el primer hombre y mujer en la tierra.", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/13888818973184" },
   { id: 2, title: "Las Consecuencias", dur: "00:43:09", desc: "Adán y Eva tienen que vivir las consecuencias de haber comido el fruto prohibido. Fueron expulsados del paraíso.", thumb: "https://static.wixstatic.com/media/859174_ecc4e327ec1b460aaa9939ab537584f2~mv2.jpg", url: "https://ok.ru/videoembed/13888837454336" },
@@ -241,6 +240,20 @@ const GenesisPC = () => {
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
+    // CAPA DE SEGURIDAD MÁXIMA: Bloqueo de Clic Derecho y Teclado
+    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'i')) || 
+        e.key === 'F12'
+      ) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('keydown', handleKeyDown);
+    
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     
@@ -250,12 +263,15 @@ const GenesisPC = () => {
       if (idx < genesisEpisodes.length) setCurrentIdx(idx);
     }
     
-    // CORRECCIÓN DEL ERROR DE RENDER: Usar myList consistentemente
     const myListStr = localStorage.getItem('myList') || '[]';
     const myList = JSON.parse(myListStr);
     if (myList.includes('genesis')) setInMyList(true);
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const openEpisode = (idx: number) => {
@@ -275,23 +291,18 @@ const GenesisPC = () => {
 
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) { 
-      list = list.filter((i: string) => i !== 'genesis'); 
-      setInMyList(false); 
-    } else { 
-      list.push('genesis'); 
-      setInMyList(true); 
-    }
+    if (inMyList) { list = list.filter((i: string) => i !== 'genesis'); setInMyList(false); }
+    else { list.push('genesis'); setInMyList(true); }
     localStorage.setItem('myList', JSON.stringify(list));
   };
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00] overflow-x-hidden">
+    <div className="bg-black min-h-screen text-white font-sans selection:none select-none overflow-x-hidden">
       <Head><title>Génesis — Estudios 421</title></Head>
 
       <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
-          <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
+          <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain pointer-events-none" priority /></div></Link>
           <div className="flex gap-8">
             {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name) => (
               <Link key={name} href={name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
@@ -305,7 +316,7 @@ const GenesisPC = () => {
           <div className="flex gap-4 mr-4">
             {['', 'en', 'pt'].map((l) => (
               <Link key={l} href={l === '' ? '/serie/genesis' : `/${l}/serie/genesis`}>
-                <img src={`https://static.wixstatic.com/media/859174_${l === '' ? '367960b11c1c44ba89cd1582fd1b5776' : l === 'en' ? '35112d9ffe234d6f9dcef16cf8f7544e' : '830f1c20656e4d44a819bedfc13a22cc'}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />
+                <img src={`https://static.wixstatic.com/media/859174_${l === '' ? '367960b11c1c44ba89cd1582fd1b5776' : l === 'en' ? '35112d9ffe234d6f9dcef16cf8f7544e' : '830f1c20656e4d44a819bedfc13a22cc'}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform pointer-events-none" />
               </Link>
             ))}
           </div>
@@ -313,12 +324,12 @@ const GenesisPC = () => {
             <IoSearchOutline className="text-white text-xl" />
             <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
           </div>
-          <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
+          <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer pointer-events-none" />
         </div>
       </nav>
 
       <div className="relative w-full h-[88vh]">
-        <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner Génesis" />
+        <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover pointer-events-none" alt="Banner Génesis" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
@@ -348,7 +359,7 @@ const GenesisPC = () => {
               onClick={() => openEpisode(index)}
             >
               <div className="relative aspect-video overflow-hidden">
-                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
+                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700 pointer-events-none" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-2 left-2 flex items-center">
                   <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1 rounded-md shadow-lg transform transition-transform group-hover:scale-110">
