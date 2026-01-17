@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
 
-// ESTRUCTURA CON EPISODIO 1 Y 221 SEGÚN TU INSTRUCCIÓN
+// ESTRUCTURA CON EPISODIO 1 Y 221
 const genesisEpisodes = [
   { id: 1, title: "El Edén", dur: "00:43:16", desc: "Esta es la historia de como todo fue creado por Dios y el inicio de la humanidad con Adán y Eva, el primer hombre y mujer en la tierra.", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/13888818973184" },
   { id: 2, title: "Las Consecuencias", dur: "00:43:09", desc: "Adán y Eva tienen que vivir las consecuencias de haber comido el fruto prohibido. Fueron expulsados del paraíso.", thumb: "https://static.wixstatic.com/media/859174_ecc4e327ec1b460aaa9939ab537584f2~mv2.jpg", url: "https://ok.ru/videoembed/13888837454336" },
@@ -243,13 +243,18 @@ const GenesisPC = () => {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    
     const savedEp = localStorage.getItem('genesis_last_ep');
     if (savedEp) {
       const idx = parseInt(savedEp);
       if (idx < genesisEpisodes.length) setCurrentIdx(idx);
     }
-    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (list.includes('genesis')) setInMyList(true);
+    
+    // CORRECCIÓN DEL ERROR DE RENDER: Usar myList consistentemente
+    const myListStr = localStorage.getItem('myList') || '[]';
+    const myList = JSON.parse(myListStr);
+    if (myList.includes('genesis')) setInMyList(true);
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -270,8 +275,13 @@ const GenesisPC = () => {
 
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) { list = list.filter((i: string) => i !== 'genesis'); setInMyList(false); }
-    else { list.push('genesis'); setInMyList(true); }
+    if (inMyList) { 
+      list = list.filter((i: string) => i !== 'genesis'); 
+      setInMyList(false); 
+    } else { 
+      list.push('genesis'); 
+      setInMyList(true); 
+    }
     localStorage.setItem('myList', JSON.stringify(list));
   };
 
