@@ -3,9 +3,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose } from 'react-icons/io5';
+import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
 
+// ESTRUCTURA CON EPISODIO 1 Y 221 SEGÚN TU INSTRUCCIÓN
 const genesisEpisodes = [
   { id: 1, title: "El Edén", dur: "00:43:16", desc: "Esta es la historia de como todo fue creado por Dios y el inicio de la humanidad con Adán y Eva, el primer hombre y mujer en la tierra.", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/13888818973184" },
   { id: 2, title: "Las Consecuencias", dur: "00:43:09", desc: "Adán y Eva tienen que vivir las consecuencias de haber comido el fruto prohibido. Fueron expulsados del paraíso.", thumb: "https://static.wixstatic.com/media/859174_ecc4e327ec1b460aaa9939ab537584f2~mv2.jpg", url: "https://ok.ru/videoembed/13888837454336" },
@@ -234,21 +235,30 @@ const GenesisPC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [showQR, setShowQR] = useState(false);
+  const [inMyList, setInMyList] = useState(false);
+  const [donated, setDonated] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     const savedEp = localStorage.getItem('genesis_last_ep');
-    if (savedEp) setCurrentIdx(parseInt(savedEp));
+    if (savedEp) {
+      const idx = parseInt(savedEp);
+      if (idx < genesisEpisodes.length) setCurrentIdx(idx);
+    }
+    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (list.includes('genesis')) setInMyList(true);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const openEpisode = (idx: number) => {
-    setCurrentIdx(idx);
-    setSelectedVideo(genesisEpisodes[idx].url);
-    localStorage.setItem('genesis_last_ep', idx.toString());
+    if (idx >= 0 && idx < genesisEpisodes.length) {
+      setCurrentIdx(idx);
+      setSelectedVideo(genesisEpisodes[idx].url);
+      localStorage.setItem('genesis_last_ep', idx.toString());
+    }
   };
 
   const closePlayer = () => {
@@ -258,82 +268,95 @@ const GenesisPC = () => {
     }, 100);
   };
 
-  const navLinks = [
-    { name: 'Inicio', href: '/' },
-    { name: 'Series Bíblicas', href: '/series-biblicas' },
-    { name: 'Series TV', href: '/series-tv' },
-    { name: 'Películas', href: '/peliculas' },
-  ];
-
-  const languages = [
-    { name: 'ESP', img: "https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" },
-    { name: 'ENG', img: "https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" },
-    { name: 'PT', img: "https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" }
-  ];
+  const toggleMyList = () => {
+    let list = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (inMyList) { list = list.filter((i: string) => i !== 'genesis'); setInMyList(false); }
+    else { list.push('genesis'); setInMyList(true); }
+    localStorage.setItem('myList', JSON.stringify(list));
+  };
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00] overflow-x-hidden">
       <Head><title>Génesis — Estudios 421</title></Head>
 
       <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
           <div className="flex gap-8">
-            {navLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="relative group text-white text-[15px] font-medium tracking-wide">
-                {link.name}
-                <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+            {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name) => (
+              <Link key={name} href={name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
+                {name}
+                <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === (name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`) ? 'w-full' : 'w-0 group-hover:w-full'}`} />
               </Link>
             ))}
           </div>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex gap-4 mr-4">
-            {languages.map((lang) => (<img key={lang.name} src={lang.img} alt={lang.name} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />))}
+            {['', 'en', 'pt'].map((l) => (
+              <Link key={l} href={l === '' ? '/serie/genesis' : `/${l}/serie/genesis`}>
+                <img src={`https://static.wixstatic.com/media/859174_${l === '' ? '367960b11c1c44ba89cd1582fd1b5776' : l === 'en' ? '35112d9ffe234d6f9dcef16cf8f7544e' : '830f1c20656e4d44a819bedfc13a22cc'}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />
+              </Link>
+            ))}
           </div>
-          <div className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5">
+          <div className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
             <IoSearchOutline className="text-white text-xl" />
-            <input type="text" placeholder="Buscar..." className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
+            <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
           </div>
           <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
         </div>
       </nav>
 
-      <div className="relative w-full h-[88vh] overflow-visible">
-        <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
+      <div className="relative w-full h-[88vh]">
+        <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Banner Génesis" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${genesisEpisodes[currentIdx].id}`}
           </button>
-          <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">+ Mi Lista</button>
-          <button onClick={() => setShowQR(true)} className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold py-4 px-10 rounded-sm hover:bg-white/20 transition-all uppercase">❤ Donar</button>
+          <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
+            {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
+          </button>
+          <button onClick={() => { setDonated(true); window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank'); }} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${donated ? 'bg-green-600 border-green-500 text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>❤ Donar</button>
         </div>
       </div>
 
       <div className="h-20 bg-black"></div>
 
-      <div className="px-16 mb-32 relative z-10">
+      <div className="px-16 mb-32 relative z-10 text-left">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
-            <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
-            <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
+          <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
+          <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
         </header>
 
         <div className="grid grid-cols-4 gap-8">
           {genesisEpisodes.map((ep, index) => (
-            <div key={ep.id} ref={(el) => { episodeRefs.current[index] = el; }} className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/30'}`} onClick={() => openEpisode(index)}>
+            <div 
+              key={ep.id} 
+              ref={(el) => { episodeRefs.current[index] = el; }} 
+              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/20 hover:shadow-2xl'}`} 
+              onClick={() => openEpisode(index)}
+            >
               <div className="relative aspect-video overflow-hidden">
                 <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
-                <span className="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[10px] font-black rounded border border-white/10 uppercase tracking-widest text-[#FF8A00]">Episodio {ep.id}</span>
-                <span className="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 text-[10px] font-bold rounded border border-white/10">{ep.dur}</span>
+                <div className="absolute bottom-2 left-2 flex items-center">
+                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1 rounded-md shadow-lg transform transition-transform group-hover:scale-110">
+                    <span className="text-[11px] font-black uppercase tracking-tighter text-white">
+                      Episodio <span className="text-[#FF8A00]">{ep.id}</span>
+                    </span>
+                  </div>
+                </div>
+                <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 shadow-lg">
+                  <span className="text-[10px] font-bold text-white tracking-widest tabular-nums">{ep.dur}</span>
+                </div>
               </div>
               <div className="p-5 flex flex-col gap-1">
-                <h3 className="font-bold text-base truncate tracking-tight">{ep.title}</h3>
+                <h3 className="font-bold text-base truncate tracking-tight uppercase transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
                 <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">{ep.desc}</p>
                 <div className="mt-4 flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-gray-600'}`}></div>
-                    <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Disponible ahora</span>
+                  <div className={`w-2 h-2 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-gray-600'}`}></div>
+                  <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Disponible ahora</span>
                 </div>
               </div>
             </div>
@@ -342,39 +365,54 @@ const GenesisPC = () => {
       </div>
 
       {selectedVideo && (
-        <div className="fixed inset-0 z-[1000] bg-black flex items-center justify-center">
-          <div className="w-full h-full bg-[#050608] flex flex-col">
-            <div className="px-8 py-5 flex items-center justify-between bg-gradient-to-r from-[#FF8A00]/20 to-transparent border-b border-white/5">
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-[0.2em]">Serie: Génesis</span>
-                <h2 className="text-xl font-bold tracking-tight">Episodio {genesisEpisodes[currentIdx].id} — {genesisEpisodes[currentIdx].title}</h2>
+        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in overflow-hidden">
+          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 relative shadow-2xl">
+            <div className="flex items-center gap-8">
+              <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
+                <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Serie: Génesis</span>
+                <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">
+                  Capítulo {genesisEpisodes[currentIdx].id} <span className="text-white/10 mx-3">/</span> <span className="text-white/90">{genesisEpisodes[currentIdx].title}</span>
+                </h2>
               </div>
-              <button onClick={closePlayer} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-all group">
-                <IoClose className="text-2xl group-hover:rotate-90 transition-transform duration-300" />
-              </button>
             </div>
-            <div className="flex-grow bg-black relative">
-              <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full" allow="autoplay; fullscreen" />
-            </div>
-            <div className="px-8 py-6 flex items-center justify-between bg-[#050608] border-t border-white/5">
-              <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-full text-xs font-bold transition-all disabled:opacity-20 uppercase tracking-widest border border-white/5"><IoChevronBack className="text-lg" /> Episodio Anterior</button>
-              <button onClick={closePlayer} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-8 py-3 rounded-full text-xs font-bold transition-all uppercase tracking-widest border border-white/5"><IoList className="text-lg" /> Lista de Episodios</button>
-              <button disabled={currentIdx === genesisEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="flex items-center gap-2 bg-[#FF8A00] hover:bg-[#FF8A00]/90 text-black px-6 py-3 rounded-full text-xs font-black transition-all disabled:opacity-20 uppercase tracking-widest shadow-lg">Siguiente Episodio <IoChevronForward className="text-lg" /></button>
-            </div>
+            <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:border-[#FF8A00] hover:scale-105 transition-all duration-500">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black transition-colors">Salir del video</span>
+              <div className="w-px h-4 bg-white/20 group-hover:bg-black/20" />
+              <IoClose className="text-2xl group-hover:rotate-90 group-hover:text-black transition-all" />
+            </button>
+          </div>
+
+          <div className="flex-grow bg-black relative flex items-center justify-center">
+            <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]" />
+            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
+          </div>
+
+          <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] to-[#050608] border-t border-white/5 flex items-center justify-between shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
+            <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black group-hover:scale-110 transition-all shadow-xl">
+                <IoChevronBack className="text-xl" />
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60">Anterior</span>
+                <span className="text-sm font-bold uppercase text-white/80 group-hover:text-white">Episodio {currentIdx}</span>
+              </div>
+            </button>
+            <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] hover:border-white/20 transition-all group scale-95 hover:scale-100">
+              <IoList className="text-2xl text-[#FF8A00] group-hover:scale-125 transition-transform" />
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60 group-hover:text-white transition-colors">Capítulos</span>
+            </button>
+            <button disabled={currentIdx === genesisEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 disabled:pointer-events-none transition-all duration-500">
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
+                <span className="text-sm font-bold uppercase text-white/80 group-hover:text-white">Episodio {currentIdx + 2}</span>
+              </div>
+              <div className="w-16 h-16 rounded-[22px] bg-[#FF8A00] flex items-center justify-center text-black shadow-[0_15px_35px_rgba(255,138,0,0.2)] group-hover:scale-110 transition-all">
+                <IoChevronForward className="text-4xl" />
+              </div>
+            </button>
           </div>
         </div>
       )}
-
-      {showQR && (
-        <div className="fixed inset-0 z-[1100] bg-black/90 flex items-center justify-center p-4">
-          <div className="bg-[#111] border border-white/10 p-10 rounded-2xl flex flex-col items-center max-w-sm text-center shadow-2xl">
-            <h3 className="text-2xl font-bold mb-4">Apoya el proyecto</h3>
-            <div className="bg-white p-4 rounded-xl mb-6 shadow-inner"><img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS')}`} alt="QR" /></div>
-            <button onClick={() => setShowQR(false)} className="bg-[#FF8A00] w-full py-3 rounded-lg font-bold text-black uppercase tracking-widest">Cerrar</button>
-          </div>
-        </div>
-      )}
-
       <Footer />
     </div>
   );
