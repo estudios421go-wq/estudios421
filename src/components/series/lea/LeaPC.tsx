@@ -107,7 +107,7 @@ const LeaPC = () => {
 
       <div className="h-20 bg-black"></div>
 
-      <div className="px-16 mb-32 relative z-10">
+      <div className="px-16 mb-32 relative z-10 text-left">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
@@ -118,36 +118,41 @@ const LeaPC = () => {
             <div 
               key={ep.id} 
               ref={(el) => { episodeRefs.current[index] = el; }} 
-              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/20 hover:shadow-2xl'}`} 
+              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-500 bg-[#161718] border ${currentIdx === index ? 'border-[#FF8A00] shadow-[0_0_30px_rgba(255,138,0,0.15)]' : 'border-white/5 hover:border-white/20 hover:shadow-2xl'}`} 
               onClick={() => openEpisode(index)}
             >
               <div className="relative aspect-video overflow-hidden">
-                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
+                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
                 
-                {/* DISEÑO MEJORADO: NÚMERO DE EPISODIO */}
-                <div className="absolute bottom-2 left-2 flex items-center">
-                  <div className="bg-gradient-to-r from-[#FF8A00] to-[#FF5C00] px-3 py-1 rounded-md shadow-lg border border-[#FF8A00]/50 transform transition-transform group-hover:scale-110">
-                    <span className="text-[11px] font-black uppercase tracking-tighter text-black">
-                      Episodio {ep.id}
+                {/* DISEÑO MEJORADO: NÚMERO DE EPISODIO (Sutil y Profesional) */}
+                <div className="absolute top-3 left-3">
+                  <div className="bg-black/60 backdrop-blur-xl border border-white/10 px-3 py-1 rounded-lg shadow-xl">
+                    <span className="text-[10px] font-black uppercase tracking-[0.1em] text-white">
+                      Episodio <span className="text-[#FF8A00]">{ep.id}</span>
                     </span>
                   </div>
                 </div>
 
-                {/* DISEÑO MEJORADO: TIEMPO DE DURACIÓN */}
-                <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 shadow-lg">
-                  <span className="text-[10px] font-bold text-white/90 tracking-widest tabular-nums">
-                    {ep.dur}
-                  </span>
+                {/* DISEÑO MEJORADO: TIEMPO DE DURACIÓN (Elegante y Moderno) */}
+                <div className="absolute bottom-3 right-3">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/10 px-2 py-1 rounded-md">
+                    <span className="text-[10px] font-medium text-white tracking-widest tabular-nums">
+                      {ep.dur}
+                    </span>
+                  </div>
                 </div>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-[#161718] via-transparent to-transparent opacity-80" />
               </div>
               
-              <div className="p-5 flex flex-col gap-1">
-                <h3 className="font-bold text-base truncate tracking-tight uppercase transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
-                <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">{ep.desc}</p>
-                <div className="mt-4 flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-gray-600'}`}></div>
-                  <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Disponible ahora</span>
+              <div className="p-5 flex flex-col gap-2">
+                <h3 className="font-bold text-[15px] truncate uppercase tracking-tight transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
+                <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed h-8 font-medium">{ep.desc}</p>
+                <div className="mt-2 pt-3 border-t border-white/5 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-1.5 h-1.5 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-white/20'}`}></div>
+                    <span className="text-[9px] uppercase font-bold text-gray-500 tracking-[0.2em]">HD Disponible</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -155,12 +160,11 @@ const LeaPC = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR PROFESIONAL (SIN CAMBIOS) */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in overflow-hidden">
           <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 relative shadow-2xl">
             <div className="flex items-center gap-8">
-              <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1">
+              <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
                 <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Serie: Lea</span>
                 <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">
                   Capítulo {leaEpisodes[currentIdx].id} <span className="text-white/10 mx-3">/</span> <span className="text-white/90">{leaEpisodes[currentIdx].title}</span>
@@ -176,7 +180,7 @@ const LeaPC = () => {
 
           <div className="flex-grow bg-black relative flex items-center justify-center">
             <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.5)]" />
-            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" />
+            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
           </div>
 
           <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] to-[#050608] border-t border-white/5 flex items-center justify-between shadow-[0_-20px_50px_rgba(0,0,0,0.5)]">
