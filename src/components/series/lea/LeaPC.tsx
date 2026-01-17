@@ -16,7 +16,6 @@ const LeaPC = () => {
     { id: 6, title: "Amor dividido", dur: "00:40:34", desc: "Las dos esposas quedan embarazadas, pero Jacob solo le da atención a Raquel, y Lía se siente desamparada.", thumb: "https://static.wixstatic.com/media/859174_eb250911b0bb4614b9deeb1b78769c02~mv2.jpg", url: "https://ok.ru/videoembed/14199378283008" },
     { id: 7, title: "El dolor de la primogénita", dur: "00:42:16", desc: "El nacimiento del hijo de Raquel hace que Jacob rechace aún más a Lía, quien da a luz a una niña.", thumb: "https://static.wixstatic.com/media/859174_7a07cdbacf0b4cf2a538a4a8058215e5~mv2.jpg", url: "https://ok.ru/videoembed/14199379134976" },
     { id: 8, title: "Bendecido para partir", dur: "00:40:14", desc: "Jacob es ayudado por Dios y logra tener su propio rebaño. Poco después, decide irse con su familia.", thumb: "https://static.wixstatic.com/media/859174_192e07b145414120854d08fdfa103e40~mv2.jpg", url: "https://ok.ru/videoembed/14199380380160" },
-    { id: 9, title: "La noche del encuentro", dur: "00:40:36", desc: "Un encuentro con Dios cambia la vida de Jacob, que planea reencontrarse con Esaú. Dina intenta resistir, pero termina entregándose a Siquem.", thumb: "https://static.wixstatic.com/media/859174_02f250b13a77498c8de22760af9bb7b8~mv2.jpg", url: "https://ok.ru/videoembed/14199397812736" },
     { id: 10, title: "Juicio en la familia", dur: "00:40:38", desc: "Jacob y Lía cuidan de Dina después de que sus hijos cometieran una masacre. Jacob descubre que Raquel adoraba ídolos y la condena.", thumb: "https://static.wixstatic.com/media/859174_24d955c28833450eae4d86e9b842a109~mv2.jpg", url: "https://ok.ru/videoembed/14199398861312" }
   ];
 
@@ -118,41 +117,36 @@ const LeaPC = () => {
             <div 
               key={ep.id} 
               ref={(el) => { episodeRefs.current[index] = el; }} 
-              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-500 bg-[#161718] border ${currentIdx === index ? 'border-[#FF8A00] shadow-[0_0_30px_rgba(255,138,0,0.15)]' : 'border-white/5 hover:border-white/20 hover:shadow-2xl'}`} 
+              className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20' : 'border-transparent hover:border-white/20 hover:shadow-2xl'}`} 
               onClick={() => openEpisode(index)}
             >
               <div className="relative aspect-video overflow-hidden">
-                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" />
+                <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] via-transparent to-transparent opacity-60" />
                 
-                {/* DISEÑO MEJORADO: NÚMERO DE EPISODIO (Sutil y Profesional) */}
-                <div className="absolute top-3 left-3">
-                  <div className="bg-black/60 backdrop-blur-xl border border-white/10 px-3 py-1 rounded-lg shadow-xl">
-                    <span className="text-[10px] font-black uppercase tracking-[0.1em] text-white">
+                {/* POSICIÓN ORIGINAL: ABAJO IZQUIERDA - DISEÑO PROFESIONAL */}
+                <div className="absolute bottom-2 left-2 flex items-center">
+                  <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-1 rounded-md shadow-lg transform transition-transform group-hover:scale-110">
+                    <span className="text-[11px] font-black uppercase tracking-tighter text-white">
                       Episodio <span className="text-[#FF8A00]">{ep.id}</span>
                     </span>
                   </div>
                 </div>
 
-                {/* DISEÑO MEJORADO: TIEMPO DE DURACIÓN (Elegante y Moderno) */}
-                <div className="absolute bottom-3 right-3">
-                  <div className="bg-white/10 backdrop-blur-md border border-white/10 px-2 py-1 rounded-md">
-                    <span className="text-[10px] font-medium text-white tracking-widest tabular-nums">
-                      {ep.dur}
-                    </span>
-                  </div>
+                {/* POSICIÓN ORIGINAL: ABAJO DERECHA - DISEÑO PROFESIONAL */}
+                <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10 shadow-lg">
+                  <span className="text-[10px] font-bold text-white tracking-widest tabular-nums">
+                    {ep.dur}
+                  </span>
                 </div>
-
-                <div className="absolute inset-0 bg-gradient-to-t from-[#161718] via-transparent to-transparent opacity-80" />
               </div>
               
-              <div className="p-5 flex flex-col gap-2">
-                <h3 className="font-bold text-[15px] truncate uppercase tracking-tight transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
-                <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed h-8 font-medium">{ep.desc}</p>
-                <div className="mt-2 pt-3 border-t border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-white/20'}`}></div>
-                    <span className="text-[9px] uppercase font-bold text-gray-500 tracking-[0.2em]">HD Disponible</span>
-                  </div>
+              <div className="p-5 flex flex-col gap-1">
+                <h3 className="font-bold text-base truncate tracking-tight uppercase transition-colors group-hover:text-[#FF8A00]">{ep.title}</h3>
+                <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">{ep.desc}</p>
+                <div className="mt-4 flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${currentIdx === index ? 'bg-[#FF8A00] animate-pulse' : 'bg-gray-600'}`}></div>
+                  <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">Disponible ahora</span>
                 </div>
               </div>
             </div>
