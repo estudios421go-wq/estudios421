@@ -69,23 +69,19 @@ const LeaMobile = () => {
           </div>
           <button onClick={() => setSelectedVideo(null)} className="text-4xl p-2">&times;</button>
         </div>
-        <div className="flex-grow flex flex-col items-center justify-center bg-black gap-4 px-4">
-          {/* VIDEO EMBEBIDO */}
+
+        {/* CONTENEDOR DEL VIDEO CORREGIDO */}
+        <div className="flex-grow flex flex-col items-center justify-center bg-black px-4 gap-3">
           <iframe
             src={selectedVideo + "?autoplay=1"}
             className="w-full aspect-video border-none"
-            allow="autoplay"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            playsInline
+            webkit-playsinline="true"
           />
-
-          {/* BOTÓN FULLSCREEN REAL */}
-          <button
-            onClick={() => window.open(selectedVideo, '_blank')}
-            className="px-4 py-2 text-xs font-bold uppercase tracking-widest
-                       bg-[#F09800] text-black rounded-md active:scale-95"
-          >
-            ⛶ Ver en pantalla completa
-          </button>
         </div>
+
         <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8">
           <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
             <IoChevronBack size={26} className="text-[#F09800]" /><span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Anterior</span>
