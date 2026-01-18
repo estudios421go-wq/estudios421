@@ -69,19 +69,9 @@ const LeaMobile = () => {
           </div>
           <button onClick={() => setSelectedVideo(null)} className="text-4xl p-2">&times;</button>
         </div>
-
-        {/* CONTENEDOR DEL VIDEO CORREGIDO */}
-        <div className="flex-grow flex flex-col items-center justify-center bg-black px-4 gap-3">
-          <iframe
-            src={selectedVideo + "?autoplay=1"}
-            className="w-full aspect-video border-none"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-            playsInline
-            webkit-playsinline="true"
-          />
+        <div className="flex-grow flex items-center justify-center bg-black">
+          <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none" allow="autoplay; fullscreen" allowFullScreen />
         </div>
-
         <div className="h-[15vh] min-h-[100px] px-8 bg-black border-t border-white/5 flex items-center justify-between pb-8">
           <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-5">
             <IoChevronBack size={26} className="text-[#F09800]" /><span className="text-[9px] font-black uppercase tracking-widest text-gray-500">Anterior</span>
@@ -118,14 +108,6 @@ const LeaMobile = () => {
             {[{ n: 'Inicio', h: '/' }, { n: 'Series Bíblicas', h: '/series-biblicas' }, { n: 'Series TV', h: '/series-tv' }, { n: 'Películas', h: '/peliculas' }].map((link) => (
               <Link key={link.n} href={link.h} onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">{link.n}</Link>
             ))}
-            <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mt-4">Idioma</p>
-            <div className="flex gap-6">
-              {[{ l: 'ESP', r: '/serie/lea', i: '367960b11c1c44ba89cd1582fd1b5776' }, { l: 'ENG', r: '/en/serie/lea', i: '35112d9ffe234d6f9dcef16cf8f7544e' }, { l: 'PT', r: '/pt/serie/lea', i: '830f1c20656e4d44a819bedfc13a22cc' }].map((lang) => (
-                <button key={lang.l} onClick={() => { setIsMenuOpen(false); router.push(lang.r); }} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
-                  <img src={`https://static.wixstatic.com/media/859174_${lang.i}~mv2.png`} alt={lang.l} className="w-10 h-10 object-contain" /><span className="text-[10px] text-white font-bold">{lang.l}</span>
-                </button>
-              ))}
-            </div>
         </div>
       </div>
       <div className="relative w-full bg-black">
