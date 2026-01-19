@@ -46,6 +46,7 @@ const LeaPage = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('keydown', disableProtections);
+      document.removeEventListener('contextmenu', (e) => e.preventDefault());
     };
   }, []);
 
@@ -56,14 +57,19 @@ const LeaPage = () => {
       <Head>
         {/* Blindaje de imágenes: evita arrastrar y soltar */}
         <style>{`
-          img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; pointer-events: none; }
+          img { 
+            -webkit-user-drag: none; 
+            user-drag: none; 
+            pointer-events: none; 
+          }
           
-          /* MODIFICACIÓN DE SEGURIDAD: Solo permite selección en móvil para habilitar Fullscreen API en Chrome */
+          /* MODIFICACIÓN DE SEGURIDAD: Selección dinámica según dispositivo */
           body { 
             -webkit-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
             -moz-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
             -ms-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
             user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
+            background-color: black;
           }
           
           iframe { pointer-events: auto; }
