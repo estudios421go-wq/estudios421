@@ -57,7 +57,15 @@ const LeaPage = () => {
         {/* Blindaje de imágenes: evita arrastrar y soltar */}
         <style>{`
           img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-drag: none; pointer-events: none; }
-          body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+          
+          /* MODIFICACIÓN DE SEGURIDAD: Solo permite selección en móvil para habilitar Fullscreen API en Chrome */
+          body { 
+            -webkit-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
+            -moz-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
+            -ms-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
+            user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
+          }
+          
           iframe { pointer-events: auto; }
         `}</style>
       </Head>
