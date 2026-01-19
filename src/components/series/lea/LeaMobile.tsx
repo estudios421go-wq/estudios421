@@ -9,13 +9,12 @@ const LeaMobile = () => {
       
       {!play ? (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>PRUEBA TÉCNICA #2</h2>
-          <p style={{ fontSize: '12px', color: '#888', margin: '15px 0' }}>Validando confianza de Chrome</p>
+          <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>TEST MÓVIL PANTALLA COMPLETA</h2>
           <button 
             onClick={() => setPlay(true)}
-            style={{ backgroundColor: '#F09800', color: '#000', border: 'none', padding: '15px 30px', borderRadius: '5px', fontWeight: 'bold' }}
+            style={{ backgroundColor: '#F09800', color: '#000', border: 'none', padding: '15px 30px', borderRadius: '5px', fontWeight: 'bold', marginTop: '20px' }}
           >
-            REPRODUCIR Y PROBAR FULLSCREEN
+            REPRODUCIR Y PROBAR
           </button>
         </div>
       ) : (
@@ -23,9 +22,9 @@ const LeaMobile = () => {
           <div style={{ height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 20px' }}>
             <button 
               onClick={() => setPlay(false)}
-              style={{ background: 'none', border: 'none', color: '#fff', fontSize: '30px' }}
+              style={{ background: '#333', color: '#fff', border: 'none', padding: '8px 15px', borderRadius: '4px', fontSize: '12px' }}
             >
-              &times;
+              CERRAR X
             </button>
           </div>
           <div style={{ flexGrow: 1, position: 'relative' }}>
