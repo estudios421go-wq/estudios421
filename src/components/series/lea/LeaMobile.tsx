@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  IoSearchOutline,
-  IoMenuOutline,
-  IoCloseOutline,
   IoChevronBack,
   IoChevronForward,
-  IoList,
-  IoCheckmarkCircle
+  IoList
 } from 'react-icons/io5';
 import Footer from '../../Footer';
 
@@ -19,11 +13,6 @@ const LeaMobile = () => {
 
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [inMyList, setInMyList] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [cinemaMode, setCinemaMode] = useState(false); // 👈 NUEVO
 
   const leaEpisodes = [
     { id: 1, title: "Hermanas del destino", dur: "00:40:06", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -39,38 +28,15 @@ const LeaMobile = () => {
   ];
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!selectedVideo) setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener('scroll', handleScroll);
-
     const saved = localStorage.getItem('lea_last_ep');
     if (saved) setCurrentIdx(parseInt(saved));
-
-    const list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (list.includes('lea')) setInMyList(true);
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [selectedVideo]);
+  }, []);
 
   const openEpisode = (idx: number) => {
     setSelectedVideo(leaEpisodes[idx].url);
     setCurrentIdx(idx);
-    setCinemaMode(false);
     localStorage.setItem('lea_last_ep', idx.toString());
     window.scrollTo(0, 0);
-  };
-
-  const toggleMyList = () => {
-    let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) {
-      list = list.filter((id: string) => id !== 'lea');
-      setInMyList(false);
-    } else {
-      list.push('lea');
-      setInMyList(true);
-    }
-    localStorage.setItem('myList', JSON.stringify(list));
   };
 
   if (selectedVideo) {
@@ -78,32 +44,18 @@ const LeaMobile = () => {
       <div className="bg-black min-h-screen w-full flex flex-col">
 
         {/* HEADER */}
-        {!cinemaMode && (
-          <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5">
-            <div className="flex flex-col border-l-2 border-[#F09800] pl-3">
-              <span className="text-[8px] text-[#F09800] uppercase font-black">Estudios 421</span>
-              <span className="text-xs font-bold uppercase truncate">
-                Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}
-              </span>
-            </div>
-            <button onClick={() => setSelectedVideo(null)} className="text-3xl">✕</button>
+        <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5">
+          <div className="flex flex-col border-l-2 border-[#F09800] pl-3">
+            <span className="text-[8px] text-[#F09800] uppercase font-black">Estudios 421</span>
+            <span className="text-xs font-bold uppercase truncate">
+              Ep. {leaEpisodes[currentIdx].id} — {leaEpisodes[currentIdx].title}
+            </span>
           </div>
-        )}
+          <button onClick={() => setSelectedVideo(null)} className="text-3xl">✕</button>
+        </div>
 
-        {/* VIDEO */}
-        <div
-          className={`bg-black flex items-center justify-center transition-all duration-300
-          ${cinemaMode ? 'fixed inset-0 z-[200]' : 'flex-grow'}`}
-        >
-          {cinemaMode && (
-            <button
-              onClick={() => setCinemaMode(false)}
-              className="absolute top-4 right-4 z-[210] text-white text-3xl bg-black/60 px-3 rounded-full"
-            >
-              ✕
-            </button>
-          )}
-
+        {/* VIDEO — CONTENEDOR ESTABLE */}
+        <div className="bg-black flex items-center justify-center flex-grow">
           <iframe
             src={selectedVideo + '?autoplay=1'}
             className="w-full aspect-video border-none"
@@ -113,31 +65,21 @@ const LeaMobile = () => {
         </div>
 
         {/* CONTROLES */}
-        {!cinemaMode && (
-          <div className="px-6 py-6 bg-black border-t border-white/5 space-y-4">
-
-            <button
-              onClick={() => setCinemaMode(true)}
-              className="w-full bg-[#F09800] text-black font-bold py-3 rounded-md uppercase tracking-widest"
-            >
-              VER EN PANTALLA COMPLETA
+        <div className="px-6 py-6 bg-black border-t border-white/5 space-y-4">
+          <div className="flex justify-between">
+            <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)}>
+              <IoChevronBack size={28} className="text-[#F09800]" />
             </button>
 
-            <div className="flex justify-between">
-              <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)}>
-                <IoChevronBack size={28} className="text-[#F09800]" />
-              </button>
+            <button onClick={() => setSelectedVideo(null)}>
+              <IoList size={26} />
+            </button>
 
-              <button onClick={() => setSelectedVideo(null)}>
-                <IoList size={26} />
-              </button>
-
-              <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)}>
-                <IoChevronForward size={28} className="text-[#F09800]" />
-              </button>
-            </div>
+            <button disabled={currentIdx === leaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)}>
+              <IoChevronForward size={28} className="text-[#F09800]" />
+            </button>
           </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -146,7 +88,6 @@ const LeaMobile = () => {
     <>
       <Head><title>Lea — Estudios 421</title></Head>
       <div className="bg-black text-white min-h-screen">
-        {/* TU HOME ORIGINAL NO TOCADO */}
         <Footer />
       </div>
     </>
