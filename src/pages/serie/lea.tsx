@@ -13,22 +13,19 @@ const LeaPage = () => {
   useEffect(() => {
     // BLINDAJE: Protección contra clic derecho e inspección de elementos
     const disableProtections = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof MouseEvent && e.button === 2) e.preventDefault(); // Clic derecho
+      if (e instanceof MouseEvent && e.button === 2) e.preventDefault();
       if (e instanceof KeyboardEvent) {
-        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault(); // Ctrl+U, S, I, J
-        if (e.key === 'F12') e.preventDefault(); // F12
+        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault();
+        if (e.key === 'F12') e.preventDefault();
       }
     };
 
     document.addEventListener('contextmenu', (e) => e.preventDefault());
     document.addEventListener('keydown', disableProtections);
 
-    // DETECCIÓN MAESTRA DE DISPOSITIVO
     const handleResize = () => {
       const width = window.innerWidth;
       const ua = navigator.userAgent.toLowerCase();
-      
-      // Detección Smart TV reforzada
       const isTV = /smarttv|smart-tv|tizen|webos|hbbtv|appletv|googletv|viera|aquos|netcast|roku|sharp|philips/.test(ua);
 
       if (isTV) {
@@ -55,15 +52,12 @@ const LeaPage = () => {
   return (
     <>
       <Head>
-        {/* Blindaje de imágenes: evita arrastrar y soltar */}
         <style>{`
           img { 
             -webkit-user-drag: none; 
             user-drag: none; 
             pointer-events: none; 
           }
-          
-          /* MODIFICACIÓN DE SEGURIDAD: Selección dinámica según dispositivo */
           body { 
             -webkit-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
             -moz-user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
@@ -71,7 +65,6 @@ const LeaPage = () => {
             user-select: ${deviceType === 'mobile' ? 'auto' : 'none'}; 
             background-color: black;
           }
-          
           iframe { pointer-events: auto; }
         `}</style>
       </Head>
