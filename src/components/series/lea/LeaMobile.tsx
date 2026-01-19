@@ -83,9 +83,6 @@ const LeaMobile = () => {
             className="w-full aspect-video border-none" 
             allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture" 
             allowFullScreen 
-            webkitallowfullscreen="true"
-            mozallowfullscreen="true"
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
           />
         </div>
         
