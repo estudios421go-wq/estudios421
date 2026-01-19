@@ -81,9 +81,8 @@ const LeaMobile = () => {
           <iframe 
             src={selectedVideo + "?autoplay=1"} 
             className="w-full aspect-video border-none" 
-            allow="autoplay; fullscreen; accelerometer; gyroscope; picture-in-picture" 
+            allow="autoplay; fullscreen" 
             allowFullScreen 
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
           />
         </div>
         
