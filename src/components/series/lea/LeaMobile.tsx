@@ -68,7 +68,7 @@ const LeaMobile = () => {
 
   if (selectedVideo) {
     return (
-      <div className="bg-black min-h-screen w-full flex flex-col">
+      <div className="fixed inset-0 bg-black w-full h-full flex flex-col z-[9999]">
         <div className="h-[10vh] min-h-[60px] px-6 flex items-center justify-between border-b border-white/5 bg-black">
           <div className="flex flex-col max-w-[70%] border-l-2 border-[#F09800] pl-3">
             <span className="text-[8px] font-black text-[#F09800] uppercase tracking-widest">Estudios 421</span>
@@ -77,10 +77,10 @@ const LeaMobile = () => {
           <button onClick={() => setSelectedVideo(null)} className="text-4xl p-2">&times;</button>
         </div>
         
-        <div className="flex-grow flex items-center justify-center bg-black">
+        <div className="flex-1 flex items-center justify-center bg-black overflow-hidden">
           <iframe 
             src={selectedVideo + "?autoplay=1"} 
-            className="w-full aspect-video border-none" 
+            className="w-full h-full border-none" 
             allow="autoplay; fullscreen" 
             allowFullScreen 
           />
