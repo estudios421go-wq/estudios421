@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-
-// Importación blindada para evitar errores de módulo en Render
-const JoseDeEgiptoPC = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoPC'), { ssr: false });
-const JoseDeEgiptoMobile = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoMobile'), { ssr: false });
+// IMPORTACIONES CORREGIDAS CON LA NUEVA CARPETA
+import JoseDeEgiptoPC from '../../components/series/jose-de-egipto/JoseDeEgiptoPC';
+import JoseDeEgiptoMobile from '../../components/series/jose-de-egipto/JoseDeEgiptoMobile';
 
 const JoseDeEgiptoPage = () => {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
