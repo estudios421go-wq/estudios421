@@ -6,8 +6,41 @@ import { useRouter } from 'next/router';
 import { IoSearchOutline, IoMenuOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import Footer from '../../Footer';
 
+// BASE DE DATOS REEMPLAZADA AL 100%
 const joseEpisodes = [
-  // ... (Aquí van los 33 episodios con la misma estructura que puse arriba, los incluyo todos en el archivo final)
+  { id: 1, title: "El nacimiento de José", dur: "42:50", thumb: "https://static.wixstatic.com/media/859174_b44bad1703f7498ab87ffc2899850ed7~mv2.jpg", url: "https://ok.ru/videoembed/14201500797440" },
+  { id: 2, title: "Espadas desaparecidas", dur: "41:20", thumb: "https://static.wixstatic.com/media/859174_04e0e0290e5b4812a701e159ffdce225~mv2.jpg", url: "https://ok.ru/videoembed/14202233752064" },
+  { id: 3, title: "Salvados por la tormenta", dur: "42:46", thumb: "https://static.wixstatic.com/media/859174_fa024efd1a9242e6911adc037fc17058~mv2.jpg", url: "https://ok.ru/videoembed/14202488490496" },
+  { id: 4, title: "Privilegios y celos", dur: "42:50", thumb: "https://static.wixstatic.com/media/859174_d196ab94593b4992a2ec6fac714bb91e~mv2.jpg", url: "https://ok.ru/videoembed/14202491636224" },
+  { id: 5, title: "Clemencia en el campo", dur: "42:08", thumb: "https://static.wixstatic.com/media/859174_85bf93bcc19647e19992cd6ba83fc345~mv2.jpg", url: "https://ok.ru/videoembed/14202493209088" },
+  { id: 6, title: "El pozo del sufrimiento", dur: "41:59", thumb: "https://static.wixstatic.com/media/859174_f2232a43af444ac79066a4ebd9eabefc~mv2.jpg", url: "https://ok.ru/videoembed/14202495502848" },
+  { id: 7, title: "Llegada a Egipto", dur: "43:36", thumb: "https://static.wixstatic.com/media/859174_d7cce2bce30141f8b88197247ca7eae3~mv2.jpg", url: "https://ok.ru/videoembed/14202701548032" },
+  { id: 8, title: "Huida inesperada", dur: "43:17", thumb: "https://static.wixstatic.com/media/859174_30fa53f8486c45f2ba234f081e926ecb~mv2.jpg", url: "https://ok.ru/videoembed/14202703710720" },
+  { id: 9, title: "Confesiones ocultas", dur: "43:19", thumb: "https://static.wixstatic.com/media/859174_d0cf09bdebe84778b1dc8c6594d77df7~mv2.jpg", url: "https://ok.ru/videoembed/14202705086976" },
+  { id: 10, title: "Fidelidad puesta a prueba", dur: "42:42", thumb: "https://static.wixstatic.com/media/859174_d4b83ba525714ddab298a831494f4dd1~mv2.jpg", url: "https://ok.ru/videoembed/14202726844928" },
+  { id: 11, title: "Decisiones prohibidas", dur: "43:18", thumb: "https://static.wixstatic.com/media/859174_56f0a2b0536f46eb96af799c073b4ae3~mv2.jpg", url: "https://ok.ru/videoembed/14540463606272" },
+  { id: 12, title: "La verdad revelada", dur: "43:23", thumb: "https://static.wixstatic.com/media/859174_4a4c48e7687c437d91f94f83438c726f~mv2.jpg", url: "https://ok.ru/videoembed/14540464916992" },
+  { id: 13, title: "Planes de traición", dur: "43:21", thumb: "https://static.wixstatic.com/media/859174_e49b213150b94ab987c2c960c2d3d89e~mv2.jpg", url: "https://ok.ru/videoembed/14540466620928" },
+  { id: 14, title: "Sabiduría egipcia", dur: "41:21", thumb: "https://static.wixstatic.com/media/859174_b740a577b4e241b1ab9352239a0bd135~mv2.jpg", url: "https://ok.ru/videoembed/14556467038720" },
+  { id: 15, title: "Sin noticias del pasado", dur: "43:21", thumb: "https://static.wixstatic.com/media/859174_8daae9eb494f435f8dc3a53b4a0eb9ee~mv2.jpg", url: "https://ok.ru/videoembed/14556484078080" },
+  { id: 16, title: "Deseo y traición", dur: "42:11", thumb: "https://static.wixstatic.com/media/859174_f4968b0eae3443ee95950fc5e79bc800~mv2.jpg", url: "https://ok.ru/videoembed/14556484536832" },
+  { id: 17, title: "El significado de los sueños", dur: "42:34", thumb: "https://static.wixstatic.com/media/859174_e655497fab594a7dbb9dc56028484568~mv2.jpg", url: "https://ok.ru/videoembed/14556636449280" },
+  { id: 18, title: "Caída en desgracia", dur: "42:09", thumb: "https://static.wixstatic.com/media/859174_8427e058b1df4ce594242b23cb33a0e9~mv2.jpg", url: "https://ok.ru/videoembed/14556636908032" },
+  { id: 19, title: "El precio de la verdad", dur: "42:02", thumb: "https://static.wixstatic.com/media/859174_6c7fc3ce3dac41f0aa7703f486074ad1~mv2.jpg", url: "https://ok.ru/videoembed/14556762999296" },
+  { id: 20, title: "De esclavo a gobernador", dur: "42:09", thumb: "https://static.wixstatic.com/media/859174_74b0f8e6e0db46b69207a8a2f1046450~mv2.jpg", url: "https://ok.ru/videoembed/14556763654656" },
+  { id: 21, title: "Revelaciones peligrosas", dur: "42:37", thumb: "https://static.wixstatic.com/media/859174_2ce9f56b09984eeb92356e3dba4f472e~mv2.jpg", url: "https://ok.ru/videoembed/14556764310016" },
+  { id: 22, title: "Dolor y confesiones", dur: "42:31", thumb: "https://static.wixstatic.com/media/859174_8ae4948f1b8f4332874878c7a4d90d6c~mv2.jpg", url: "https://ok.ru/videoembed/14556764703232" },
+  { id: 23, title: "Juicio y pesadillas", dur: "41:42", thumb: "https://static.wixstatic.com/media/859174_65288823091c423ead0a40284889c330~mv2.jpg", url: "https://ok.ru/videoembed/14556765030912" },
+  { id: 24, title: "El poder de los sueños", dur: "43:36", thumb: "https://static.wixstatic.com/media/859174_f4b598fae5914ee7a1bb1615b1889e4d~mv2.jpg", url: "https://ok.ru/videoembed/14540486609408" },
+  { id: 25, title: "Ascenso amenazado", dur: "39:00", thumb: "https://static.wixstatic.com/media/859174_d4e8dbf5e22a40a2ad7eadf1361388c0~mv2.jpg", url: "https://ok.ru/videoembed/14540488313344" },
+  { id: 26, title: "Objetivo del traidor", dur: "42:42", thumb: "https://static.wixstatic.com/media/859174_018c912a00804ef9a9e7a7244f181428~mv2.jpg", url: "https://ok.ru/videoembed/14540489886208" },
+  { id: 27, title: "Peligro en el palacio", dur: "42:25", thumb: "https://static.wixstatic.com/media/859174_770b78cf63b9488295dc20e0c0c4bd47~mv2.jpg", url: "https://ok.ru/videoembed/14540492507648" },
+  { id: 28, title: "Hambre y castigo", dur: "42:37", thumb: "https://static.wixstatic.com/media/859174_d9cbbe9380894663bb2727450cda429f~mv2.jpg", url: "https://ok.ru/videoembed/14540494080512" },
+  { id: 29, title: "En Egipto", dur: "42:29", thumb: "https://static.wixstatic.com/media/859174_21d59b65bd4a477b8e0afe08575a37f9~mv2.jpg", url: "https://ok.ru/videoembed/14556779842048" },
+  { id: 30, title: "Reencuentro inesperado", dur: "42:29", thumb: "https://static.wixstatic.com/media/859174_c7baf40be24d4bb2bf254f921f5c1f8d~mv2.jpg", url: "https://ok.ru/videoembed/14540497029632" },
+  { id: 31, title: "El dilema de José", dur: "42:30", thumb: "https://static.wixstatic.com/media/859174_f850e4ca54b741b3ab0aa845734af9f3~mv2.jpg", url: "https://ok.ru/videoembed/14540498471424" },
+  { id: 32, title: "Padre tu hijo esta vivo", dur: "41:46", thumb: "https://static.wixstatic.com/media/859174_8acdce69414d43d7af92b43fbeaedd17~mv2.jpg", url: "https://ok.ru/videoembed/14540500240896" },
+  { id: 33, title: "Amor y despedida", dur: "38:56", thumb: "https://static.wixstatic.com/media/859174_aabf06782221457f8f48f03c18e4403e~mv2.jpg", url: "https://ok.ru/videoembed/14540502272512" }
 ];
 
 const JoseDeEgiptoMobile = () => {
@@ -22,12 +55,16 @@ const JoseDeEgiptoMobile = () => {
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
+    
     const saved = localStorage.getItem('jose_last_ep');
     if (saved) setCurrentIdx(parseInt(saved));
+    
     const list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (list.includes('jose-de-egipto')) setInMyList(true);
+
     const handleContext = (e: MouseEvent) => e.preventDefault();
     document.addEventListener('contextmenu', handleContext);
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('contextmenu', handleContext);
