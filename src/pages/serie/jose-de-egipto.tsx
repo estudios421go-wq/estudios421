@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-// Corregimos las rutas eliminando un nivel de retroceso si es necesario
-// o asegurando que apunten a la carpeta correcta
-const JoseDeEgiptoPC = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoPC'));
-const JoseDeEgiptoMobile = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoMobile'));
+// Importación blindada para evitar errores de módulo en Render
+const JoseDeEgiptoPC = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoPC'), { ssr: false });
+const JoseDeEgiptoMobile = dynamic(() => import('../../components/series/jose-de-egipto/JoseDeEgiptoMobile'), { ssr: false });
 
 const JoseDeEgiptoPage = () => {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkDevice = () => {
-      // Mantenemos la lógica de 1024px que es estable
       setIsMobile(window.innerWidth < 1024);
     };
     checkDevice();
