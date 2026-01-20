@@ -177,7 +177,7 @@ const LeaMobile = () => {
       <div className="px-5 mt-12 mb-20">
         <header className="flex items-center gap-3 mb-6 border-b border-white/5 pb-3">
           <div className="w-1 h-5 bg-[#F09800]"></div>
-          <h2 className="text-[11px] font-black text-white/50 tracking-[0.3em] uppercase">Capítulos Disponibles</h2>
+          <h2 className="text-[11px] font-black text-white/50 tracking-[0.3em] uppercase">Episodios Disponibles</h2>
         </header>
         <div className="grid grid-cols-2 gap-5">
           {leaEpisodes.map((ep, index) => (
