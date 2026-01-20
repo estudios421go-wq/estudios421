@@ -1,58 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import Head from 'next/head';
 
 const LeaPC = dynamic(() => import('../../components/series/lea/LeaPC'));
 const LeaMobile = dynamic(() => import('../../components/series/lea/LeaMobile'));
-const LeaTV = dynamic(() => import('../../components/series/lea/LeaTV'));
 
 const LeaPage = () => {
-  const [deviceType, setDeviceType] = useState<'pc' | 'mobile' | 'tv' | null>(null);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const disableProtections = (e: MouseEvent | KeyboardEvent) => {
-      if (e instanceof MouseEvent && e.button === 2) e.preventDefault();
-      if (e instanceof KeyboardEvent) {
-        if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i' || e.key === 'j')) e.preventDefault();
-        if (e.key === 'F12') e.preventDefault();
-      }
+    const checkDevice = () => {
+      setIsMobile(window.innerWidth < 1024);
     };
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    document.addEventListener('keydown', disableProtections);
-
-    const handleResize = () => {
-      const width = window.innerWidth;
-      const ua = navigator.userAgent.toLowerCase();
-      const isTV = /smarttv|smart-tv|tizen|webos|hbbtv|appletv|googletv|viera|aquos|netcast|roku|sharp|philips/.test(ua);
-      if (isTV) { setDeviceType('tv'); } 
-      else if (width < 768) { setDeviceType('mobile'); } 
-      else { setDeviceType('pc'); }
-    };
-
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      document.removeEventListener('keydown', disableProtections);
-    };
+    checkDevice();
+    window.addEventListener('resize', checkDevice);
+    return () => window.removeEventListener('resize', checkDevice);
   }, []);
 
-  if (!deviceType) return <div className="bg-black min-h-screen" />;
+  if (isMobile === null) return <div className="bg-black min-h-screen" />;
 
-  return (
-    <>
-      <Head>
-        <style>{`
-          img { -webkit-user-drag: none; user-drag: none; pointer-events: none; }
-          body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-          iframe { pointer-events: auto; }
-        `}</style>
-      </Head>
-      {deviceType === 'pc' && <LeaPC />}
-      {deviceType === 'mobile' && <LeaMobile />}
-      {deviceType === 'tv' && <LeaTV />}
-    </>
-  );
+  return isMobile ? <LeaMobile /> : <LeaPC />;
 };
 
 export default LeaPage;
