@@ -1,21 +1,41 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Footer from '../../Footer';
 
-const JesusMobile = () => (
-  <div className="bg-black min-h-screen text-white font-sans flex flex-col text-center">
-    <Head><title>Jesús — Móvil</title></Head>
-    <div className="flex-grow flex flex-col items-center justify-center px-8 relative">
-      <div className="w-16 h-1 bg-[#FF8A00] mb-6" />
-      <h1 className="text-3xl font-black uppercase tracking-widest mb-4 leading-tight text-center">Jesús</h1>
-      <p className="text-[#FF8A00] text-[10px] font-bold tracking-widest uppercase mb-6 animate-pulse text-center">Reconstruyendo esta serie</p>
-      <p className="text-gray-500 text-xs leading-relaxed mb-10 text-center">Próximamente disponible con la mejor calidad. Gracias por tu paciencia.</p>
-      <Link href="/" className="w-full">
-        <button className="w-full bg-white text-black font-black py-4 rounded-xl text-xs uppercase tracking-widest active:scale-95 transition-transform">Volver al inicio</button>
-      </Link>
+const JesusPC = () => {
+  useEffect(() => {
+    const handleContext = (e: MouseEvent) => e.preventDefault();
+    const handleKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'i')) || e.key === 'F12') e.preventDefault();
+    };
+    document.addEventListener('contextmenu', handleContext);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('contextmenu', handleContext);
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, []);
+
+  return (
+    <div className="bg-black min-h-screen text-white font-sans select-none flex flex-col">
+      <Head><title>Jesús — Estudios 421</title></Head>
+      <div className="flex-grow flex flex-col items-center justify-center relative px-4 text-left">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FF8A00]/10 via-transparent to-black" />
+        <div className="z-10 text-center space-y-8 max-w-2xl">
+          <div className="w-24 h-1 bg-[#FF8A00] mx-auto shadow-[0_0_20px_#FF8A00]" />
+          <h1 className="text-6xl font-black uppercase tracking-[0.2em]">Jesús</h1>
+          <p className="text-[#FF8A00] text-sm font-bold tracking-[0.4em] uppercase">Estamos reconstruyendo esta experiencia</p>
+          <p className="text-gray-400 text-base leading-relaxed">Próximamente esta serie bíblica estará disponible con la mejor calidad y todas sus funcionalidades. Gracias por tu paciencia.</p>
+          <Link href="/">
+            <button className="mt-8 border border-white/20 px-12 py-4 rounded-full font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-500 transform hover:scale-105 shadow-2xl">
+              Volver al inicio
+            </button>
+          </Link>
+        </div>
+      </div>
+      <Footer />
     </div>
-    <Footer />
-  </div>
-);
-export default JesusMobile;
+  );
+};
+export default JesusPC;
