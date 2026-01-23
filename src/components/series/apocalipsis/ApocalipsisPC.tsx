@@ -38,4 +38,5 @@ const ApocalipsisPC = () => {
     </div>
   );
 };
+
 export default ApocalipsisPC;
