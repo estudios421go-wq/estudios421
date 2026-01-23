@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import Slider from 'react-slick';
 import { IoSearchOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { FaPlay, FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
-import { FaXTwitter, FaFa6XTwitter } from 'react-icons/fa6';
+import { FaXTwitter, FaXTwitter } from 'react-icons/fa6';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { BiDonateHeart } from 'react-icons/bi';
 import { allSeries } from '../../data/series';
