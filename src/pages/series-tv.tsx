@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-const SeriesTVPC = dynamic(() => import('../components/series-tv/SeriesTVPC'), { ssr: false });
-const SeriesTVMobile = dynamic(() => import('../components/series-tv/SeriesTVMobile'), { ssr: false });
-const SeriesTVTV = dynamic(() => import('../components/series-tv/SeriesTVTV'), { ssr: false });
+const SeriesTVPC = dynamic(() => import('../components/hub-series-tv/SeriesTVPC'), { ssr: false });
+const SeriesTVMobile = dynamic(() => import('../components/hub-series-tv/SeriesTVMobile'), { ssr: false });
+const SeriesTVTV = dynamic(() => import('../components/hub-series-tv/SeriesTVTV'), { ssr: false });
 
 export default function SeriesTVPage() {
   const [device, setDevice] = useState<'mobile' | 'pc' | 'tv' | null>(null);
