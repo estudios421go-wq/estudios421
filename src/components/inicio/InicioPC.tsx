@@ -9,7 +9,7 @@ import { FaPlay, FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-ico
 import { FaXTwitter } from 'react-icons/fa6';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { BiDonateHeart } from 'react-icons/bi';
-import { allSeries, Serie } from '../data/series';
+import { allSeries, Serie } from '../../data/series';
 
 // --- COMPONENTE INTERNO: NAVBAR ---
 const Navbar = ({ searchQuery, setSearchQuery, handleSearch }: any) => {
