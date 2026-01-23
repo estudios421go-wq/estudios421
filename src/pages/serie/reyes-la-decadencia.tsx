@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import dynamic from 'dynamic';
+import dynamic from 'next/dynamic';
 
 const ReyesDecadenciaPC = dynamic(() => import('../../components/series/reyes-la-decadencia/ReyesLaDecadenciaPC'), { ssr: false });
 const ReyesDecadenciaMobile = dynamic(() => import('../../components/series/reyes-la-decadencia/ReyesLaDecadenciaMobile'), { ssr: false });
