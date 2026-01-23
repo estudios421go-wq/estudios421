@@ -3,10 +3,11 @@ import Head from 'next/head';
 import { IoShieldCheckmarkOutline, IoChatbubbleEllipsesOutline, IoWarningOutline } from 'react-icons/io5';
 
 const AyudaPC = () => {
-  // Inicialización del SDK de Facebook para que cargue el chat/comentarios
+  // Corregimos el error "Property FB does not exist" usando (window as any)
   useEffect(() => {
-    if (window.FB) {
-      window.FB.XFBML.parse();
+    const win = window as any;
+    if (win.FB) {
+      win.FB.XFBML.parse();
     }
   }, []);
 
@@ -14,8 +15,13 @@ const AyudaPC = () => {
     <div className="bg-black min-h-screen text-gray-300 font-sans">
       <Head>
         <title>Centro de Ayuda — Estudios 421</title>
-        {/* Script necesario para que Facebook funcione */}
-        <script async defer crossOrigin="anonymous" src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v18.0"></script>
+        {/* SDK de Facebook necesario para el chat/comentarios */}
+        <script 
+          async 
+          defer 
+          crossOrigin="anonymous" 
+          src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v18.0"
+        ></script>
       </Head>
 
       <main className="max-w-6xl mx-auto pt-24 pb-20 px-10">
@@ -25,7 +31,7 @@ const AyudaPC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* LADO IZQUIERDO: NORMAS */}
+          {/* SECCIÓN DE NORMAS */}
           <div className="space-y-8">
             <section className="bg-zinc-900/50 p-6 rounded-2xl border border-white/5">
               <h2 className="text-[#F09800] font-bold flex items-center gap-2 mb-4 uppercase text-sm tracking-widest">
@@ -38,26 +44,26 @@ const AyudaPC = () => {
                 </li>
                 <li className="flex gap-3">
                   <span className="text-[#F09800] font-bold">02.</span>
-                  <p>No Spam: Enlaces externos o publicidad no autorizada serán eliminados inmediatamente.</p>
+                  <p>No Spam: Enlaces externos o publicidad no autorizada serán eliminados.</p>
                 </li>
                 <li className="flex gap-3">
                   <span className="text-[#F09800] font-bold">03.</span>
-                  <p>Privacidad: No compartas datos personales propios o de terceros en el chat.</p>
+                  <p>Privacidad: No compartas datos personales en el chat público.</p>
                 </li>
               </ul>
             </section>
 
             <div className="p-6 bg-amber-900/10 border border-amber-900/20 rounded-2xl">
               <h3 className="text-white text-xs font-bold flex items-center gap-2 mb-2 uppercase">
-                <IoWarningOutline className="text-[#F09800]" /> Sistema de Moderación
+                <IoWarningOutline className="text-[#F09800]" /> Moderación Activa
               </h3>
               <p className="text-[10px] text-gray-500 leading-relaxed">
-                Estudios 421 utiliza moderación activa vía Facebook. El administrador tiene la facultad de bloquear cuentas que incumplan estas normas.
+                Estudios 421 utiliza herramientas de Facebook para la moderación. El administrador puede bloquear cuentas que incumplan las normas.
               </p>
             </div>
           </div>
 
-          {/* LADO DERECHO: CHAT / COMENTARIOS PROFESIONAL */}
+          {/* CONTENEDOR PROFESIONAL DE COMENTARIOS/CHAT */}
           <div className="lg:col-span-2 bg-white rounded-3xl overflow-hidden min-h-[500px] shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             <div className="bg-[#F09800] p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -71,11 +77,11 @@ const AyudaPC = () => {
               </div>
             </div>
 
-            {/* AQUÍ SE RENDERIZA EL PLUGIN DE FACEBOOK */}
             <div className="p-4 bg-white">
+              {/* Plugin de Facebook configurado para tu dominio */}
               <div 
                 className="fb-comments" 
-                data-href="https://estudios421.com/ayuda" 
+                data-href="https://estudios421.onrender.com/ayuda" 
                 data-width="100%" 
                 data-numposts="10" 
                 data-colorscheme="light">
