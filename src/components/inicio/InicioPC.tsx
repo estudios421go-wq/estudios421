@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import Slider from 'react-slick';
 import { IoSearchOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { FaPlay, FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
-import { FaXTwitter, FaXTwitter } from 'react-icons/fa6';
+import { FaXTwitter } from 'react-icons/fa6';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
 import { BiDonateHeart } from 'react-icons/bi';
 import { allSeries } from '../../data/series';
@@ -31,7 +31,6 @@ const InicioPC = () => {
     if (searchQuery.trim()) router.push(`/buscar?q=${encodeURIComponent(searchQuery)}`);
   };
 
-  // --- BLOQUE 1: NAVBAR ORIGINAL + EFECTO JOB ---
   const Navbar = (
     <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
       <div className="flex items-center gap-10">
@@ -60,7 +59,6 @@ const InicioPC = () => {
     </nav>
   );
 
-  // --- BLOQUE 2: HEROBANNER ORIGINAL (6 SERIES EXACTAS) ---
   const banners = [
     { id: 1, bg: "https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_6eb0c42c44e340d2a314f7be009d6e8a~mv2.png", desc: "Inspirada en el libro de Ester, esta historia revela cómo una joven guiada por su fe es llevada al corazón del imperio persa para cumplir un propósito divino." },
     { id: 2, bg: "https://static.wixstatic.com/media/859174_298156d13007436bade3f3219dac7771~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_373d72b97d7e49c6a2ed99da442b8e5a~mv2.png", desc: "En una etapa de corrupción espiritual, el reino de Israel se hunde bajo decisiones alejadas de Dios. Idolatría y guerras se entrelazan." },
@@ -70,7 +68,6 @@ const InicioPC = () => {
     { id: 6, bg: "https://static.wixstatic.com/media/859174_d16e8080cf4043e5a7b17a2538f8dcf5~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_4f27eb2a8b7741f69eccead2e7fd0dcf~mv2.png", desc: "En el Imperio romano, surge un amor imposible entre Elisa y Cayo. Las persecuciones ponen a prueba su relación y su esperanza." }
   ];
 
-  // --- BLOQUE 3: MOVIEROW ORIGINAL ---
   const MovieRow = ({ title, movies }: any) => {
     const sRef = useRef<Slider | null>(null);
     if (movies.length === 0) return null;
@@ -135,15 +132,14 @@ const InicioPC = () => {
         </div>
       </main>
 
-      {/* --- BLOQUE 4: FOOTER ORIGINAL --- */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center md:justify-end gap-6 mb-10">
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
+            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
