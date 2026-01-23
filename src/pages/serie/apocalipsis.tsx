@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic';
 
 const ApocalipsisPC = dynamic(() => import('../../components/series/apocalipsis/ApocalipsisPC'), { ssr: false });
 const ApocalipsisMobile = dynamic(() => import('../../components/series/apocalipsis/ApocalipsisMobile'), { ssr: false });
-const ApocalipsisTV = dynamic(() => import('../../components/series/apocalipsis/ApocalipsisTV'), { ssr: false });
 
 const ApocalipsisPage = () => {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
