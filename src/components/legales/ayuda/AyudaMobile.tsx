@@ -4,14 +4,22 @@ import { IoShieldCheckmarkOutline, IoChatbubbleEllipsesOutline } from 'react-ico
 
 const AyudaMobile = () => {
   useEffect(() => {
-    if (window.FB) window.FB.XFBML.parse();
+    // Usamos (window as any) para que TypeScript no bloquee la compilación en Render
+    if ((window as any).FB) {
+      (window as any).FB.XFBML.parse();
+    }
   }, []);
 
   return (
     <div className="bg-black min-h-screen text-gray-300 font-sans pb-10">
       <Head>
         <title>Soporte — Móvil</title>
-        <script async defer src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v18.0"></script>
+        {/* SDK de Facebook */}
+        <script 
+          async 
+          defer 
+          src="https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v18.0"
+        ></script>
       </Head>
 
       <main className="px-6 pt-20">
@@ -35,6 +43,7 @@ const AyudaMobile = () => {
           </div>
           
           <div className="p-2 min-h-[400px]">
+            {/* El plugin de comentarios apunta a tu dominio */}
             <div 
               className="fb-comments" 
               data-href="https://estudios421.com/ayuda" 
