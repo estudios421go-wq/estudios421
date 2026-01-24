@@ -15,6 +15,7 @@ const InicioPC = () => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [myList, setMyList] = useState<any[]>([]);
   const sliderRef = useRef<Slider | null>(null);
 
@@ -26,9 +27,23 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  // --- LÓGICA DE BÚSQUEDA ESTILO NETFLIX (TIEMPO REAL) ---
+  useEffect(() => {
+    if (searchQuery.trim().length > 0) {
+      const term = searchQuery.toLowerCase();
+      const filtered = allSeries.filter(serie => 
+        serie.title.toLowerCase().includes(term) || 
+        serie.category.toLowerCase().includes(term)
+      );
+      setSearchResults(filtered);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) router.push(`/buscar?q=${encodeURIComponent(searchQuery)}`);
+    // Prevenimos recarga, la búsqueda ya es en tiempo real
   };
 
   const Navbar = (
@@ -36,7 +51,6 @@ const InicioPC = () => {
       <div className="flex items-center gap-10">
         <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         <div className="flex gap-8">
-          {/* AJUSTE: Rutas de Navbar sin tildes según especificación */}
           <Link href="/" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
             Inicio
             <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
@@ -61,9 +75,15 @@ const InicioPC = () => {
             <Link key={l.n} href={l.n === '' ? '/' : `/${l.n}`}><img src={`https://static.wixstatic.com/media/859174_${l.img}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" /></Link>
           ))}
         </div>
-        <form onSubmit={handleSearch} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
+        <form onSubmit={handleSearchSubmit} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
           <IoSearchOutline className="text-white text-xl" />
-          <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
+          <input 
+            type="text" 
+            placeholder="Buscar por título o categoría..." 
+            value={searchQuery} 
+            onChange={(e) => setSearchQuery(e.target.value)} 
+            className="bg-transparent border-none outline-none text-white text-sm ml-2 w-48 placeholder:text-gray-400" 
+          />
         </form>
         <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
       </div>
@@ -92,10 +112,10 @@ const InicioPC = () => {
               <div key={m.id} className="px-1.5 outline-none py-4">
                 <Link href={m.path || '#'}>
                   <div className="relative aspect-[2/3] rounded-md transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl">
-                    <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10"><Image src={m.banner || m.image} alt={m.title} fill className="object-cover" unoptimized /></div>
+                    <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10"><Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized /></div>
                     <div className="absolute bottom-1 left-1 z-20">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' || m.isLatino ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
-                        {m.audio === 'Latino' || m.isLatino ? 'LAT' : 'SUB'}
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                        {m.audio === 'Latino' ? 'LAT' : 'SUB'}
                       </span>
                     </div>
                   </div>
@@ -110,7 +130,6 @@ const InicioPC = () => {
 
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
-      {/* AJUSTE: Título de la pestaña según especificación */}
       <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
       {Navbar}
       <main className="relative">
@@ -135,12 +154,46 @@ const InicioPC = () => {
           </Slider>
         </section>
 
-        <div className="relative z-30">
-          <MovieRow title="Mi Lista" movies={myList} />
-          <MovieRow title="Estrenos" movies={allSeries.filter(s => s.title.includes('Reyes') || s.title === 'La Reina de Persia')} />
-          <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
-          <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
-          <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
+        <div className="relative z-30 transition-all duration-500">
+          {/* LÓGICA DE VISUALIZACIÓN: RESULTADOS VS CARRUSELES */}
+          {searchQuery.trim().length > 0 ? (
+            <div className="px-16 pt-10 min-h-[60vh] bg-black/40 backdrop-blur-sm pb-20">
+              <h2 className="text-white text-2xl font-bold mb-8 uppercase tracking-widest flex items-center gap-3">
+                <span className="w-1.5 h-6 bg-[#FF8A00]" />
+                Resultados para: "{searchQuery}"
+              </h2>
+              {searchResults.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
+                  {searchResults.map((m) => (
+                    <Link key={m.id} href={m.path}>
+                      <div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[60] cursor-pointer shadow-2xl group">
+                        <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10 group-hover:ring-[#FF8A00]/50">
+                          <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
+                        </div>
+                        <div className="absolute bottom-1 left-1 z-20">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                            {m.audio === 'Latino' ? 'LAT' : 'SUB'}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-20 text-center">
+                  <p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-[-80px] md:mt-[-120px]">
+              <MovieRow title="Mi Lista" movies={myList} />
+              <MovieRow title="Estrenos" movies={allSeries.filter(s => s.title.includes('Reyes') || s.title === 'La Reina de Persia')} />
+              <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
+              <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
+              <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
+            </div>
+          )}
         </div>
       </main>
 
@@ -157,7 +210,6 @@ const InicioPC = () => {
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
             <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
-          {/* AJUSTE: Rutas de Footer según especificación */}
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
             <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
