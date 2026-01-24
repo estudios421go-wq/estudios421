@@ -36,12 +36,23 @@ const InicioPC = () => {
       <div className="flex items-center gap-10">
         <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         <div className="flex gap-8">
-          {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name) => (
-            <Link key={name} href={name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
-              {name}
-              <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === (name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`) ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </Link>
-          ))}
+          {/* AJUSTE: Rutas de Navbar sin tildes según especificación */}
+          <Link href="/" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
+            Inicio
+            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+          </Link>
+          <Link href="/series-biblicas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
+            Series Bíblicas
+            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+          </Link>
+          <Link href="/series-tv" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
+            Series TV
+            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+          </Link>
+          <Link href="/peliculas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
+            Películas
+            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+          </Link>
         </div>
       </div>
       <div className="flex items-center gap-6">
@@ -99,7 +110,8 @@ const InicioPC = () => {
 
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
-      <Head><title>Estudios 421</title></Head>
+      {/* AJUSTE: Título de la pestaña según especificación */}
+      <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
       {Navbar}
       <main className="relative">
         <section className="relative w-full h-[95vh] bg-black overflow-hidden">
@@ -145,12 +157,13 @@ const InicioPC = () => {
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
             <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
+          {/* AJUSTE: Rutas de Footer según especificación */}
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
-            <a href="#" className="hover:text-white transition-colors">Política de privacidad</a>
-            <a href="#" className="hover:text-white transition-colors">Términos de uso</a>
-            <a href="#" className="hover:text-white transition-colors">Configuración de cookies</a>
-            <a href="#" className="hover:text-white transition-colors">Especificaciones de anuncios</a>
-            <a href="#" className="hover:text-white transition-colors">Centro de ayuda</a>
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
+            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
+            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
           </div>
         </div>
       </footer>
