@@ -27,7 +27,7 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- LÓGICA DE BÚSQUEDA ESTILO NETFLIX (TIEMPO REAL) ---
+  // --- LÓGICA DE BÚSQUEDA INSTANTÁNEA ---
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
       const term = searchQuery.toLowerCase();
@@ -41,32 +41,15 @@ const InicioPC = () => {
     }
   }, [searchQuery]);
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Prevenimos recarga, la búsqueda ya es en tiempo real
-  };
-
   const Navbar = (
-    <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
+    <nav className={`fixed top-0 w-full z-[110] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
       <div className="flex items-center gap-10">
         <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         <div className="flex gap-8">
-          <Link href="/" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
-            Inicio
-            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-          </Link>
-          <Link href="/series-biblicas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
-            Series Bíblicas
-            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-          </Link>
-          <Link href="/series-tv" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
-            Series TV
-            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-          </Link>
-          <Link href="/peliculas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>
-            Películas
-            <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-          </Link>
+          <Link href="/" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Inicio<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/series-biblicas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Series Bíblicas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/series-tv" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Series TV<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/peliculas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Películas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
         </div>
       </div>
       <div className="flex items-center gap-6">
@@ -75,15 +58,9 @@ const InicioPC = () => {
             <Link key={l.n} href={l.n === '' ? '/' : `/${l.n}`}><img src={`https://static.wixstatic.com/media/859174_${l.img}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" /></Link>
           ))}
         </div>
-        <form onSubmit={handleSearchSubmit} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
+        <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
           <IoSearchOutline className="text-white text-xl" />
-          <input 
-            type="text" 
-            placeholder="Buscar por título o categoría..." 
-            value={searchQuery} 
-            onChange={(e) => setSearchQuery(e.target.value)} 
-            className="bg-transparent border-none outline-none text-white text-sm ml-2 w-48 placeholder:text-gray-400" 
-          />
+          <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
         </form>
         <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
       </div>
@@ -114,9 +91,7 @@ const InicioPC = () => {
                   <div className="relative aspect-[2/3] rounded-md transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl">
                     <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10"><Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized /></div>
                     <div className="absolute bottom-1 left-1 z-20">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
-                        {m.audio === 'Latino' ? 'LAT' : 'SUB'}
-                      </span>
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
                     </div>
                   </div>
                 </Link>
@@ -132,7 +107,35 @@ const InicioPC = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
       <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
       {Navbar}
+      
       <main className="relative">
+        {/* CAPA DE BÚSQUEDA (APA RECE SOBRE EL BANNER) */}
+        {searchQuery.length > 0 && (
+          <div className="fixed inset-0 bg-black z-[100] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
+             <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3">
+                <span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados para: "{searchQuery}"
+              </h2>
+              {searchResults.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
+                  {searchResults.map((m) => (
+                    <Link key={m.id} href={m.path}>
+                      <div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group">
+                        <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10 group-hover:ring-[#FF8A00]/50">
+                          <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
+                        </div>
+                        <div className="absolute bottom-1 left-1 z-20">
+                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p></div>
+              )}
+          </div>
+        )}
+
         <section className="relative w-full h-[95vh] bg-black overflow-hidden">
           <Slider {...{ dots: true, infinite: true, speed: 1000, autoplay: true, autoplaySpeed: 5000, pauseOnHover: false, arrows: false, dotsClass: "slick-dots custom-dots" }}>
             {banners.map((item) => (
@@ -154,46 +157,12 @@ const InicioPC = () => {
           </Slider>
         </section>
 
-        <div className="relative z-30 transition-all duration-500">
-          {/* LÓGICA DE VISUALIZACIÓN: RESULTADOS VS CARRUSELES */}
-          {searchQuery.trim().length > 0 ? (
-            <div className="px-16 pt-10 min-h-[60vh] bg-black/40 backdrop-blur-sm pb-20">
-              <h2 className="text-white text-2xl font-bold mb-8 uppercase tracking-widest flex items-center gap-3">
-                <span className="w-1.5 h-6 bg-[#FF8A00]" />
-                Resultados para: "{searchQuery}"
-              </h2>
-              {searchResults.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
-                  {searchResults.map((m) => (
-                    <Link key={m.id} href={m.path}>
-                      <div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[60] cursor-pointer shadow-2xl group">
-                        <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10 group-hover:ring-[#FF8A00]/50">
-                          <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
-                        </div>
-                        <div className="absolute bottom-1 left-1 z-20">
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
-                            {m.audio === 'Latino' ? 'LAT' : 'SUB'}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-20 text-center">
-                  <p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="mt-[-80px] md:mt-[-120px]">
-              <MovieRow title="Mi Lista" movies={myList} />
-              <MovieRow title="Estrenos" movies={allSeries.filter(s => s.title.includes('Reyes') || s.title === 'La Reina de Persia')} />
-              <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
-              <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
-              <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
-            </div>
-          )}
+        <div className="relative z-30 mt-[-80px] md:mt-[-120px]">
+          <MovieRow title="Mi Lista" movies={myList} />
+          <MovieRow title="Estrenos" movies={allSeries.filter(s => s.title.includes('Reyes') || s.title === 'La Reina de Persia')} />
+          <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
+          <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
+          <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
         </div>
       </main>
 
@@ -206,9 +175,9 @@ const InicioPC = () => {
             <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
-          <div className="mb-10 space-y-4">
-            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
+          <div className="mb-10 space-y-4 text-xs">
+            <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
+            <p className="text-gray-500">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
