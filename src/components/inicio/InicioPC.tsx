@@ -26,31 +26,43 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- MOTOR DE BÚSQUEDA INTELIGENTE UNIVERSAL ---
+  // --- MOTOR DE BÚSQUEDA POR CONCEPTOS (PASO 2 FINALIZADO) ---
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
       const normalize = (text: string) => 
         text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-      const searchTerms = normalize(searchQuery).split(" ").filter(t => t.length > 2);
+      const term = normalize(searchQuery);
+
+      // Diccionario de conceptos para búsquedas "redundantes" e inteligentes
+      const concepts: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division'],
+        david: ['david', 'reyes', 'casa de david', 'pastor'],
+        ester: ['ester', 'reina de persia', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo']
+      };
+
+      // Detectamos si el término de búsqueda pertenece a un concepto amplio
+      const conceptKey = Object.keys(concepts).find(key => term.includes(key));
+      const expandedTerms = conceptKey ? concepts[conceptKey] : [term];
 
       const filtered = allSeries.filter(serie => {
         const titleNormalized = normalize(serie.title);
         const categoryNormalized = normalize(serie.category || "");
         
-        // Coincidencia si alguna palabra de la búsqueda está en el título o categoría
-        return searchTerms.some(term => 
-          titleNormalized.includes(term) || categoryNormalized.includes(term)
-        );
+        // Buscamos coincidencia con el término original O con los términos del concepto expandido
+        return expandedTerms.some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
       });
 
-      // Ordenar por relevancia: los que coinciden con más términos primero
+      // Orden de prioridad: el nombre exacto siempre aparece primero
       const sortedResults = filtered.sort((a, b) => {
         const aTitle = normalize(a.title);
         const bTitle = normalize(b.title);
-        const aMatches = searchTerms.filter(t => aTitle.includes(t)).length;
-        const bMatches = searchTerms.filter(t => bTitle.includes(t)).length;
-        return bMatches - aMatches;
+        if (aTitle.includes(term) && !bTitle.includes(term)) return -1;
+        if (!aTitle.includes(term) && bTitle.includes(term)) return 1;
+        return 0;
       });
 
       setSearchResults(sortedResults);
