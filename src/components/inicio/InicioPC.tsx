@@ -26,43 +26,58 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- MOTOR DE BÚSQUEDA POR CONCEPTOS (PASO 2 FINALIZADO) ---
+  // --- MOTOR DE BÚSQUEDA SÚPER INTELIGENTE (PASO 2 - VERSIÓN FINAL) ---
   useEffect(() => {
-    if (searchQuery.trim().length > 0) {
+    if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => 
         text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
       const term = normalize(searchQuery);
 
-      // Diccionario de conceptos para búsquedas "redundantes" e inteligentes
-      const concepts: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo'],
-        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division'],
-        david: ['david', 'reyes', 'casa de david', 'pastor'],
-        ester: ['ester', 'reina de persia', 'artajerjes'],
-        pablo: ['pablo', 'apostol', 'cristo', 'saulo']
+      // Diccionario de Conceptos Ampliado para Redundancia Total
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
       };
 
-      // Detectamos si el término de búsqueda pertenece a un concepto amplio
-      const conceptKey = Object.keys(concepts).find(key => term.includes(key));
-      const expandedTerms = conceptKey ? concepts[conceptKey] : [term];
+      // 1. Obtener todos los términos relacionados si la búsqueda coincide con una "llave" del diccionario
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) {
+          values.forEach(v => relatedTerms.add(v));
+        }
+      });
 
+      // 2. Filtrar el inventario
       const filtered = allSeries.filter(serie => {
         const titleNormalized = normalize(serie.title);
         const categoryNormalized = normalize(serie.category || "");
         
-        // Buscamos coincidencia con el término original O con los términos del concepto expandido
-        return expandedTerms.some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
+        // Coincide si el título contiene el término buscado
+        // O si el título contiene alguno de los términos relacionados del diccionario
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || 
+               categoryNormalized.includes(term);
       });
 
-      // Orden de prioridad: el nombre exacto siempre aparece primero
-      const sortedResults = filtered.sort((a, b) => {
+      // 3. Orden Jerárquico: 
+      // Prioridad 1: Título empieza exactamente con la búsqueda.
+      // Prioridad 2: Título contiene la palabra.
+      // Prioridad 3: Relacionados temáticamente.
+      const sortedResults = [...filtered].sort((a, b) => {
         const aTitle = normalize(a.title);
         const bTitle = normalize(b.title);
-        if (aTitle.includes(term) && !bTitle.includes(term)) return -1;
-        if (!aTitle.includes(term) && bTitle.includes(term)) return 1;
-        return 0;
+        
+        const aStarts = aTitle.startsWith(term) ? 2 : aTitle.includes(term) ? 1 : 0;
+        const bStarts = bTitle.startsWith(term) ? 2 : bTitle.includes(term) ? 1 : 0;
+        
+        return bStarts - aStarts;
       });
 
       setSearchResults(sortedResults);
