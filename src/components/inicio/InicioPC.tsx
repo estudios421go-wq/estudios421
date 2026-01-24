@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Slider from 'react-slick';
-import { IoSearchOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
+import { IoSearchOutline } from 'react-icons/io5';
 import { FaPlay, FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { HiOutlineInformationCircle } from 'react-icons/hi';
@@ -17,7 +17,6 @@ const InicioPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [myList, setMyList] = useState<any[]>([]);
-  const sliderRef = useRef<Slider | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -27,14 +26,33 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- LÓGICA DE BÚSQUEDA INSTANTÁNEA ---
+  // --- MOTOR DE BÚSQUEDA FLEXIBLE (PASO 2 MEJORADO) ---
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
-      const term = searchQuery.toLowerCase();
-      const filtered = allSeries.filter(serie => 
-        serie.title.toLowerCase().includes(term) || 
-        serie.category.toLowerCase().includes(term)
-      );
+      // Función para quitar tildes y caracteres especiales
+      const normalize = (text: string) => 
+        text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+      const term = normalize(searchQuery);
+
+      const filtered = allSeries.filter(serie => {
+        const title = normalize(serie.title);
+        const category = normalize(serie.category || "");
+        
+        // 1. Coincidencia por inclusión (Moisés -> Moises)
+        if (title.includes(term) || category.includes(term)) return true;
+
+        // 2. Coincidencia parcial (Aproximación simple)
+        // Si el término es largo, permitimos que coincida aunque falten letras
+        if (term.length > 3) {
+          const words = title.split(" ");
+          return words.some(word => 
+            word.startsWith(term.substring(0, 3)) || term.startsWith(word.substring(0, 3))
+          );
+        }
+        return false;
+      });
+
       setSearchResults(filtered);
     } else {
       setSearchResults([]);
@@ -46,10 +64,10 @@ const InicioPC = () => {
       <div className="flex items-center gap-10">
         <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         <div className="flex gap-8">
-          <Link href="/" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Inicio<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/series-biblicas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Series Bíblicas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/series-tv" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Series TV<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/peliculas" className={`relative group text-white text-[15px] font-medium tracking-wide`}>Películas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Bíblicas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Películas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
         </div>
       </div>
       <div className="flex items-center gap-6">
@@ -109,7 +127,6 @@ const InicioPC = () => {
       {Navbar}
       
       <main className="relative">
-        {/* CAPA DE BÚSQUEDA (APA RECE SOBRE EL BANNER) */}
         {searchQuery.length > 0 && (
           <div className="fixed inset-0 bg-black z-[100] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
              <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3">
@@ -131,7 +148,7 @@ const InicioPC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p></div>
+                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados exactos.</p></div>
               )}
           </div>
         )}
@@ -140,7 +157,7 @@ const InicioPC = () => {
           <Slider {...{ dots: true, infinite: true, speed: 1000, autoplay: true, autoplaySpeed: 5000, pauseOnHover: false, arrows: false, dotsClass: "slick-dots custom-dots" }}>
             {banners.map((item) => (
               <div key={item.id} className="relative w-full h-[95vh] outline-none">
-                <div className="relative w-full h-full"><Image src={item.bg} alt="Banner" fill className="object-cover opacity-100 transition-opacity duration-500" priority /></div>
+                <div className="relative w-full h-full"><Image src={item.bg} alt="Banner" fill className="object-cover" priority /></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent z-10 w-2/3" />
                 <div className="absolute inset-0 z-20 flex flex-col justify-center px-20 pt-10">
