@@ -26,34 +26,34 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- MOTOR DE BÚSQUEDA FLEXIBLE (PASO 2 MEJORADO) ---
+  // --- MOTOR DE BÚSQUEDA INTELIGENTE UNIVERSAL ---
   useEffect(() => {
     if (searchQuery.trim().length > 0) {
-      // Función para quitar tildes y caracteres especiales
       const normalize = (text: string) => 
         text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-      const term = normalize(searchQuery);
+      const searchTerms = normalize(searchQuery).split(" ").filter(t => t.length > 2);
 
       const filtered = allSeries.filter(serie => {
-        const title = normalize(serie.title);
-        const category = normalize(serie.category || "");
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
         
-        // 1. Coincidencia por inclusión (Moisés -> Moises)
-        if (title.includes(term) || category.includes(term)) return true;
-
-        // 2. Coincidencia parcial (Aproximación simple)
-        // Si el término es largo, permitimos que coincida aunque falten letras
-        if (term.length > 3) {
-          const words = title.split(" ");
-          return words.some(word => 
-            word.startsWith(term.substring(0, 3)) || term.startsWith(word.substring(0, 3))
-          );
-        }
-        return false;
+        // Coincidencia si alguna palabra de la búsqueda está en el título o categoría
+        return searchTerms.some(term => 
+          titleNormalized.includes(term) || categoryNormalized.includes(term)
+        );
       });
 
-      setSearchResults(filtered);
+      // Ordenar por relevancia: los que coinciden con más términos primero
+      const sortedResults = filtered.sort((a, b) => {
+        const aTitle = normalize(a.title);
+        const bTitle = normalize(b.title);
+        const aMatches = searchTerms.filter(t => aTitle.includes(t)).length;
+        const bMatches = searchTerms.filter(t => bTitle.includes(t)).length;
+        return bMatches - aMatches;
+      });
+
+      setSearchResults(sortedResults);
     } else {
       setSearchResults([]);
     }
@@ -125,7 +125,6 @@ const InicioPC = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
       <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
       {Navbar}
-      
       <main className="relative">
         {searchQuery.length > 0 && (
           <div className="fixed inset-0 bg-black z-[100] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
@@ -148,7 +147,7 @@ const InicioPC = () => {
                   ))}
                 </div>
               ) : (
-                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados exactos.</p></div>
+                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p></div>
               )}
           </div>
         )}
