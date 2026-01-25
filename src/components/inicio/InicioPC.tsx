@@ -21,13 +21,17 @@ const InicioPC = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState({ url: "", path: "" });
 
-  const estrenoTitles = ["Reyes La Decadencia", "Pablo El Apóstol", "La Casa De David", "La Reina De Persia", "La Vida De Job", "El Señor Y La Sierva", "Reyes La Sucesión", "Nehemías"];
+  const estrenoTitles = [
+    "Reyes La Decadencia", "Pablo El Apóstol", "La Casa De David", 
+    "La Reina De Persia", "La Vida De Job", "El Señor Y La Sierva", 
+    "Reyes La Sucesión", "Nehemías"
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     
-    // Recomendados: 10 aleatorios excluyendo estrenos
+    // Recomendados: 10 aleatorios de la lista completa (excluyendo estrenos)
     const pool = allSeries.filter(s => !estrenoTitles.includes(s.title));
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     setRecommended(shuffled.slice(0, 10));
@@ -38,6 +42,12 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // --- FUNCIÓN openTrailer DEFINIDA PARA CORREGIR EL ERROR DE COMPILACIÓN ---
+  const openTrailer = (url: string, path: string) => {
+    setActiveTrailer({ url, path });
+    setShowModal(true);
+  };
+
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -46,7 +56,7 @@ const InicioPC = () => {
     } else { setSearchResults([]); }
   }, [searchQuery]);
 
-  // Componentes de Flechas Extremas
+  // Flechas en los extremos absolutos
   const NextArrow = ({ onClick }: any) => (
     <div className="absolute right-0 top-0 bottom-0 z-50 flex items-center justify-center w-12 bg-black/20 hover:bg-black/60 cursor-pointer group/arrow transition-all" onClick={onClick}>
       <IoChevronForward className="text-white group-hover:text-[#FF8A00] transition-colors" size={45} />
@@ -61,20 +71,28 @@ const InicioPC = () => {
 
   const MovieRow = ({ title, movies }: any) => {
     if (movies.length === 0) return null;
-    const settings = { dots: false, infinite: movies.length > 6, speed: 500, slidesToShow: 6, slidesToScroll: 4, nextArrow: <NextArrow />, prevArrow: <PrevArrow /> };
+    const settings = { 
+        dots: false, 
+        infinite: movies.length > 6, 
+        speed: 500, 
+        slidesToShow: 6, 
+        slidesToScroll: 4, 
+        nextArrow: <NextArrow />, 
+        prevArrow: <PrevArrow /> 
+    };
     return (
       <div className="mb-14 px-4 md:px-16 relative group/row overflow-hidden">
         <h2 className="text-white text-xl font-bold mb-4 uppercase tracking-wider ml-2 flex items-center gap-3">
           <span className="w-1.5 h-6 bg-[#FF8A00]" />{title}
         </h2>
-        <div className="relative slider-container-fixed border-x border-transparent">
+        <div className="relative slider-container-fixed">
           <Slider {...settings} className="movie-slider">
             {movies.map((m: any) => (
               <div key={m.id} className="px-1.5 outline-none py-4">
                 <Link href={m.path || '#'}>
                   <div className="relative aspect-[2/3] rounded-lg transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl group/poster">
                     <div className="relative w-full h-full rounded-lg overflow-hidden ring-1 ring-white/10 group-hover/poster:ring-2 group-hover/poster:ring-[#FF8A00]/50">
-                      <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
+                      <Image src={m.banner} alt={m.title} fill className="object-cover rounded-lg" unoptimized />
                     </div>
                     <div className="absolute bottom-2 left-2 z-20">
                       <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
@@ -124,7 +142,7 @@ const InicioPC = () => {
       <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
       {Navbar}
       <main className="relative">
-        {/* BUSCADOR OVERLAY ORIGINAL */}
+        {/* BUSCADOR OVERLAY ORIGINAL RECUPERADO */}
         {searchQuery.length > 0 && (
           <div className="fixed inset-0 bg-black z-[120] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
              <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -139,7 +157,7 @@ const InicioPC = () => {
         {/* MODAL DE TRAILER */}
         {showModal && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center px-4">
-            <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setShowModal(false)} />
+            <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setShowModal(false)} />
             <div className="relative w-full max-w-5xl aspect-video bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(255,138,0,0.25)] border border-white/10">
               <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 z-[210] text-[#FF8A00] hover:scale-110 transition-transform"><IoCloseOutline size={50} /></button>
               <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen />
@@ -179,14 +197,15 @@ const InicioPC = () => {
         </div>
       </main>
 
+      {/* FOOTER ORIGINAL RESTAURADO */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center md:justify-end gap-6 mb-10">
-            <a href="#" className="hover:text-[#FF8A00] transition-colors text-xl"><FaFacebookF /></a>
-            <a href="#" className="hover:text-[#FF8A00] transition-colors text-xl"><FaInstagram /></a>
-            <a href="#" className="hover:text-[#FF8A00] transition-colors text-xl"><FaTiktok /></a>
-            <a href="#" className="hover:text-[#FF8A00] transition-colors text-xl"><FaYoutube /></a>
-            <a href="#" className="hover:text-[#FF8A00] transition-colors text-xl"><FaXTwitter /></a>
+            <a href="#" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
+            <a href="#" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
+            <a href="#" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="#" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="#" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
