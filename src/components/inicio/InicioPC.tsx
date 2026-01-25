@@ -21,19 +21,36 @@ const InicioPC = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState({ url: "", path: "" });
 
-  const estrenoTitles = [
-    "Reyes La Decadencia", "Pablo El Apóstol", "La Casa De David", 
-    "La Reina De Persia", "La Vida De Job", "El Señor Y La Sierva", 
-    "Reyes La Sucesión", "Nehemías"
-  ];
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     
-    // Recomendados: 10 aleatorios de la lista completa (excluyendo estrenos)
-    const pool = allSeries.filter(s => !estrenoTitles.includes(s.title));
-    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    // LÓGICA RECOMENDADOS: 10 posters aleatorios de la lista maestra enviada
+    const poolRecomendados = [
+      { title: "Génesis", banner: "https://static.wixstatic.com/media/859174_018cfcb041814b67bd52c6a4359b3cbc~mv2.jpg", path: "/serie/genesis", audio: "Latino" },
+      { title: "Lea", banner: "https://static.wixstatic.com/media/859174_dae68737adf0429d906c00ccd6312b48~mv2.jpg", path: "/serie/lea", audio: "Latino" },
+      { title: "La Vida de Job", banner: "https://static.wixstatic.com/media/859174_bf0ed28131784482ae405ea82eea4c97~mv2.jpg", path: "/serie/la-vida-de-job", audio: "Subtitulado" },
+      { title: "José de Egipto", banner: "https://static.wixstatic.com/media/859174_e4bd49f00d5d4377a7e404ae7246d696~mv2.jpg", path: "/serie/jose-de-egipto", audio: "Latino" },
+      { title: "Los Diez Mandamientos", banner: "https://static.wixstatic.com/media/859174_0e75860e77094dbf9f210a7822ba7f5e~mv2.jpg", path: "/serie/moises-y-los-diez-mandamientos", audio: "Latino" },
+      { title: "La Tierra Prometida", banner: "https://static.wixstatic.com/media/859174_e4d2a3d4cbe04efc8a90f9d17a3466e3~mv2.jpg", path: "/serie/la-tierra-prometida", audio: "Latino" },
+      { title: "Sansón y Dalila", banner: "https://static.wixstatic.com/media/859174_4b72ddf27fd9425f890afa32a6f0f29b~mv2.jpg", path: "/serie/sanson-y-dalila", audio: "Latino" },
+      { title: "Rey David", banner: "https://static.wixstatic.com/media/859174_e0555531e40c4362ad8d1e06f243af08~mv2.jpg", path: "/serie/rey-david", audio: "Latino" },
+      { title: "Reyes", banner: "https://static.wixstatic.com/media/859174_72102f14890f4c5b97cd1ba680dc700a~mv2.jpg", path: "/serie/reyes", audio: "Latino" },
+      { title: "Jezabel", banner: "https://static.wixstatic.com/media/859174_e64b24afc6174b53b7682529f7184069~mv2.jpg", path: "/serie/jezabel", audio: "Latino" },
+      { title: "El Rico y Lázaro", banner: "https://static.wixstatic.com/media/859174_4a207a35843047c7aa4400dff1a8bc68~mv2.jpg", path: "/serie/el-rico-y-lazaro", audio: "Latino" },
+      { title: "La Historia de Ester", banner: "https://static.wixstatic.com/media/859174_08a0b7968f0f48a4acbb8c58805d387e~mv2.jpg", path: "/serie/la-historia-de-la-reina-ester", audio: "Latino" },
+      { title: "La Reina de Persia", banner: "https://static.wixstatic.com/media/859174_f4ecd0fc68ec45a598afcdd9344cba79~mv2.jpg", path: "/serie/la-reina-de-persia", audio: "Latino" },
+      { title: "Nehemías", banner: "https://static.wixstatic.com/media/859174_2fa68ebd2b22447889e85bf3cebe4c75~mv2.jpg", path: "/serie/nehemias", audio: "Latino" },
+      { title: "Milagros de Jesús", banner: "https://static.wixstatic.com/media/859174_0d01d04096d144b7821f7c6438bc281d~mv2.jpg", path: "/serie/los-milagros-de-jesus", audio: "Latino" },
+      { title: "Jesús", banner: "https://static.wixstatic.com/media/859174_d9ce32069d954bc99d5db05bb90fc924~mv2.jpg", path: "/serie/jesus", audio: "Latino" },
+      { title: "Pablo El Apóstol", banner: "https://static.wixstatic.com/media/859174_c43f668e3a914d29b7c5e9f90e722641~mv2.jpg", path: "/serie/pablo-el-apostol", audio: "Latino" },
+      { title: "El Señor y La Sierva", banner: "https://static.wixstatic.com/media/859174_b3605a85f77244c3a348ae3561ce49bb~mv2.jpg", path: "/serie/el-senor-y-la-sierva", audio: "Subtitulado" },
+      { title: "Apocalipsis", banner: "https://static.wixstatic.com/media/859174_3187cee73d2e4cd9bc1aa7971fd2c117~mv2.jpg", path: "/serie/apocalipsis", audio: "Latino" },
+      { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_cc2c878f7a0a4fffa5b63ef31048fb75~mv2.jpg", path: "/serie-tv/la-casa-de-david", audio: "Latino" },
+      { title: "Reyes La Decepción", banner: "https://static.wixstatic.com/media/859174_e6a7e56fc1d3456c80a1be6c93eaa3ea~mv2.jpg", path: "/serie/reyes-la-decepcion", audio: "Latino" },
+      { title: "Reyes La Esperanza", banner: "https://static.wixstatic.com/media/859174_5333427811fa4d8c94d72a12b17b231f~mv2.jpg", path: "/serie/reyes-la-esperanza", audio: "Latino" }
+    ];
+    const shuffled = [...poolRecomendados].sort(() => 0.5 - Math.random());
     setRecommended(shuffled.slice(0, 10));
 
     const saved = JSON.parse(localStorage.getItem('myList') || '[]');
@@ -42,7 +59,6 @@ const InicioPC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- FUNCIÓN openTrailer DEFINIDA PARA CORREGIR EL ERROR DE COMPILACIÓN ---
   const openTrailer = (url: string, path: string) => {
     setActiveTrailer({ url, path });
     setShowModal(true);
@@ -56,43 +72,35 @@ const InicioPC = () => {
     } else { setSearchResults([]); }
   }, [searchQuery]);
 
-  // Flechas en los extremos absolutos
+  // Flechas con iluminación naranja en el recuadro
   const NextArrow = ({ onClick }: any) => (
-    <div className="absolute right-0 top-0 bottom-0 z-50 flex items-center justify-center w-12 bg-black/20 hover:bg-black/60 cursor-pointer group/arrow transition-all" onClick={onClick}>
-      <IoChevronForward className="text-white group-hover:text-[#FF8A00] transition-colors" size={45} />
+    <div className="absolute right-0 top-0 bottom-0 z-50 flex items-center justify-center w-12 hover:bg-[#F09800] cursor-pointer group/arrow transition-all duration-300" onClick={onClick}>
+      <IoChevronForward className="text-white group-hover:scale-125 transition-transform" size={45} />
     </div>
   );
 
   const PrevArrow = ({ onClick }: any) => (
-    <div className="absolute left-0 top-0 bottom-0 z-50 flex items-center justify-center w-12 bg-black/20 hover:bg-black/60 cursor-pointer group/arrow transition-all" onClick={onClick}>
-      <IoChevronBack className="text-white group-hover:text-[#FF8A00] transition-colors" size={45} />
+    <div className="absolute left-0 top-0 bottom-0 z-50 flex items-center justify-center w-12 hover:bg-[#F09800] cursor-pointer group/arrow transition-all duration-300" onClick={onClick}>
+      <IoChevronBack className="text-white group-hover:scale-125 transition-transform" size={45} />
     </div>
   );
 
   const MovieRow = ({ title, movies }: any) => {
     if (movies.length === 0) return null;
-    const settings = { 
-        dots: false, 
-        infinite: movies.length > 6, 
-        speed: 500, 
-        slidesToShow: 6, 
-        slidesToScroll: 4, 
-        nextArrow: <NextArrow />, 
-        prevArrow: <PrevArrow /> 
-    };
+    const settings = { dots: false, infinite: movies.length > 6, speed: 500, slidesToShow: 6, slidesToScroll: 4, nextArrow: <NextArrow />, prevArrow: <PrevArrow /> };
     return (
       <div className="mb-14 px-4 md:px-16 relative group/row overflow-hidden">
         <h2 className="text-white text-xl font-bold mb-4 uppercase tracking-wider ml-2 flex items-center gap-3">
           <span className="w-1.5 h-6 bg-[#FF8A00]" />{title}
         </h2>
-        <div className="relative slider-container-fixed">
+        <div className="relative">
           <Slider {...settings} className="movie-slider">
-            {movies.map((m: any) => (
-              <div key={m.id} className="px-1.5 outline-none py-4">
+            {movies.map((m: any, idx: number) => (
+              <div key={idx} className="px-1.5 outline-none py-4">
                 <Link href={m.path || '#'}>
                   <div className="relative aspect-[2/3] rounded-lg transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl group/poster">
                     <div className="relative w-full h-full rounded-lg overflow-hidden ring-1 ring-white/10 group-hover/poster:ring-2 group-hover/poster:ring-[#FF8A00]/50">
-                      <Image src={m.banner} alt={m.title} fill className="object-cover rounded-lg" unoptimized />
+                      <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
                     </div>
                     <div className="absolute bottom-2 left-2 z-20">
                       <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
@@ -107,42 +115,71 @@ const InicioPC = () => {
     );
   };
 
-  const Navbar = (
-    <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
-      <div className="flex items-center gap-10">
-        <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
-        <div className="flex gap-8">
-          <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Bíblicas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
-          <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
-          <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Películas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
-        </div>
-      </div>
-      <div className="flex items-center gap-6">
-        <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
-          <IoSearchOutline className="text-white text-xl" />
-          <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
-        </form>
-        <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
-      </div>
-    </nav>
-  );
+  // DATOS ESPECÍFICOS POR CARRUSEL
+  const dataEstrenos = [
+    { title: "Reyes La Decadencia", banner: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", path: "serie/reyes-la-decadencia", audio: "Latino" },
+    { title: "Pablo El Apóstol", banner: "https://static.wixstatic.com/media/859174_1a4c34a2bb8a495bad6ea09b5da366dd~mv2.jpg", path: "serie/pablo-el-apostol", audio: "Latino" },
+    { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Subtitulado" },
+    { title: "La Reina De Persia", banner: "https://static.wixstatic.com/media/859174_25430a5b5d74415f8a6ad729958081d2~mv2.jpg", path: "serie/la-reina-de-persia", audio: "Latino" },
+    { title: "La Vida De Job", banner: "https://static.wixstatic.com/media/859174_d0095ad0db584be09c815e43b4bd1c39~mv2.jpg", path: "serie/la-vida-de-job", audio: "Subtitulado" },
+    { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" },
+    { title: "Reyes La Sucesión", banner: "https://static.wixstatic.com/media/859174_2960f93a729e41df96813820c93b80eb~mv2.jpg", path: "serie/reyes-la-sucesion", audio: "Latino" },
+    { title: "Nehemías", banner: "https://static.wixstatic.com/media/859174_fb1b30a68bcd427fa813140bd095f259~mv2.jpg", path: "serie/nehemias", audio: "Latino" }
+  ];
 
-  const banners = [
-    { id: 1, path: "/serie/la-reina-de-persia", trailer: "https://ok.ru/videoembed/14703414348288", bg: "https://static.wixstatic.com/media/859174_8880c8a667894fd1af103a0336171721~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_6eb0c42c44e340d2a314f7be009d6e8a~mv2.png", desc: "Inspirada en el libro de Ester, esta historia revela cómo una joven guiada por su fe es llevada al corazón del imperio persa para cumplir un propósito divino." },
-    { id: 2, path: "/serie/reyes-la-decadencia", trailer: "https://ok.ru/videoembed/14703415134720", bg: "https://static.wixstatic.com/media/859174_298156d13007436bade3f3219dac7771~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_373d72b97d7e49c6a2ed99da442b8e5a~mv2.png", desc: "En una etapa de corrupción espiritual, el reino de Israel se hunde bajo decisiones alejadas de Dios. Idolatría y guerras se entrelazan." },
-    { id: 3, path: "/serie/pablo-el-apostol", trailer: "https://ok.ru/videoembed/14703417887232", bg: "https://static.wixstatic.com/media/859174_3f7434c3c97d4ed982befff72cfdbd27~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_90bd74be414340e29671df248bade4a3~mv2.png", desc: "De perseguidor implacable a mensajero de Cristo, vive la transformación radical de Pablo de Tarso. Una fe inquebrantable que desafía imperios." },
-    { id: 4, path: "/serie/la-vida-de-job", trailer: "https://ok.ru/videoembed/14703420508672", bg: "https://static.wixstatic.com/media/859174_b9159dfbf8cc403eb180531c8338589e~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_57a3f59e3dc44abc96ad1508f1ecf6db~mv2.png", desc: "La fe de un hombre justo es llevada al límite tras perderlo todo. En medio del dolor, Job enfrenta preguntas profundas sobre el sufrimiento." },
-    { id: 5, path: "/serie-tv/la-casa-de-david", trailer: "https://ok.ru/videoembed/14703421032960", bg: "https://static.wixstatic.com/media/859174_25f3802c3bc0432b85c91bed4f588599~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_483e446bb507429694def615b148509d~mv2.png", desc: "De pastor de ovejas al trono de Israel, sigue la vida de David. Gigantes y batallas marcan el camino de un líder conforme al corazón de Dios." },
-    { id: 6, path: "/serie/el-senor-y-la-sierva", trailer: "https://ok.ru/videoembed/14703422867968", bg: "https://static.wixstatic.com/media/859174_d16e8080cf4043e5a7b17a2538f8dcf5~mv2.jpg", logo: "https://static.wixstatic.com/media/859174_4f27eb2a8b7741f69eccead2e7fd0dcf~mv2.png", desc: "En el Imperio romano, surge un amor imposible entre Elisa y Cayo. Las persecuciones ponen a prueba su relación y su esperanza." }
+  const dataBiblicas = [
+    { title: "Génesis", banner: "https://static.wixstatic.com/media/859174_018cfcb041814b67bd52c6a4359b3cbc~mv2.jpg", path: "serie/genesis", audio: "Latino" },
+    { title: "Lea", banner: "https://static.wixstatic.com/media/859174_dae68737adf0429d906c00ccd6312b48~mv2.jpg", path: "serie/lea", audio: "Latino" },
+    { title: "La Vida de Job", banner: "https://static.wixstatic.com/media/859174_bf0ed28131784482ae405ea82eea4c97~mv2.jpg", path: "serie/la-vida-de-job", audio: "Subtitulado" },
+    { title: "José de Egipto", banner: "https://static.wixstatic.com/media/859174_e4bd49f00d5d4377a7e404ae7246d696~mv2.jpg", path: "serie/jose-de-egipto", audio: "Latino" },
+    { title: "Los Diez Mandamientos", banner: "https://static.wixstatic.com/media/859174_0e75860e77094dbf9f210a7822ba7f5e~mv2.jpg", path: "serie/moises-y-los-diez-mandamientos", audio: "Latino" },
+    { title: "La Tierra Prometida", banner: "https://static.wixstatic.com/media/859174_e4d2a3d4cbe04efc8a90f9d17a3466e3~mv2.jpg", path: "serie/la-tierra-prometida", audio: "Latino" },
+    { title: "Sansón y Dalila", banner: "https://static.wixstatic.com/media/859174_4b72ddf27fd9425f890afa32a6f0f29b~mv2.jpg", path: "serie/sanson-y-dalila", audio: "Latino" },
+    { title: "Rey David", banner: "https://static.wixstatic.com/media/859174_e0555531e40c4362ad8d1e06f243af08~mv2.jpg", path: "serie/rey-david", audio: "Latino" },
+    { title: "Reyes", banner: "https://static.wixstatic.com/media/859174_72102f14890f4c5b97cd1ba680dc700a~mv2.jpg", path: "serie/reyes", audio: "Latino" },
+    { title: "Jezabel", banner: "https://static.wixstatic.com/media/859174_e64b24afc6174b53b7682529f7184069~mv2.jpg", path: "serie/jezabel", audio: "Latino" },
+    { title: "El Rico y Lázaro", banner: "https://static.wixstatic.com/media/859174_4a207a35843047c7aa4400dff1a8bc68~mv2.jpg", path: "serie/el-rico-y-lazaro", audio: "Latino" },
+    { title: "La Historia de Ester", banner: "https://static.wixstatic.com/media/859174_08a0b7968f0f48a4acbb8c58805d387e~mv2.jpg", path: "serie/la-historia-de-la-reina-ester", audio: "Latino" },
+    { title: "La Reina de Persia", banner: "https://static.wixstatic.com/media/859174_f4ecd0fc68ec45a598afcdd9344cba79~mv2.jpg", path: "serie/la-reina-de-persia", audio: "Latino" },
+    { title: "Nehemías", banner: "https://static.wixstatic.com/media/859174_2fa68ebd2b22447889e85bf3cebe4c75~mv2.jpg", path: "serie/nehemias", audio: "Subtitulado" },
+    { title: "Milagros de Jesús", banner: "https://static.wixstatic.com/media/859174_0d01d04096d144b7821f7c6438bc281d~mv2.jpg", path: "serie/los-milagros-de-jesus", audio: "Latino" },
+    { title: "Jesús", banner: "https://static.wixstatic.com/media/859174_d9ce32069d954bc99d5db05bb90fc924~mv2.jpg", path: "serie/jesus", audio: "Latino" },
+    { title: "Pablo El Apóstol", banner: "https://static.wixstatic.com/media/859174_c43f668e3a914d29b7c5e9f90e722641~mv2.jpg", path: "serie/pablo-el-apostol", audio: "Latino" },
+    { title: "El Señor y La Sierva", banner: "https://static.wixstatic.com/media/859174_b3605a85f77244c3a348ae3561ce49bb~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" },
+    { title: "Apocalipsis", banner: "https://static.wixstatic.com/media/859174_3187cee73d2e4cd9bc1aa7971fd2c117~mv2.jpg", path: "serie/apocalipsis", audio: "Latino" }
+  ];
+
+  const dataSeriesTV = [
+    { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_cc2c878f7a0a4fffa5b63ef31048fb75~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Latino" },
+    { title: "La Biblia", banner: "https://static.wixstatic.com/media/859174_aa4a8425d9714f0aa2f96b418a408747~mv2.jpg", path: "serie-tv/la-biblia", audio: "Latino" },
+    { title: "La Biblia Continúa", banner: "https://static.wixstatic.com/media/859174_e096b3d265a049d98bb882e620efb771~mv2.jpg", path: "serie-tv/la-biblia-continua", audio: "Latino" },
+    { title: "María Magdalena", banner: "https://static.wixstatic.com/media/859174_a6c8755b0d7f42d2b8ad21009f75c4e3~mv2.jpg", path: "serie-tv/maria-magdalena", audio: "Latino" },
+    { title: "Testamento La Historia De Moisés", banner: "https://static.wixstatic.com/media/859174_2eabf33760ca467895f9edd4646b2bbe~mv2.jpg", path: "serie-tv/testamento-la-historia-de-moises", audio: "Latino" },
+    { title: "Jesús De Nazaret", banner: "https://static.wixstatic.com/media/859174_a9d3a4a2dcaa4de4bd5c4d0be6d47613~mv2.jpg", path: "serie-tv/jesus-de-nazaret", audio: "Latino" }
+  ];
+
+  const dataPeliculas = [
+    { title: "La Pasón De Cristo", banner: "https://static.wixstatic.com/media/859174_68e2caed65fb48f482bead90d49ac07a~mv2.jpg", path: "pelicula/la-pasion-de-cristo", audio: "Latino" },
+    { title: "Ben Hur 1959", banner: "https://static.wixstatic.com/media/859174_e3ac4cc159834b3693529ae55a7e0301~mv2.jpg", path: "pelicula/ben-hur-1959", audio: "Latino" },
+    { title: "Los Diez Mandamientos", banner: "https://static.wixstatic.com/media/859174_bf2a773d1afe438dbd337595d26f4ea4~mv2.jpg", path: "pelicula/los-diez-mandamientos", audio: "Latino" },
+    { title: "La Vida Pública De Jesús", banner: "https://static.wixstatic.com/media/859174_38220362bde44213a0e94d65b00ee5c5~mv2.jpg", path: "pelicula/la-vida-publica-de-jesus", audio: "Latino" },
+    { title: "Su Único Hijo", banner: "https://static.wixstatic.com/media/859174_9434fb1fb91a4d09a9bcf2a0bdc85b08~mv2.jpg", path: "pelicula/su-unico-hijo", audio: "Latino" },
+    { title: "María", banner: "https://static.wixstatic.com/media/859174_2e4a16bf3a734176986ef81b8f9cd486~mv2.jpg", path: "pelicula/maria", audio: "Latino" },
+    { title: "Hijo De Dios", banner: "https://static.wixstatic.com/media/859174_285f0efa7e074594acae3f60be33db6b~mv2.jpg", path: "pelicula/hijo-de-dios", audio: "Latino" },
+    { title: "Pablo El Apóstol De Cristo", banner: "https://static.wixstatic.com/media/859174_c7361566c7fe41fab5de85fd9806d223~mv2.jpg", path: "pelicula/pablo-el-apostol-de-cristo", audio: "Latino" },
+    { title: "María Magdalena", banner: "https://static.wixstatic.com/media/859174_019343e65be24760870af76aa4dd9d7e~mv2.jpg", path: "pelicula/maria-magdalena", audio: "Latino" },
+    { title: "Ben Hur 2016", banner: "https://static.wixstatic.com/media/859174_3c33afd52cfa42c1966ee45ac42c694a~mv2.jpg", path: "pelicula/ben-hur-2016", audio: "Latino" },
+    { title: "Apocalipsis Edit", banner: "https://static.wixstatic.com/media/859174_392444e4313943e8903983ff7a5601b6~mv2.jpg", path: "pelicula/el-apocalipsis-de-san-juan", audio: "Latino" }
   ];
 
   return (
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
       <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
+      
       {Navbar}
+      
       <main className="relative">
-        {/* BUSCADOR OVERLAY ORIGINAL RECUPERADO */}
+        {/* BUSCADOR OVERLAY ORIGINAL */}
         {searchQuery.length > 0 && (
           <div className="fixed inset-0 bg-black z-[120] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
              <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -187,13 +224,14 @@ const InicioPC = () => {
           </Slider>
         </section>
 
+        {/* GRUPO DE CARRUSELES SUBIDO PARA ENCAJE PERFECTO */}
         <div className="relative z-30 pb-20 mt-[-60px]">
           <MovieRow title="Mi Lista" movies={myList} />
-          <MovieRow title="Estrenos" movies={allSeries.filter(s => estrenoTitles.includes(s.title))} />
-          <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
+          <MovieRow title="Estrenos" movies={dataEstrenos} />
+          <MovieRow title="Series Bíblicas" movies={dataBiblicas} />
           <MovieRow title="Recomendados" movies={recommended} />
-          <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
-          <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
+          <MovieRow title="Series TV" movies={dataSeriesTV} />
+          <MovieRow title="Películas" movies={dataPeliculas} />
         </div>
       </main>
 
@@ -228,7 +266,6 @@ const InicioPC = () => {
         .custom-dots li.slick-active { width: 45px !important; }
         .custom-dots li.slick-active button:before { color: #F09800 !important; content: '' !important; background: #F09800; width: 45px; height: 5px; border-radius: 3px; top: 10px; opacity: 1; }
         .movie-slider .slick-list { overflow: visible !important; }
-        .slider-container-fixed { position: relative; overflow: hidden; }
         .movie-slider .slick-prev, .movie-slider .slick-next { height: 100%; width: 48px; z-index: 100; top: 50%; transform: translateY(-50%); transition: all 0.3s ease; opacity: 0; }
         .group\/row:hover .movie-slider .slick-prev, .group\/row:hover .movie-slider .slick-next { opacity: 1; }
         .movie-slider .slick-prev { left: 0 !important; }
