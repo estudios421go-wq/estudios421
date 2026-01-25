@@ -17,52 +17,40 @@ const InicioPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [myList, setMyList] = useState<any[]>([]);
+  const [recommended, setRecommended] = useState<any[]>([]);
   
-  // Estados para el Modal de Tráiler
   const [showModal, setShowModal] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState({ url: "", path: "" });
+
+  // Listas de Estrenos para Exclusión
+  const estrenoTitles = [
+    "Reyes La Decadencia", "Pablo El Apóstol", "La Casa De David", 
+    "La Reina De Persia", "La Vida De Job", "El Señor Y La Sierva", 
+    "Reyes La Sucesión", "Nehemías"
+  ];
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
+    
+    // Generar Recomendados Aleatorios (Excluyendo Estrenos)
+    const pool = allSeries.filter(s => !estrenoTitles.includes(s.title));
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    setRecommended(shuffled.slice(0, 15));
+
     const saved = JSON.parse(localStorage.getItem('myList') || '[]');
     setMyList(allSeries.filter(s => saved.includes(s.id)));
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- MOTOR DE BÚSQUEDA SÚPER INTELIGENTE ---
+  // --- MOTOR DE BÚSQUEDA INTELIGENTE ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
-      const normalize = (text: string) => 
-        text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
-        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
-        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
-        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
-        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
-        biblia: ['biblia', 'continua', 'testamento', 'milagros']
-      };
-      const relatedTerms = new Set<string>();
-      relatedTerms.add(term);
-      Object.entries(themeMap).forEach(([key, values]) => {
-        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
-      });
-      const filtered = allSeries.filter(serie => {
-        const titleNormalized = normalize(serie.title);
-        const categoryNormalized = normalize(serie.category || "");
-        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
-      });
-      const sortedResults = [...filtered].sort((a, b) => {
-        const aTitle = normalize(a.title);
-        const bTitle = normalize(b.title);
-        const aStarts = aTitle.startsWith(term) ? 2 : aTitle.includes(term) ? 1 : 0;
-        const bStarts = bTitle.startsWith(term) ? 2 : bTitle.includes(term) ? 1 : 0;
-        return bStarts - aStarts;
-      });
-      setSearchResults(sortedResults);
+      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term) || normalize(serie.category || "").includes(term));
+      setSearchResults(filtered);
     } else {
       setSearchResults([]);
     }
@@ -78,18 +66,17 @@ const InicioPC = () => {
       <div className="flex items-center gap-10">
         <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         <div className="flex gap-8">
-          <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Bíblicas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-biblicas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/series-tv' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
-          <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Películas<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === '/peliculas' ? 'w-full' : 'w-0 group-hover:w-full'}`} /></Link>
+          {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name, idx) => {
+            const paths = ['/', '/series-biblicas', '/series-tv', '/peliculas'];
+            return (
+              <Link key={name} href={paths[idx]} className="relative group text-white text-[15px] font-medium tracking-wide">
+                {name}<span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 ${router.pathname === paths[idx] ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              </Link>
+            );
+          })}
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <div className="flex gap-4 mr-4">
-          {[{ n: '', img: '367960b11c1c44ba89cd1582fd1b5776' }, { n: 'en', img: '35112d9ffe234d6f9dcef16cf8f7544e' }, { n: 'pt', img: '830f1c20656e4d44a819bedfc13a22cc' }].map((l) => (
-            <Link key={l.n} href={l.n === '' ? '/' : `/${l.n}`}><img src={`https://static.wixstatic.com/media/859174_${l.img}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" /></Link>
-          ))}
-        </div>
         <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
           <IoSearchOutline className="text-white text-xl" />
           <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
@@ -110,19 +97,26 @@ const InicioPC = () => {
 
   const MovieRow = ({ title, movies }: any) => {
     if (movies.length === 0) return null;
-    const settings = { dots: false, infinite: movies.length > 6, speed: 500, slidesToShow: 6, slidesToScroll: 3, arrows: movies.length > 6 };
+    const settings = { dots: false, infinite: movies.length > 6, speed: 500, slidesToShow: 6, slidesToScroll: 3, arrows: true };
     return (
-      <div className="mb-4 px-4 md:px-16 relative group/row">
-        <h2 className="text-white text-xl font-bold mb-2 uppercase tracking-wider ml-2 opacity-80">{title}</h2>
+      <div className="mb-12 px-4 md:px-16 relative group/row">
+        <h2 className="text-white text-xl font-bold mb-4 uppercase tracking-wider ml-2 flex items-center gap-3">
+          <span className="w-1 h-6 bg-[#FF8A00]" />
+          {title}
+        </h2>
         <div className="relative slider-container">
           <Slider {...settings} className="movie-slider">
             {movies.map((m: any) => (
               <div key={m.id} className="px-1.5 outline-none py-4">
                 <Link href={m.path || '#'}>
-                  <div className="relative aspect-[2/3] rounded-md transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl">
-                    <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10"><Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized /></div>
-                    <div className="absolute bottom-1 left-1 z-20">
-                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
+                  <div className="relative aspect-[2/3] rounded-md transition-all duration-300 hover:scale-110 hover:z-[100] cursor-pointer shadow-2xl group/poster">
+                    <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10 group-hover/poster:ring-2 group-hover/poster:ring-[#FF8A00]/50 transition-all">
+                      <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
+                    </div>
+                    <div className="absolute bottom-2 left-2 z-20">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>
+                        {m.audio === 'Latino' ? 'LAT' : 'SUB'}
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -142,77 +136,34 @@ const InicioPC = () => {
       <main className="relative">
         {/* BUSCADOR OVERLAY */}
         {searchQuery.length > 0 && (
-          <div className="fixed inset-0 bg-black z-[100] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
-             <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3">
-                <span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados para: "{searchQuery}"
-              </h2>
-              {searchResults.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
-                  {searchResults.map((m) => (
-                    <Link key={m.id} href={m.path}>
-                      <div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group">
-                        <div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10 group-hover:ring-[#FF8A00]/50">
-                          <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
-                        </div>
-                        <div className="absolute bottom-1 left-1 z-20">
-                          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded border border-white/10 ${m.audio === 'Latino' ? 'bg-[#F09800] text-white' : 'bg-black/70 text-white backdrop-blur-md'}`}>{m.audio === 'Latino' ? 'LAT' : 'SUB'}</span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-20 text-center"><p className="text-gray-500 text-xl italic">No se encontraron resultados para su búsqueda.</p></div>
-              )}
+          <div className="fixed inset-0 bg-black z-[120] pt-24 px-8 md:px-16 overflow-y-auto pb-20">
+             <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
+             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-10">
+               {searchResults.map((m) => (
+                 <Link key={m.id} href={m.path}>
+                   <div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group"><div className="relative w-full h-full rounded-md overflow-hidden ring-1 ring-white/10"><Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized /></div></div>
+                 </Link>
+               ))}
+             </div>
           </div>
         )}
 
-        {/* MODAL DE TRAILER (VENTANA FLOTANTE) */}
+        {/* MODAL DE TRAILER */}
         {showModal && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-10 animate-in fade-in duration-300">
-            <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-            <div className="relative w-full max-w-5xl aspect-video bg-[#0a0a0a] rounded-xl overflow-hidden shadow-[0_0_50px_rgba(255,138,0,0.2)] border border-white/10">
-              {/* Botón Cerrar (X) */}
-              <button 
-                onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 z-[210] text-white/70 hover:text-[#FF8A00] transition-colors p-1"
-              >
-                <IoCloseOutline size={40} />
-              </button>
-
-              <iframe 
-                src={`${activeTrailer.url}?autoplay=1`}
-                className="w-full h-full"
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              />
-
-              {/* Botón Ver Ahora Interno */}
-              <div className="absolute bottom-6 left-8 z-[210]">
-                <button 
-                  onClick={() => router.push(activeTrailer.path)}
-                  className="bg-[#F09800] text-white px-8 py-3 rounded-md font-bold flex items-center gap-3 hover:scale-105 transition-transform shadow-xl"
-                >
-                  <FaPlay size={14} /> VER AHORA
-                </button>
+          <div className="fixed inset-0 z-[200] flex items-center justify-center px-4">
+            <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setShowModal(false)} />
+            <div className="relative w-full max-w-5xl aspect-video bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(240,152,0,0.3)] border border-white/10">
+              <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 z-50 text-[#FF8A00] hover:scale-110 transition-transform"><IoCloseOutline size={45} /></button>
+              <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen />
+              <div className="absolute bottom-6 left-8 flex gap-4">
+                <button onClick={() => router.push(activeTrailer.path)} className="bg-[#F09800] text-white px-8 py-3 rounded-md font-bold flex items-center gap-2 hover:scale-105 transition-transform"><FaPlay size={12} /> VER AHORA</button>
               </div>
             </div>
           </div>
         )}
 
-        <section className="relative w-full h-[95vh] bg-black overflow-hidden">
-          <Slider {...{ 
-            fade: true, 
-            dots: true, 
-            infinite: true, 
-            speed: 1500, 
-            autoplay: true, 
-            autoplaySpeed: 6000, 
-            pauseOnHover: false, 
-            arrows: false, 
-            dotsClass: "slick-dots custom-dots" 
-          }}>
+        <section className="relative w-full h-[95vh] bg-black overflow-hidden mb-12">
+          <Slider {...{ fade: true, dots: true, infinite: true, speed: 1000, autoplay: true, autoplaySpeed: 6000, pauseOnHover: false, arrows: false, dotsClass: "slick-dots custom-dots" }}>
             {banners.map((item) => (
               <div key={item.id} className="relative w-full h-[95vh] outline-none">
                 <div className="relative w-full h-full"><Image src={item.bg} alt="Banner" fill className="object-cover" priority /></div>
@@ -220,35 +171,11 @@ const InicioPC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent z-10 w-2/3" />
                 <div className="absolute inset-0 z-20 flex flex-col justify-center px-20 pt-10">
                   <div className="relative w-[450px] h-[160px] mb-6 drop-shadow-2xl"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" /></div>
-                  <p className="max-w-[550px] text-white text-[19px] font-medium mb-8 leading-relaxed drop-shadow-lg text-justify opacity-95">{item.desc}</p>
-                  
+                  <p className="max-w-[550px] text-white text-[19px] font-medium mb-8 leading-relaxed text-justify opacity-90">{item.desc}</p>
                   <div className="flex items-center gap-5">
-                    {/* Botón Ver Ahora Premium */}
-                    <button 
-                      onClick={() => router.push(item.path)}
-                      className="flex items-center justify-center gap-3 text-white px-9 py-3 rounded-md font-bold text-base shadow-[0_0_20px_rgba(240,152,0,0.4)] hover:shadow-[0_0_30px_rgba(240,152,0,0.6)] hover:scale-105 transition-all duration-300"
-                      style={{ backgroundColor: '#F09800' }}
-                    >
-                      <FaPlay size={12} /> Ver Ahora
-                    </button>
-
-                    {/* Botón Más Información Glassmorphism */}
-                    <button 
-                      onClick={() => openTrailer(item.trailer, item.path)}
-                      className="flex items-center justify-center gap-3 bg-white/10 text-white px-9 py-3 rounded-md font-bold backdrop-blur-md border border-white/20 text-base hover:bg-white/20 hover:scale-105 transition-all duration-300"
-                    >
-                      <HiOutlineInformationCircle size={24} /> Más Información
-                    </button>
-
-                    {/* Botón Donar Universal */}
-                    <a 
-                      href="https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS"
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="flex items-center justify-center gap-3 text-white px-6 py-3 rounded-md font-bold text-sm border border-[#F09800]/50 hover:bg-[#F09800]/10 hover:scale-105 transition-all duration-300 uppercase tracking-wider"
-                    >
-                      <BiDonateHeart size={20} className="text-[#F09800]" /> Donar
-                    </a>
+                    <button onClick={() => router.push(item.path)} className="bg-[#F09800] text-white px-9 py-3 rounded font-bold text-base shadow-[0_0_20px_rgba(240,152,0,0.4)] hover:scale-105 transition-all duration-300 flex items-center gap-2"><FaPlay size={12} /> VER AHORA</button>
+                    <button onClick={() => openTrailer(item.trailer, item.path)} className="bg-white/10 text-white px-9 py-3 rounded font-bold backdrop-blur-md border border-white/20 hover:bg-white/20 hover:scale-105 transition-all duration-300 flex items-center gap-2"><HiOutlineInformationCircle size={22} /> MÁS INFORMACIÓN</button>
+                    <a href="https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS" target="_blank" rel="noreferrer" className="bg-black/40 text-white px-6 py-3 rounded font-bold border border-[#F09800]/50 hover:border-[#F09800] hover:scale-105 transition-all duration-300 flex items-center gap-2 text-sm uppercase tracking-wider"><BiDonateHeart size={20} className="text-[#F09800]" /> Donar</a>
                   </div>
                 </div>
               </div>
@@ -256,9 +183,9 @@ const InicioPC = () => {
           </Slider>
         </section>
 
-        <div className="relative z-30 mt-[-80px] md:mt-[-120px]">
-          <MovieRow title="Mi Lista" movies={myList} />
-          <MovieRow title="Estrenos" movies={allSeries.filter(s => s.title.includes('Reyes') || s.title === 'La Reina de Persia')} />
+        <div className="relative z-30 pb-20">
+          <MovieRow title="Estrenos" movies={allSeries.filter(s => estrenoTitles.includes(s.title))} />
+          <MovieRow title="Recomendados" movies={recommended} />
           <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
           <MovieRow title="Series TV" movies={allSeries.filter(s => s.category === 'Serie de TV')} />
           <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
@@ -274,34 +201,28 @@ const InicioPC = () => {
             <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
-          <div className="mb-10 space-y-4 text-xs">
-            <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-            <p className="text-gray-500 opacity-60">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro.</p>
+          <div className="mb-10 space-y-4 text-xs opacity-60">
+            <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
+            <p>Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras. Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad.</p>
+          </div>
+          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
+            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
+            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
           </div>
         </div>
       </footer>
 
       <style jsx global>{`
-        /* Estilos Dots Elípticos Premium */
-        .custom-dots { bottom: 100px !important; z-index: 50 !important; text-align: left !important; padding-left: 80px !important; }
-        .custom-dots li { width: 12px !important; height: 12px !important; transition: all 0.5s ease; }
-        .custom-dots li button:before { color: white !important; font-size: 10px !important; opacity: 0.5; }
+        .custom-dots { bottom: 60px !important; text-align: center !important; }
+        .custom-dots li { margin: 0 5px !important; }
+        .custom-dots li button:before { color: white !important; font-size: 8px !important; opacity: 0.5; }
         .custom-dots li.slick-active { width: 40px !important; }
-        .custom-dots li.slick-active button:before { 
-          color: #F09800 !important; 
-          content: '' !important; 
-          background: #F09800; 
-          width: 40px; 
-          height: 5px; 
-          border-radius: 4px; 
-          top: 5px; 
-          opacity: 1; 
-        }
-
-        .slider-container::before, .slider-container::after { content: ""; position: absolute; top: 0; width: 100vw; height: 100%; background: black; z-index: 50; }
-        .slider-container::before { right: 100%; } .slider-container::after { left: 100%; }
-        .movie-slider .slick-list { overflow: visible !important; padding: 10px 0 !important; }
-        .movie-slider .slick-prev, .movie-slider .slick-next { z-index: 110; width: 50px; height: 100%; background: rgba(0,0,0,0.6); opacity: 0 !important; transition: all 0.4s ease; top: 50%; transform: translateY(-50%); }
+        .custom-dots li.slick-active button:before { color: #F09800 !important; content: '' !important; background: #F09800; width: 40px; height: 4px; border-radius: 2px; top: 10px; opacity: 1; }
+        .movie-slider .slick-list { overflow: visible !important; }
+        .movie-slider .slick-prev, .movie-slider .slick-next { z-index: 100; width: 45px; height: 100%; background: rgba(0,0,0,0.5); opacity: 0 !important; transition: opacity 0.3s ease; }
         .group\/row:hover .movie-slider .slick-prev, .group\/row:hover .movie-slider .slick-next { opacity: 1 !important; }
       `}</style>
     </div>
