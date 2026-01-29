@@ -30,8 +30,10 @@ const LeaPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
+  // ID de la serie tal cual aparece en data/series.ts (Asegúrate que allí sea 'lea')
+  const SERIES_ID = 'lea';
+
   useEffect(() => {
-    // El blindaje ya está aplicado en tu código base, se respeta totalmente.
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
@@ -42,17 +44,35 @@ const LeaPC = () => {
     }
 
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (myListData.includes('lea')) setInMyList(true);
+    if (myListData.includes(SERIES_ID)) setInMyList(true);
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Sincronización de búsqueda con Inicio
+  // BUSCADOR AL 100% (IDÉNTICO A INICIO)
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term));
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
+      };
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
+      });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
@@ -68,10 +88,10 @@ const LeaPC = () => {
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (inMyList) { 
-      list = list.filter((i: string) => i !== 'lea'); 
+      list = list.filter((i: string) => i !== SERIES_ID); 
       setInMyList(false); 
     } else { 
-      list.push('lea'); 
+      list.push(SERIES_ID); 
       setInMyList(true); 
     }
     localStorage.setItem('myList', JSON.stringify(list));
@@ -81,7 +101,6 @@ const LeaPC = () => {
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left">
       <Head><title>Lea — Estudios 421</title></Head>
 
-      {/* NAVBAR SINCRONIZADA */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
@@ -106,7 +125,6 @@ const LeaPC = () => {
         </div>
       </nav>
 
-      {/* RESULTADOS DE BÚSQUEDA */}
       {searchQuery.length > 0 && (
         <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
           <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -204,7 +222,6 @@ const LeaPC = () => {
         </div>
       )}
 
-      {/* FOOTER COMPLETO Y SINCRONIZADO */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center md:justify-end gap-6 mb-10">
