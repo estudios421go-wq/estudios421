@@ -28,9 +28,7 @@ const InicioMobile = () => {
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Subtitulado" },
     { title: "La Reina De Persia", banner: "https://static.wixstatic.com/media/859174_25430a5b5d74415f8a6ad729958081d2~mv2.jpg", path: "serie/la-reina-de-persia", audio: "Latino" },
     { title: "La Vida De Job", banner: "https://static.wixstatic.com/media/859174_d0095ad0db584be09c815e43b4bd1c39~mv2.jpg", path: "serie/la-vida-de-job", audio: "Subtitulado" },
-    { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" },
-    { title: "Reyes La Sucesión", banner: "https://static.wixstatic.com/media/859174_2960f93a729e41df96813820c93b80eb~mv2.jpg", path: "serie/reyes-la-sucesion", audio: "Latino" },
-    { title: "Nehemías", banner: "https://static.wixstatic.com/media/859174_fb1b30a68bcd427fa813140bd095f259~mv2.jpg", path: "serie/nehemias", audio: "Latino" }
+    { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" }
   ];
 
   const banners = [
@@ -51,7 +49,6 @@ const InicioMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // BUSCADOR COMPLETO (Sincronizado con PC y Lea)
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -60,10 +57,7 @@ const InicioMobile = () => {
         moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
         egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
         jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
-        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
-        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
-        biblia: ['biblia', 'continua', 'testamento', 'milagros']
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia']
       };
       const relatedTerms = new Set<string>();
       relatedTerms.add(term);
@@ -108,7 +102,7 @@ const InicioMobile = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
       </Head>
 
-      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
+      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-500 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
@@ -148,17 +142,16 @@ const InicioMobile = () => {
         </div>
       )}
 
-      <section className="relative w-full aspect-[4/3] bg-black mb-14 mt-6">
+      <section className="relative w-full aspect-[4/3] bg-black mb-14 overflow-hidden">
         <Slider dots={true} infinite={true} speed={800} autoplay={true} autoplaySpeed={5000} arrows={false} dotsClass="slick-dots mobile-dots">
           {banners.map((item) => (
             <div key={item.id} className="relative w-full aspect-[4/3] outline-none bg-black">
-              {/* object-contain asegura que el banner se vea completo horizontalmente */}
               <Image src={item.bg} alt="Banner" fill className="object-contain" priority />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
-              <div className="absolute inset-0 flex flex-col justify-end px-5 pb-10">
-                <div className="relative w-[150px] h-[60px] mb-2"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" unoptimized /></div>
-                {/* Texto completo con tamaño de letra optimizado */}
-                <p className="text-[10px] leading-relaxed text-gray-200 mb-4 max-w-[95%] text-justify font-medium">{item.desc}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
+              <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8">
+                <div className="relative w-[140px] h-[55px] mb-1.5"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" unoptimized /></div>
+                {/* Descripción Compacta a la Izquierda */}
+                <p className="text-[9px] leading-tight text-gray-300 mb-4 max-w-[85%] text-left font-medium opacity-90">{item.desc}</p>
                 <div className="flex gap-2">
                   <button onClick={() => router.push(item.path)} className="bg-[#FF8A00] text-white px-5 py-2 rounded font-black text-[9px] flex items-center gap-1.5 active:scale-95"><FaPlay size={8}/> VER</button>
                   <button onClick={() => {setActiveTrailer({url: item.trailer, path: item.path}); setShowModal(true)}} className="bg-white/10 backdrop-blur-md text-white px-5 py-2 rounded font-black text-[9px] border border-white/20 active:scale-95">INFO</button>
@@ -170,7 +163,7 @@ const InicioMobile = () => {
         </Slider>
       </section>
 
-      <div className="relative z-30 -mt-10 pb-10">
+      <div className="relative z-30 -mt-12 pb-10">
         {myList.length > 0 && <MovieRow title="Mi Lista" movies={myList} />}
         <MovieRow title="Estrenos" movies={dataEstrenos} />
         <MovieRow title="Series Bíblicas" movies={allSeries.filter(s => s.category === 'Serie Bíblica')} />
@@ -189,7 +182,6 @@ const InicioMobile = () => {
         </div>
         <div className="space-y-4 mb-8 text-[10px]">
           <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-          <p className="text-gray-600 leading-relaxed">El contenido compartido pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro.</p>
         </div>
         <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
           <Link href="/politica-de-privacidad">Política de privacidad</Link>
@@ -203,9 +195,17 @@ const InicioMobile = () => {
       {showModal && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={() => setShowModal(false)} />
-          <div className="relative w-full aspect-video bg-[#0a0a0a] rounded-lg border border-white/10">
-            <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-[#FF8A00]"><IoCloseOutline size={30} /></button>
-            <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allowFullScreen />
+          <div className="relative w-full aspect-video bg-[#0a0a0a] rounded-lg border border-white/10 flex flex-col">
+            <button onClick={() => setShowModal(false)} className="absolute top-2 right-2 text-[#FF8A00] z-[220]"><IoCloseOutline size={30} /></button>
+            <div className="flex-grow relative">
+              <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allowFullScreen />
+            </div>
+            {/* Botón VER AHORA Elegante dentro del Modal */}
+            <div className="p-4 flex justify-center bg-black">
+               <button onClick={() => router.push(activeTrailer.path)} className="w-full bg-[#FF8A00] text-white py-3 rounded-md font-black text-xs flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg">
+                 <FaPlay size={10} /> VER SERIE COMPLETA
+               </button>
+            </div>
           </div>
         </div>
       )}
