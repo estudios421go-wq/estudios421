@@ -80,9 +80,10 @@ const InicioMobile = () => {
         <h2 className="text-white text-[11px] font-black mb-4 uppercase tracking-[0.3em] flex items-center gap-2">
           <span className="w-1 h-4 bg-[#FF8A00]" />{title}
         </h2>
-        <Slider dots={false} infinite={false} speed={500} slidesToShow={2.5} slidesToScroll={2} arrows={false}>
+        {/* Pósters notoriamente más pequeños: slidesToShow de 2.5 a 3.2 */}
+        <Slider dots={false} infinite={false} speed={500} slidesToShow={3.2} slidesToScroll={3} arrows={false}>
           {movies.map((m: any, idx: number) => (
-            <div key={idx} className="px-1.5 outline-none active:scale-95 transition-transform">
+            <div key={idx} className="px-1 outline-none active:scale-90 transition-transform">
               <Link href={m.path || '#'}>
                 <div className="relative aspect-[2/3] rounded-md overflow-hidden border border-white/5">
                   <Image src={m.banner} alt={m.title} fill className="object-cover" unoptimized />
@@ -102,7 +103,8 @@ const InicioMobile = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
       </Head>
 
-      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-500 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
+      {/* Navbar con altura incrementada verticalmente (py-3.5) */}
+      <nav className={`fixed top-0 w-full z-[110] px-4 py-3.5 flex items-center gap-4 transition-all duration-500 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
@@ -150,8 +152,8 @@ const InicioMobile = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
               <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8">
                 <div className="relative w-[140px] h-[55px] mb-1.5"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" unoptimized /></div>
-                {/* Descripción Compacta a la Izquierda */}
-                <p className="text-[9px] leading-tight text-gray-300 mb-4 max-w-[85%] text-left font-medium opacity-90">{item.desc}</p>
+                {/* Descripción controlada: Máximo 55% de ancho y alineada a la izquierda */}
+                <p className="text-[9px] leading-tight text-gray-300 mb-4 max-w-[55%] text-left font-medium opacity-90">{item.desc}</p>
                 <div className="flex gap-2">
                   <button onClick={() => router.push(item.path)} className="bg-[#FF8A00] text-white px-5 py-2 rounded font-black text-[9px] flex items-center gap-1.5 active:scale-95"><FaPlay size={8}/> VER</button>
                   <button onClick={() => {setActiveTrailer({url: item.trailer, path: item.path}); setShowModal(true)}} className="bg-white/10 backdrop-blur-md text-white px-5 py-2 rounded font-black text-[9px] border border-white/20 active:scale-95">INFO</button>
@@ -200,7 +202,6 @@ const InicioMobile = () => {
             <div className="flex-grow relative">
               <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allowFullScreen />
             </div>
-            {/* Botón VER AHORA Elegante dentro del Modal */}
             <div className="p-4 flex justify-center bg-black">
                <button onClick={() => router.push(activeTrailer.path)} className="w-full bg-[#FF8A00] text-white py-3 rounded-md font-black text-xs flex items-center justify-center gap-3 active:scale-95 transition-all shadow-lg">
                  <FaPlay size={10} /> VER SERIE COMPLETA
