@@ -41,10 +41,20 @@ const LaVidaDeJobPC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // SERIES_ID según data/series.ts para Job
   const SERIES_ID = 3; 
 
   useEffect(() => {
+    // --- BLINDAJE TOTAL ACTIVADO ---
+    const handleGlobalPrevent = (e: any) => e.preventDefault();
+    document.addEventListener('contextmenu', handleGlobalPrevent);
+    document.addEventListener('dragstart', handleGlobalPrevent);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || (e.metaKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || e.key === 'F12') {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
@@ -57,10 +67,14 @@ const LaVidaDeJobPC = () => {
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      document.removeEventListener('contextmenu', handleGlobalPrevent);
+      document.removeEventListener('dragstart', handleGlobalPrevent);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
-  // BUSCADOR COMPLETO
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -114,7 +128,7 @@ const LaVidaDeJobPC = () => {
   };
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left">
+    <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
       <Head><title>La vida de Job — Estudios 421</title></Head>
 
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
@@ -199,7 +213,7 @@ const LaVidaDeJobPC = () => {
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in">
           <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
-            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1">
+            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
               <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Serie: La vida de Job</span>
               <h2 className="text-2xl font-black tracking-tighter uppercase">Capítulo {jobEpisodes[currentIdx].id} <span className="text-white/10 mx-3">/</span> {jobEpisodes[currentIdx].title}</h2>
             </div>
@@ -216,7 +230,7 @@ const LaVidaDeJobPC = () => {
               <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black transition-all">
                 <IoChevronBack className="text-xl" />
               </div>
-              <div className="flex flex-col items-start">
+              <div className="flex flex-col items-start text-left">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60">Anterior</span>
                 <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx}</span>
               </div>
@@ -226,7 +240,7 @@ const LaVidaDeJobPC = () => {
               <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Capítulos</span>
             </button>
             <button disabled={currentIdx === jobEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5">
-              <div className="flex flex-col items-end">
+              <div className="flex flex-col items-end text-right">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
                 <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx + 2}</span>
               </div>
@@ -238,9 +252,9 @@ const LaVidaDeJobPC = () => {
         </div>
       )}
 
-      <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
+      <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center md:justify-end gap-6 mb-10">
+          <div className="flex justify-start md:justify-end gap-6 mb-10">
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
             <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
@@ -260,6 +274,17 @@ const LaVidaDeJobPC = () => {
           </div>
         </div>
       </footer>
+      <style jsx global>{`
+        .unselectable {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        img {
+          pointer-events: none !important;
+        }
+      `}</style>
     </div>
   );
 };
