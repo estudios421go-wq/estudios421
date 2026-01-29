@@ -31,7 +31,6 @@ const LeaMobile = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  // ID REAL DE TU ARCHIVO DATA/SERIES.TS
   const SERIES_ID = 2;
 
   useEffect(() => {
@@ -39,14 +38,11 @@ const LeaMobile = () => {
     window.addEventListener('scroll', handleScroll);
     const saved = localStorage.getItem('lea_last_ep');
     if (saved) setCurrentIdx(parseInt(saved));
-    
     const list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (list.includes(SERIES_ID)) setInMyList(true);
-    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // BUSCADOR COMPLETO
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -89,14 +85,8 @@ const LeaMobile = () => {
             <IoClose className="text-2xl" />
           </button>
         </div>
-
         <div className="flex-grow flex flex-col relative bg-black items-center justify-center">
-          <iframe 
-            src={selectedVideo + "?autoplay=1"} 
-            className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" 
-            allow="autoplay; fullscreen" 
-            allowFullScreen 
-          />
+          <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" allow="autoplay; fullscreen" allowFullScreen />
           <div className="absolute inset-x-0 bottom-8 flex justify-around items-center px-6">
             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-2 group disabled:opacity-5">
               <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center active:bg-[#F09800] transition-all"><IoChevronBack size={20} /></div>
@@ -120,9 +110,12 @@ const LeaMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] text-left">
       <Head><title>Lea — Estudios 421</title></Head>
       
-      <nav className={`fixed top-0 w-full z-[100] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
+      {/* BARRA DE NAVEGACIÓN SUPERIOR FIJA CON Z-INDEX ALTO */}
+      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <button className="text-white text-3xl z-[110]" onClick={() => setIsMenuOpen(!isMenuOpen)}>{isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}</button>
+          <button className="text-white text-3xl active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
+          </button>
           <Link href="/"><div className="relative w-[110px] h-[30px]"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         </div>
         <form onSubmit={(e) => e.preventDefault()} className="flex-grow relative group">
@@ -134,7 +127,7 @@ const LeaMobile = () => {
 
       {/* RESULTADOS DE BÚSQUEDA MÓVIL */}
       {searchQuery.length > 0 && (
-        <div className="fixed inset-0 bg-black z-[95] pt-24 px-4 overflow-y-auto pb-20">
+        <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20">
           <h2 className="text-white text-sm font-black mb-6 uppercase tracking-widest flex items-center gap-2"><span className="w-1 h-4 bg-[#F09800]" />Resultados: "{searchQuery}"</h2>
           <div className="grid grid-cols-2 gap-4">
             {searchResults.map((m) => (
@@ -144,7 +137,8 @@ const LeaMobile = () => {
         </div>
       )}
 
-      <div className={`fixed inset-0 bg-black/98 z-[105] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+      {/* MENÚ LATERAL AJUSTADO POR DEBAJO DE LA NAV */}
+      <div className={`fixed inset-0 bg-black/98 z-[100] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8 text-left">
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Navegación</p>
           <Link href="/" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Inicio</Link>
@@ -199,7 +193,6 @@ const LeaMobile = () => {
         </div>
       </div>
 
-      {/* FOOTER MÓVIL SINCRONIZADO */}
       <footer className="bg-[#0a0a0a] text-gray-500 py-10 px-6 border-t border-white/5 text-left">
         <div className="flex justify-start gap-6 mb-8 text-xl">
           <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="active:text-[#F09800] transition-colors"><FaFacebookF /></a>
