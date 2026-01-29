@@ -3,10 +3,10 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoSearchOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { allSeries } from '../../data/series';
+import { allSeries } from '../../../data/series';
 
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "00:40:04", desc: "Lía pierde a su madre siendo aún joven y comienza a criar a su hermana menor. Raquel se convierte en una adulta fría y egoísta.", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -31,7 +31,7 @@ const LeaPC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
   useEffect(() => {
-    // El blindaje ya está aplicado en tu código base, se respeta.
+    // El blindaje ya está aplicado en tu código base, se respeta totalmente.
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
@@ -41,13 +41,13 @@ const LeaPC = () => {
       if (idx < leaEpisodes.length) setCurrentIdx(idx);
     }
 
-    const myList = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (myList.includes('lea')) setInMyList(true);
+    const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (myListData.includes('lea')) setInMyList(true);
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lógica de búsqueda sincronizada con Inicio
+  // Sincronización de búsqueda con Inicio
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
