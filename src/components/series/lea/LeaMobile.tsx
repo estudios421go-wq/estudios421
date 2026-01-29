@@ -43,11 +43,33 @@ const LeaMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // BUSCADOR COMPLETO Y PROFESIONAL (IDÉNTICO A PC)
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term) || normalize(serie.category || "").includes(term));
+      
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
+      });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
@@ -110,7 +132,6 @@ const LeaMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] text-left">
       <Head><title>Lea — Estudios 421</title></Head>
       
-      {/* BARRA DE NAVEGACIÓN SUPERIOR FIJA CON Z-INDEX ALTO */}
       <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -125,7 +146,6 @@ const LeaMobile = () => {
         <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
       </nav>
 
-      {/* RESULTADOS DE BÚSQUEDA MÓVIL */}
       {searchQuery.length > 0 && (
         <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20">
           <h2 className="text-white text-sm font-black mb-6 uppercase tracking-widest flex items-center gap-2"><span className="w-1 h-4 bg-[#F09800]" />Resultados: "{searchQuery}"</h2>
@@ -137,7 +157,6 @@ const LeaMobile = () => {
         </div>
       )}
 
-      {/* MENÚ LATERAL AJUSTADO POR DEBAJO DE LA NAV */}
       <div className={`fixed inset-0 bg-black/98 z-[100] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8 text-left">
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Navegación</p>
