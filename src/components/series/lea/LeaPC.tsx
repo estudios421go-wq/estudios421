@@ -30,8 +30,8 @@ const LeaPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  // ID de la serie tal cual aparece en data/series.ts (Asegúrate que allí sea 'lea')
-  const SERIES_ID = 'lea';
+  // ID REAL EXTRAÍDO DE TU ARCHIVO DATA/SERIES.TS
+  const SERIES_ID = 2; 
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -43,13 +43,14 @@ const LeaPC = () => {
       if (idx < leaEpisodes.length) setCurrentIdx(idx);
     }
 
+    // Verificación de Mi Lista usando el ID numérico
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // BUSCADOR AL 100% (IDÉNTICO A INICIO)
+  // BUSCADOR AL 100% (MISMA LÓGICA QUE INICIO)
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -88,7 +89,7 @@ const LeaPC = () => {
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (inMyList) { 
-      list = list.filter((i: string) => i !== SERIES_ID); 
+      list = list.filter((i: number) => i !== SERIES_ID); 
       setInMyList(false); 
     } else { 
       list.push(SERIES_ID); 
@@ -222,6 +223,7 @@ const LeaPC = () => {
         </div>
       )}
 
+      {/* FOOTER SINCRONIZADO AL 100% */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center md:justify-end gap-6 mb-10">
