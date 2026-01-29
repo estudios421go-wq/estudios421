@@ -21,6 +21,24 @@ const InicioPC = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState({ url: "", path: "" });
 
+  // --- 1. AJUSTE DE BLINDAJE (FUNCIONALIDAD PROTEGIDA) ---
+  useEffect(() => {
+    const preventAction = (e: any) => e.preventDefault();
+    
+    // Bloquea clic derecho y arrastre de imágenes solo si el objetivo es una imagen
+    document.addEventListener('contextmenu', (e: any) => {
+      if (e.target.tagName === 'IMG') e.preventDefault();
+    });
+    document.addEventListener('dragstart', (e: any) => {
+      if (e.target.tagName === 'IMG') e.preventDefault();
+    });
+
+    return () => {
+      document.removeEventListener('contextmenu', preventAction);
+      document.removeEventListener('dragstart', preventAction);
+    };
+  }, []);
+
   const dataEstrenos = [
     { title: "Reyes La Decadencia", banner: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", path: "serie/reyes-la-decadencia", audio: "Latino" },
     { title: "Pablo El Apóstol", banner: "https://static.wixstatic.com/media/859174_1a4c34a2bb8a495bad6ea09b5da366dd~mv2.jpg", path: "serie/pablo-el-apostol", audio: "Latino" },
@@ -69,7 +87,6 @@ const InicioPC = () => {
     const filteredPool = poolRecomendados.filter(p => !dataEstrenos.map(e => e.title).includes(p.title));
     setRecommended([...filteredPool].sort(() => 0.5 - Math.random()).slice(0, 10));
     
-    // --- LÓGICA DE MI LISTA: RECUPERA DATOS DE LOCALSTORAGE ---
     const saved = JSON.parse(localStorage.getItem('myList') || '[]');
     setMyList(allSeries.filter(s => saved.includes(s.id)));
     
@@ -263,7 +280,6 @@ const InicioPC = () => {
           <div className="relative w-full max-w-5xl aspect-video bg-[#0a0a0a] rounded-2xl overflow-hidden shadow-[0_0_60px_rgba(255,138,0,0.3)] border border-white/10">
             <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 z-[210] text-[#FF8A00]"><IoCloseOutline size={50} /></button>
             <iframe src={`${activeTrailer.url}?autoplay=1`} className="w-full h-full" frameBorder="0" allow="autoplay; encrypted-media" allowFullScreen />
-            {/* AJUSTE BOTÓN VER AHORA ELEGANTE */}
             <div className="absolute bottom-6 left-8 z-[210]">
               <button onClick={() => router.push(activeTrailer.path)} className="bg-[#F09800] text-white px-8 py-3 rounded font-bold flex items-center gap-3 hover:scale-105 transition-all shadow-xl group">
                 <FaPlay size={12} className="group-hover:translate-x-1 transition-transform" /> VER AHORA
@@ -282,8 +298,8 @@ const InicioPC = () => {
         
         /* AJUSTE DE LÍMITES Y DESBORDAMIENTO */
         .movie-slider .slick-list { 
-          overflow: hidden !important; /* Limita la visibilidad al ancho del contenedor */
-          margin: 0 50px !important; /* Deja espacio para las flechas fijas */
+          overflow: hidden !important;
+          margin: 0 50px !important; 
         }
         .movie-slider .slick-track { display: flex !important; }
         
@@ -299,6 +315,16 @@ const InicioPC = () => {
         /* FLECHAS COMO LÍMITES ABSOLUTOS */
         .movie-slider .slick-prev { left: 0 !important; }
         .movie-slider .slick-next { right: 0 !important; }
+
+        /* BLINDAJE VISUAL BÁSICO (SOLO IMÁGENES) */
+        img {
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-drag: none;
+          -o-user-drag: none;
+          user-drag: none;
+          user-select: none;
+        }
       `}</style>
     </div>
   );
