@@ -21,21 +21,26 @@ const InicioPC = () => {
   const [showModal, setShowModal] = useState(false);
   const [activeTrailer, setActiveTrailer] = useState({ url: "", path: "" });
 
-  // --- 1. AJUSTE DE BLINDAJE (FUNCIONALIDAD PROTEGIDA) ---
+  // --- BLINDAJE TOTAL DE PÁGINA ---
   useEffect(() => {
-    const preventAction = (e: any) => e.preventDefault();
+    const handleGlobalPrevent = (e: any) => e.preventDefault();
     
-    // Bloquea clic derecho y arrastre de imágenes solo si el objetivo es una imagen
-    document.addEventListener('contextmenu', (e: any) => {
-      if (e.target.tagName === 'IMG') e.preventDefault();
-    });
-    document.addEventListener('dragstart', (e: any) => {
-      if (e.target.tagName === 'IMG') e.preventDefault();
-    });
+    // Bloqueo de Clic Derecho en TODA la página
+    document.addEventListener('contextmenu', handleGlobalPrevent);
+    // Bloqueo de Arrastre de cualquier elemento
+    document.addEventListener('dragstart', handleGlobalPrevent);
+    // Bloqueo de combinaciones de teclas (Ctrl+U, Ctrl+S)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && (e.key === 'u' || e.key === 's')) || (e.metaKey && (e.key === 'u' || e.key === 's'))) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('contextmenu', preventAction);
-      document.removeEventListener('dragstart', preventAction);
+      document.removeEventListener('contextmenu', handleGlobalPrevent);
+      document.removeEventListener('dragstart', handleGlobalPrevent);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -201,8 +206,11 @@ const InicioPC = () => {
   ];
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans selection:bg-[#FF8A00]">
-      <Head><title>Estudios 421 — La Fe En Pantalla</title></Head>
+    <div className="bg-black min-h-screen text-white font-sans selection:bg-none unselectable">
+      <Head>
+        <title>Estudios 421 — La Fe En Pantalla</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+      </Head>
       {Navbar}
       <main className="relative">
         {searchQuery.length > 0 && (
@@ -238,7 +246,6 @@ const InicioPC = () => {
         </section>
 
         <div className="relative z-30 pb-20 mt-[-110px]">
-          {/* --- BLOQUE INTELIGENTE DE MI LISTA --- */}
           {myList.length > 0 && (
             <MovieRow title="Mi Lista" movies={myList} />
           )}
@@ -296,7 +303,6 @@ const InicioPC = () => {
         .custom-dots li.slick-active { width: 45px !important; }
         .custom-dots li.slick-active button:before { color: #F09800 !important; content: '' !important; background: #F09800; width: 45px; height: 5px; border-radius: 3px; top: 10px; opacity: 1; }
         
-        /* AJUSTE DE LÍMITES Y DESBORDAMIENTO */
         .movie-slider .slick-list { 
           overflow: hidden !important;
           margin: 0 50px !important; 
@@ -312,17 +318,31 @@ const InicioPC = () => {
         .group\/row:hover .movie-slider .slick-prev, .group\/row:hover .movie-slider .slick-next { opacity: 1; }
         .movie-slider .slick-prev:hover, .movie-slider .slick-next:hover { background: #F09800; }
         
-        /* FLECHAS COMO LÍMITES ABSOLUTOS */
         .movie-slider .slick-prev { left: 0 !important; }
         .movie-slider .slick-next { right: 0 !important; }
 
-        /* BLINDAJE VISUAL BÁSICO (SOLO IMÁGENES) */
+        /* BLINDAJE GLOBAL ULTRA SEGURO */
+        .unselectable {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          -webkit-touch-callout: none;
+        }
+
         img {
-          -webkit-user-drag: none;
-          -khtml-user-drag: none;
-          -moz-user-drag: none;
-          -o-user-drag: none;
-          user-drag: none;
+          pointer-events: none !important;
+          -webkit-user-drag: none !important;
+          -khtml-user-drag: none !important;
+          -moz-user-drag: none !important;
+          -o-user-drag: none !important;
+        }
+
+        /* Bloqueo de selección en toda la página */
+        body {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
           user-select: none;
         }
       `}</style>
