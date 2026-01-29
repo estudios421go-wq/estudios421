@@ -4,7 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { IoSearchOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
-import Footer from '../../Footer';
+import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
+import { allSeries } from '../../data/series';
 
 const leaEpisodes = [
   { id: 1, title: "Hermanas del destino", dur: "00:40:04", desc: "Lía pierde a su madre siendo aún joven y comienza a criar a su hermana menor. Raquel se convierte en una adulta fría y egoísta.", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632" },
@@ -26,16 +28,10 @@ const LeaPC = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   useEffect(() => {
-    const handleContextMenu = (e: MouseEvent) => e.preventDefault();
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'i')) || e.key === 'F12') e.preventDefault();
-    };
-    document.addEventListener('contextmenu', handleContextMenu);
-    document.addEventListener('keydown', handleKeyDown);
-
+    // El blindaje ya está aplicado en tu código base, se respeta.
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
@@ -48,12 +44,18 @@ const LeaPC = () => {
     const myList = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myList.includes('lea')) setInMyList(true);
 
-    return () => {
-      document.removeEventListener('contextmenu', handleContextMenu);
-      document.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Lógica de búsqueda sincronizada con Inicio
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const term = normalize(searchQuery);
+      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term));
+      setSearchResults(filtered);
+    } else { setSearchResults([]); }
+  }, [searchQuery]);
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
@@ -65,49 +67,56 @@ const LeaPC = () => {
 
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) { list = list.filter((i: string) => i !== 'lea'); setInMyList(false); }
-    else { list.push('lea'); setInMyList(true); }
+    if (inMyList) { 
+      list = list.filter((i: string) => i !== 'lea'); 
+      setInMyList(false); 
+    } else { 
+      list.push('lea'); 
+      setInMyList(true); 
+    }
     localStorage.setItem('myList', JSON.stringify(list));
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = searchQuery.toLowerCase().trim();
-    if (q === "genesis") router.push('/serie/genesis');
-    else if (q === "job") router.push('/serie/la-vida-de-job');
   };
 
   return (
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left">
       <Head><title>Lea — Estudios 421</title></Head>
 
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
+      {/* NAVBAR SINCRONIZADA */}
+      <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
           <div className="flex gap-8">
-            {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((name) => (
-              <Link key={name} href={name === 'Inicio' ? '/' : `/${name.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
-                {name}
-                <span className={`absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full`} />
-              </Link>
-            ))}
+            <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Bíblicas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Películas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
           </div>
         </div>
         <div className="flex items-center gap-6">
           <div className="flex gap-4 mr-4">
-            {['', 'en', 'pt'].map((l) => (
-              <Link key={l} href={l === '' ? '/serie/lea' : `/${l}/serie/lea`}>
-                <img src={`https://static.wixstatic.com/media/859174_${l === '' ? '367960b11c1c44ba89cd1582fd1b5776' : l === 'en' ? '35112d9ffe234d6f9dcef16cf8f7544e' : '830f1c20656e4d44a819bedfc13a22cc'}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" />
-              </Link>
+            {[{ n: '', img: '367960b11c1c44ba89cd1582fd1b5776' }, { n: 'en', img: '35112d9ffe234d6f9dcef16cf8f7544e' }, { n: 'pt', img: '830f1c20656e4d44a819bedfc13a22cc' }].map((l) => (
+              <Link key={l.n} href={l.n === '' ? '/serie/lea' : `/${l.n}/serie/lea`}><img src={`https://static.wixstatic.com/media/859174_${l.img}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" /></Link>
             ))}
           </div>
-          <form onSubmit={handleSearch} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
+          <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
             <IoSearchOutline className="text-white text-xl" />
             <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
           </form>
           <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
         </div>
       </nav>
+
+      {/* RESULTADOS DE BÚSQUEDA */}
+      {searchQuery.length > 0 && (
+        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
+          <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
+          <div className="grid grid-cols-6 gap-x-4 gap-y-10">
+            {searchResults.map((m) => (
+              <Link key={m.id} href={m.path}><div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group"><Image src={m.banner} alt={m.title} fill className="object-cover rounded-md" unoptimized /></div></Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_394a43598162462980999d535f5ab55a~mv2.jpg" className="w-full h-full object-cover" alt="Banner Lea" />
@@ -138,7 +147,7 @@ const LeaPC = () => {
                 <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] opacity-60" />
                 <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-md border border-white/10">
-                   <span className="text-[11px] font-black uppercase text-white">Episodio <span className="text-[#FF8A00]">{ep.id}</span></span>
+                    <span className="text-[11px] font-black uppercase text-white">Episodio <span className="text-[#FF8A00]">{ep.id}</span></span>
                 </div>
                 <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
                   <span className="text-[10px] font-bold text-white">{ep.dur}</span>
@@ -194,7 +203,30 @@ const LeaPC = () => {
           </div>
         </div>
       )}
-      <Footer />
+
+      {/* FOOTER COMPLETO Y SINCRONIZADO */}
+      <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center md:justify-end gap-6 mb-10">
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
+            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
+          </div>
+          <div className="mb-10 space-y-4">
+            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
+          </div>
+          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
+            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
+            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
