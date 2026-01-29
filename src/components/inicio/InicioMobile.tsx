@@ -28,7 +28,9 @@ const InicioMobile = () => {
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Subtitulado" },
     { title: "La Reina De Persia", banner: "https://static.wixstatic.com/media/859174_25430a5b5d74415f8a6ad729958081d2~mv2.jpg", path: "serie/la-reina-de-persia", audio: "Latino" },
     { title: "La Vida De Job", banner: "https://static.wixstatic.com/media/859174_d0095ad0db584be09c815e43b4bd1c39~mv2.jpg", path: "serie/la-vida-de-job", audio: "Subtitulado" },
-    { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" }
+    { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" },
+    { title: "Reyes La Sucesión", banner: "https://static.wixstatic.com/media/859174_2960f93a729e41df96813820c93b80eb~mv2.jpg", path: "serie/reyes-la-sucesion", audio: "Latino" },
+    { title: "Nehemías", banner: "https://static.wixstatic.com/media/859174_fb1b30a68bcd427fa813140bd095f259~mv2.jpg", path: "serie/nehemias", audio: "Latino" }
   ];
 
   const banners = [
@@ -80,7 +82,6 @@ const InicioMobile = () => {
         <h2 className="text-white text-[11px] font-black mb-4 uppercase tracking-[0.3em] flex items-center gap-2">
           <span className="w-1 h-4 bg-[#FF8A00]" />{title}
         </h2>
-        {/* Pósters notoriamente más pequeños: slidesToShow de 2.5 a 3.2 */}
         <Slider dots={false} infinite={false} speed={500} slidesToShow={3.2} slidesToScroll={3} arrows={false}>
           {movies.map((m: any, idx: number) => (
             <div key={idx} className="px-1 outline-none active:scale-90 transition-transform">
@@ -103,8 +104,7 @@ const InicioMobile = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
       </Head>
 
-      {/* Navbar con altura incrementada verticalmente (py-3.5) */}
-      <nav className={`fixed top-0 w-full z-[110] px-4 py-3.5 flex items-center gap-4 transition-all duration-500 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/80 to-transparent'}`}>
+      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-500 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 via-black/40 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
@@ -121,9 +121,10 @@ const InicioMobile = () => {
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/98 z-[100] flex flex-col pt-24 px-8 gap-8 animate-fade-in">
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">Navegación</p>
-          {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((n) => (
-            <Link key={n} href={n === 'Inicio' ? '/' : `/${n.toLowerCase().replace(' ', '-')}`} onClick={() => setIsMenuOpen(false)} className={`text-xl font-bold ${n === 'Inicio' ? 'text-[#FF8A00]' : 'text-white'}`}>{n}</Link>
-          ))}
+          <Link href="/" onClick={() => setIsMenuOpen(false)} className={`text-xl font-bold ${router.pathname === '/' ? 'text-[#FF8A00]' : 'text-white'}`}>Inicio</Link>
+          <Link href="/series-biblicas" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Series Bíblicas</Link>
+          <Link href="/series-tv" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Series TV</Link>
+          <Link href="/peliculas" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Películas</Link>
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mt-4">Idioma</p>
           <div className="flex gap-6">
             {[{l:'ESP', i:'367960b11c1c44ba89cd1582fd1b5776', p:'/'}, {l:'ENG', i:'35112d9ffe234d6f9dcef16cf8f7544e', p:'/en'}, {l:'PT', i:'830f1c20656e4d44a819bedfc13a22cc', p:'/pt'}].map((lang) => (
@@ -152,7 +153,6 @@ const InicioMobile = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
               <div className="absolute inset-0 flex flex-col justify-end px-5 pb-8">
                 <div className="relative w-[140px] h-[55px] mb-1.5"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" unoptimized /></div>
-                {/* Descripción controlada: Máximo 55% de ancho y alineada a la izquierda */}
                 <p className="text-[9px] leading-tight text-gray-300 mb-4 max-w-[55%] text-left font-medium opacity-90">{item.desc}</p>
                 <div className="flex gap-2">
                   <button onClick={() => router.push(item.path)} className="bg-[#FF8A00] text-white px-5 py-2 rounded font-black text-[9px] flex items-center gap-1.5 active:scale-95"><FaPlay size={8}/> VER</button>
@@ -174,23 +174,26 @@ const InicioMobile = () => {
         <MovieRow title="Películas" movies={allSeries.filter(s => s.category === 'Película')} />
       </div>
 
-      <footer className="bg-[#0a0a0a] text-gray-500 py-10 px-6 border-t border-white/5">
-        <div className="flex justify-start gap-6 mb-8 text-xl">
-          <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer"><FaFacebookF /></a>
-          <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer"><FaInstagram /></a>
-          <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer"><FaTiktok /></a>
-          <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer"><FaYoutube /></a>
-          <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer"><FaXTwitter /></a>
-        </div>
-        <div className="space-y-4 mb-8 text-[10px]">
-          <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-        </div>
-        <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
-          <Link href="/politica-de-privacidad">Política de privacidad</Link>
-          <Link href="/terminos-de-uso">Términos de uso</Link>
-          <Link href="/cookies">Configuración de cookies</Link>
-          <Link href="/anuncios">Especificaciones de anuncios</Link>
-          <Link href="/ayuda">Centro de ayuda</Link>
+      <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 border-t border-white/5 text-left">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-start gap-6 mb-10">
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
+            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
+          </div>
+          <div className="mb-10 space-y-4">
+            <p className="text-[10px] leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
+            <p className="text-[9px] leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
+          </div>
+          <div className="flex flex-col gap-y-4 text-[11px] font-medium uppercase tracking-widest border-t border-white/5 pt-8">
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
+            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
+            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
+          </div>
         </div>
       </footer>
 
