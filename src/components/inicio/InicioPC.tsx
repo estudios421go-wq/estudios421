@@ -68,8 +68,11 @@ const InicioPC = () => {
     window.addEventListener('scroll', handleScroll);
     const filteredPool = poolRecomendados.filter(p => !dataEstrenos.map(e => e.title).includes(p.title));
     setRecommended([...filteredPool].sort(() => 0.5 - Math.random()).slice(0, 10));
+    
+    // --- LÓGICA DE MI LISTA: RECUPERA DATOS DE LOCALSTORAGE ---
     const saved = JSON.parse(localStorage.getItem('myList') || '[]');
     setMyList(allSeries.filter(s => saved.includes(s.id)));
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -218,6 +221,11 @@ const InicioPC = () => {
         </section>
 
         <div className="relative z-30 pb-20 mt-[-110px]">
+          {/* --- BLOQUE INTELIGENTE DE MI LISTA --- */}
+          {myList.length > 0 && (
+            <MovieRow title="Mi Lista" movies={myList} />
+          )}
+
           <MovieRow title="Estrenos" movies={dataEstrenos} />
           <MovieRow title="Series Bíblicas" movies={dataBiblicas} />
           <MovieRow title="Recomendados" movies={recommended} />
