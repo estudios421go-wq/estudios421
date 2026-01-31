@@ -241,11 +241,11 @@ const GenesisPC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // SERIES_ID según data/series.ts para Génesis
+  // ID ÚNICO Y UNIFICADO PARA GÉNESIS
   const SERIES_ID = 1; 
 
   useEffect(() => {
-    // --- BLINDAJE TOTAL ACTIVADO ---
+    // --- BLINDAJE TOTAL ---
     const handleGlobalPrevent = (e: any) => e.preventDefault();
     document.addEventListener('contextmenu', handleGlobalPrevent);
     document.addEventListener('dragstart', handleGlobalPrevent);
@@ -259,14 +259,18 @@ const GenesisPC = () => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
+    // Cargar último episodio visto
     const savedEp = localStorage.getItem('genesis_last_ep');
     if (savedEp) {
       const idx = parseInt(savedEp);
       if (idx < genesisEpisodes.length) setCurrentIdx(idx);
     }
 
+    // LÓGICA DE MI LISTA CORREGIDA (1% REPARADO)
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (myListData.includes('genesis')) setInMyList(true);
+    if (myListData.includes(SERIES_ID)) {
+      setInMyList(true);
+    }
 
     return () => {
       document.removeEventListener('contextmenu', handleGlobalPrevent);
@@ -276,7 +280,7 @@ const GenesisPC = () => {
     };
   }, []);
 
-  // BUSCADOR COMPLETO Y PROFESIONAL
+  // BUSCADOR PROFESIONAL (COMPLETO)
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -319,10 +323,10 @@ const GenesisPC = () => {
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (inMyList) { 
-      list = list.filter((i: string) => i !== 'genesis'); 
+      list = list.filter((i: number) => i !== SERIES_ID); 
       setInMyList(false); 
     } else { 
-      list.push('genesis'); 
+      list.push(SERIES_ID); 
       setInMyList(true); 
     }
     localStorage.setItem('myList', JSON.stringify(list));
