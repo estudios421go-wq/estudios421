@@ -249,7 +249,7 @@ const MoisesPC = () => {
           {/* TEMPORADA 1 — AJUSTADA PARA MOSTRAR LOS 176 EPISODIOS */}
           <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
             <button onClick={() => setOpenT1(!openT1)} className="w-full px-8 py-6 flex items-center justify-between hover:bg-white/[0.05] transition-all group">
-              <span className="text-xl font-black uppercase tracking-widest group-hover:text-[#FF8A00]">Temporada 1 — La Liberación</span>
+              <span className="text-xl font-black uppercase tracking-widest group-hover:text-[#FF8A00]">Temporada 1</span>
               <IoChevronDown size={24} className={`transition-transform duration-500 ${openT1 ? 'rotate-180 text-[#FF8A00]' : ''}`} />
             </button>
             <div className={`transition-all duration-700 ease-in-out ${openT1 ? 'max-h-[5000px] opacity-100 py-8 px-8' : 'max-h-0 opacity-0 overflow-hidden'}`}>
@@ -266,7 +266,7 @@ const MoisesPC = () => {
           {/* TEMPORADA 2 */}
           <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
             <button onClick={() => setOpenT2(!openT2)} className="w-full px-8 py-6 flex items-center justify-between hover:bg-white/[0.05] transition-all group">
-              <span className="text-xl font-black uppercase tracking-widest group-hover:text-[#FF8A00]">Temporada 2 — La Tierra Prometida</span>
+              <span className="text-xl font-black uppercase tracking-widest group-hover:text-[#FF8A00]">Temporada 2</span>
               <IoChevronDown size={24} className={`transition-transform duration-500 ${openT2 ? 'rotate-180 text-[#FF8A00]' : ''}`} />
             </button>
             <div className={`transition-all duration-700 ease-in-out ${openT2 ? 'max-h-[2000px] opacity-100 py-8 px-8' : 'max-h-0 opacity-0 overflow-hidden'}`}>
@@ -341,7 +341,7 @@ const MoisesPC = () => {
           </div>
           <div className="mb-10 space-y-4">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros).</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
