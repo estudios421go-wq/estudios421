@@ -8,7 +8,7 @@ import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
 
-// --- CONFIGURACIÓN DE EPISODIOS OPTIMIZADA ---
+// --- CONFIGURACIÓN DE EPISODIOS ---
 const MoisesT1 = [
   "https://ok.ru/videoembed/3543349922400", "https://ok.ru/videoembed/3545452317280", "https://ok.ru/videoembed/3546765789792",
   "https://ok.ru/videoembed/3549399485024", "https://ok.ru/videoembed/3553369983584", "https://ok.ru/videoembed/3567162493536",
@@ -34,7 +34,7 @@ const MoisesT1 = [
   "https://ok.ru/videoembed/3923089754720", "https://ok.ru/videoembed/3923089820256", "https://ok.ru/videoembed/3923089885792",
   "https://ok.ru/videoembed/3923090016864", "https://ok.ru/videoembed/3966247832160", "https://ok.ru/videoembed/3966248159840",
   "https://ok.ru/videoembed/3966248290912", "https://ok.ru/videoembed/3966248421984", "https://ok.ru/videoembed/3966248487520",
-  "https://ok.ru/videoembed/3966248684128", "https://ok.ru/videoembed/3966248749664", "https://ok.ru/videoembed/396624815200",
+  "https://ok.ru/videoembed/3966248684128", "https://ok.ru/videoembed/3966248749664", "https://ok.ru/videoembed/3966248815200",
   "https://ok.ru/videoembed/4074089220704", "https://ok.ru/videoembed/4074090138208", "https://ok.ru/videoembed/4074091514464",
   "https://ok.ru/videoembed/4074092366432", "https://ok.ru/videoembed/4074092956256", "https://ok.ru/videoembed/4074093415008",
   "https://ok.ru/videoembed/4074095184480", "https://ok.ru/videoembed/4074093939296", "https://ok.ru/videoembed/4074096888416",
@@ -103,12 +103,10 @@ const MoisesPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   
-  // Lógica de reproducción
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [currentSeason, setCurrentSeason] = useState(1);
   const [currentIdx, setCurrentIdx] = useState(0);
 
-  // Lógica de Acordeones
   const [openT1, setOpenT1] = useState(true);
   const [openT2, setOpenT2] = useState(false);
 
@@ -124,20 +122,16 @@ const MoisesPC = () => {
       }
     };
     document.addEventListener('keydown', handleKeyDown);
-
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-
     const savedPos = localStorage.getItem('moises_last_pos');
     if (savedPos) {
       const { s, i } = JSON.parse(savedPos);
       setCurrentSeason(s);
       setCurrentIdx(i);
     }
-
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
-
     return () => {
       document.removeEventListener('contextmenu', handleGlobalPrevent);
       document.removeEventListener('dragstart', handleGlobalPrevent);
@@ -146,7 +140,6 @@ const MoisesPC = () => {
     };
   }, []);
 
-  // Buscador profesional clonado
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -193,16 +186,14 @@ const MoisesPC = () => {
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
       <Head><title>Moisés y los Diez Mandamientos — Estudios 421</title></Head>
 
-      {/* NAVBAR CLONADO */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
           <div className="flex gap-8">
-            {['Inicio', 'Series Bíblicas', 'Series TV', 'Películas'].map((n) => (
-              <Link key={n} href={n === 'Inicio' ? '/' : `/${n.toLowerCase().replace(' ', '-')}`} className="relative group text-white text-[15px] font-medium tracking-wide">
-                {n}<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" />
-              </Link>
-            ))}
+            <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Biblicas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Peliculas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
           </div>
         </div>
         <div className="flex items-center gap-6">
@@ -221,7 +212,6 @@ const MoisesPC = () => {
         </div>
       </nav>
 
-      {/* RESULTADOS BÚSQUEDA */}
       {searchQuery.length > 0 && (
         <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
           <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -233,7 +223,6 @@ const MoisesPC = () => {
         </div>
       )}
 
-      {/* BANNER PRINCIPAL */}
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_bd48f7fab5344a3f8a733a139594a3b7~mv2.jpg" className="w-full h-full object-cover" alt="Banner Moisés" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
@@ -250,21 +239,20 @@ const MoisesPC = () => {
 
       <div className="h-20 bg-black"></div>
 
-      {/* SECCIÓN EPISODIOS SIMPLIFICADA (ACORDEONES) */}
-      <div className="px-16 mb-32 relative z-10">
-        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
+      <div className="px-16 mb-32 relative z-10 text-left">
+        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4 text-left">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase tracking-widest">Episodios Disponibles</h2>
         </header>
 
-        <div className="flex flex-col gap-6 max-w-6xl mx-auto">
-          {/* TEMPORADA 1 */}
+        <div className="flex flex-col gap-6 max-w-6xl mx-auto text-left">
+          {/* TEMPORADA 1 — AJUSTADA PARA MOSTRAR LOS 176 EPISODIOS */}
           <div className="border border-white/10 rounded-xl overflow-hidden bg-white/[0.02]">
             <button onClick={() => setOpenT1(!openT1)} className="w-full px-8 py-6 flex items-center justify-between hover:bg-white/[0.05] transition-all group">
               <span className="text-xl font-black uppercase tracking-widest group-hover:text-[#FF8A00]">Temporada 1 — La Liberación</span>
               <IoChevronDown size={24} className={`transition-transform duration-500 ${openT1 ? 'rotate-180 text-[#FF8A00]' : ''}`} />
             </button>
-            <div className={`transition-all duration-700 ease-in-out ${openT1 ? 'max-h-[2000px] opacity-100 py-8 px-8' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+            <div className={`transition-all duration-700 ease-in-out ${openT1 ? 'max-h-[5000px] opacity-100 py-8 px-8' : 'max-h-0 opacity-0 overflow-hidden'}`}>
               <div className="grid grid-cols-8 gap-4">
                 {MoisesT1.map((_, i) => (
                   <button key={i} onClick={() => openEpisode(1, i)} className={`aspect-square rounded-lg font-bold text-sm transition-all border ${currentSeason === 1 && currentIdx === i ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/5 border-white/10 hover:border-[#FF8A00] hover:text-[#FF8A00]'}`}>
@@ -294,7 +282,6 @@ const MoisesPC = () => {
         </div>
       </div>
 
-      {/* REPRODUCTOR EMERGENTE CLONADO */}
       {selectedVideo && (
         <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in">
           <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
@@ -343,7 +330,6 @@ const MoisesPC = () => {
         </div>
       )}
 
-      {/* FOOTER CLONADO EXACTO */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-start md:justify-end gap-6 mb-10">
