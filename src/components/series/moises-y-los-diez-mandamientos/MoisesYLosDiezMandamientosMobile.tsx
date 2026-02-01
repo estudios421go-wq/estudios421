@@ -285,7 +285,7 @@ const MoisesMobile = () => {
           {/* TEMPORADA 1 */}
           <div className="border border-white/5 rounded-lg bg-white/[0.02] overflow-hidden">
             <button onClick={() => setOpenT1(!openT1)} className="w-full px-5 py-4 flex items-center justify-between active:bg-white/5">
-              <span className="text-xs font-black uppercase tracking-widest text-white/80">Temporada 1 — Liberación</span>
+              <span className="text-xs font-black uppercase tracking-widest text-white/80">Temporada 1</span>
               <IoChevronDown size={18} className={`transition-transform ${openT1 ? 'rotate-180 text-[#F09800]' : ''}`} />
             </button>
             <div className={`transition-all ${openT1 ? 'h-auto py-6 px-4' : 'h-0 overflow-hidden'}`}>
@@ -302,7 +302,7 @@ const MoisesMobile = () => {
           {/* TEMPORADA 2 */}
           <div className="border border-white/5 rounded-lg bg-white/[0.02] overflow-hidden">
             <button onClick={() => setOpenT2(!openT2)} className="w-full px-5 py-4 flex items-center justify-between active:bg-white/5">
-              <span className="text-xs font-black uppercase tracking-widest text-white/80">Temporada 2 — Tierra Prometida</span>
+              <span className="text-xs font-black uppercase tracking-widest text-white/80">Temporada 2</span>
               <IoChevronDown size={18} className={`transition-transform ${openT2 ? 'rotate-180 text-[#F09800]' : ''}`} />
             </button>
             <div className={`transition-all ${openT2 ? 'h-auto py-6 px-4' : 'h-0 overflow-hidden'}`}>
@@ -328,7 +328,7 @@ const MoisesMobile = () => {
         </div>
         <div className="space-y-4 mb-8">
           <p className="text-[10px] leading-relaxed">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-          <p className="text-[9px] leading-relaxed text-gray-600">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, entre otros). Estudios 421 es una plataforma sin fines de lucro.</p>
+          <p className="text-[9px] leading-relaxed text-gray-600">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
         </div>
         <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
           <Link href="/politica-de-privacidad">Política de privacidad</Link>
