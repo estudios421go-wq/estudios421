@@ -1,41 +1,270 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
-import Footer from '../../Footer';
+import { useRouter } from 'next/router';
+import { IoSearchOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
+import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
+import { FaXTwitter } from 'react-icons/fa6';
+import { allSeries } from '../../../data/series';
 
-const ReyesLaDecadenciaPC = () => {
+// --- CONFIGURACIÓN DE EPISODIOS (ID: 29) ---
+const reyesDecadenciaEpisodes = [
+  { id: 1, title: "El Día Siguiente", dur: "00:48:11", desc: "En un escenario que refleja paz y armonía, Salomón disfruta de la compañía de su familia. En Damasco, se encarga un ritual al dios Nergal...", thumb: "https://static.wixstatic.com/media/859174_07288c0a3d8e4891b810a15ce13ba86b~mv2.jpg", url: "https://ok.ru/videoembed/14703822867968", available: true },
+  { id: 2, title: "La Venganza del Duelo", dur: "00:42:15", desc: "Sin imaginar lo que le costaría, Naamã acepta la ayuda de una persona querida de su pasado. Con la tensión casi palpable...", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14703822862968", available: true },
+  { id: 3, title: "Episodio 03", date: "3 de febrero", available: false },
+  { id: 4, title: "Episodio 04", date: "4 de febrero", available: false },
+  { id: 5, title: "Episodio 05", date: "5 de febrero", available: false },
+  { id: 6, title: "Episodio 06", date: "6 de febrero", available: false },
+  { id: 7, title: "Episodio 07", date: "9 de febrero", available: false },
+  { id: 8, title: "Episodio 08", date: "10 de febrero", available: false },
+  { id: 9, title: "Episodio 09", date: "11 de febrero", available: false },
+  { id: 10, title: "Episodio 10", date: "12 de febrero", available: false },
+  { id: 11, title: "Episodio 11", date: "13 de febrero", available: false },
+  { id: 12, title: "Episodio 12", date: "16 de febrero", available: false },
+  { id: 13, title: "Episodio 13", date: "17 de febrero", available: false },
+  { id: 14, title: "Episodio 14", date: "18 de febrero", available: false },
+  { id: 15, title: "Episodio 15", date: "19 de febrero", available: false },
+  { id: 16, title: "Episodio 16", date: "20 de febrero", available: false },
+  { id: 17, title: "Episodio 17", date: "23 de febrero", available: false },
+  { id: 18, title: "Episodio 18", date: "24 de febrero", available: false },
+  { id: 19, title: "Episodio 19", date: "25 de febrero", available: false },
+  { id: 20, title: "Episodio 20", date: "26 de febrero", available: false },
+  { id: 21, title: "Episodio 21", date: "27 de febrero", available: false },
+];
+
+const ReyesDecadenciaPC = () => {
+  const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [inMyList, setInMyList] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
+  const SERIES_ID = 29;
+
   useEffect(() => {
-    const handleContext = (e: MouseEvent) => e.preventDefault();
-    const handleKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'i')) || e.key === 'F12') e.preventDefault();
+    const handleGlobalPrevent = (e: any) => e.preventDefault();
+    document.addEventListener('contextmenu', handleGlobalPrevent);
+    document.addEventListener('dragstart', handleGlobalPrevent);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || (e.metaKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || e.key === 'F12') {
+        e.preventDefault();
+      }
     };
-    document.addEventListener('contextmenu', handleContext);
-    document.addEventListener('keydown', handleKey);
+    document.addEventListener('keydown', handleKeyDown);
+
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', handleScroll);
+
+    const savedEp = localStorage.getItem('reyes_decadencia_last_ep');
+    if (savedEp) {
+      const idx = parseInt(savedEp);
+      if (idx < reyesDecadenciaEpisodes.length && reyesDecadenciaEpisodes[idx].available) setCurrentIdx(idx);
+    }
+
+    const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (myListData.includes(SERIES_ID)) setInMyList(true);
+
     return () => {
-      document.removeEventListener('contextmenu', handleContext);
-      document.removeEventListener('keydown', handleKey);
+      document.removeEventListener('contextmenu', handleGlobalPrevent);
+      document.removeEventListener('dragstart', handleGlobalPrevent);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
+  useEffect(() => {
+    if (searchQuery.trim().length >= 2) {
+      const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const term = normalize(searchQuery);
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo'],
+        reyes: ['reyes', 'salomon', 'decadencia', 'david', 'saul', 'jerusalen'],
+        jesus: ['jesus', 'milagros', 'pasion']
+      };
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
+      });
+      setSearchResults(filtered);
+    } else { setSearchResults([]); }
+  }, [searchQuery]);
+
+  const openEpisode = (idx: number) => {
+    if (!reyesDecadenciaEpisodes[idx].available) return;
+    setCurrentIdx(idx);
+    setSelectedVideo(reyesDecadenciaEpisodes[idx].url || null);
+    localStorage.setItem('reyes_decadencia_last_ep', idx.toString());
+  };
+
+  const closePlayer = () => setSelectedVideo(null);
+
+  const toggleMyList = () => {
+    let list = JSON.parse(localStorage.getItem('myList') || '[]');
+    if (inMyList) { 
+      list = list.filter((i: number) => i !== SERIES_ID); 
+      setInMyList(false); 
+    } else { 
+      list.push(SERIES_ID); 
+      setInMyList(true); 
+    }
+    localStorage.setItem('myList', JSON.stringify(list));
+  };
+
   return (
-    <div className="bg-black min-h-screen text-white font-sans select-none flex flex-col">
-      <Head><title>Reyes La Decadencia — Estudios 421</title></Head>
-      <div className="flex-grow flex flex-col items-center justify-center relative px-4 text-left">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FF8A00]/10 via-transparent to-black" />
-        <div className="z-10 text-center space-y-8 max-w-2xl">
-          <div className="w-24 h-1 bg-[#FF8A00] mx-auto shadow-[0_0_20px_#FF8A00]" />
-          <h1 className="text-6xl font-black uppercase tracking-[0.2em]">Reyes La Decadencia</h1>
-          <p className="text-[#FF8A00] text-sm font-bold tracking-[0.4em] uppercase">Estamos reconstruyendo esta experiencia</p>
-          <p className="text-gray-400 text-base leading-relaxed">Próximamente esta serie bíblica estará disponible con la mejor calidad y todas sus funcionalidades. Gracias por tu paciencia.</p>
-          <Link href="/">
-            <button className="mt-8 border border-white/20 px-12 py-4 rounded-full font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-500 transform hover:scale-105 shadow-2xl">
-              Volver al inicio
-            </button>
-          </Link>
+    <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
+      <Head><title>Reyes: La Decadencia — Estudios 421</title></Head>
+
+      <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
+        <div className="flex items-center gap-10">
+          <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
+          <div className="flex gap-8">
+            <Link href="/" className="relative group text-white text-[15px] font-medium tracking-wide">Inicio<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-biblicas" className="relative group text-white text-[15px] font-medium tracking-wide">Series Biblicas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/series-tv" className="relative group text-white text-[15px] font-medium tracking-wide">Series TV<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+            <Link href="/peliculas" className="relative group text-white text-[15px] font-medium tracking-wide">Peliculas<span className="absolute -bottom-1 left-0 h-[3px] bg-[#FF8A00] transition-all duration-500 w-0 group-hover:w-full" /></Link>
+          </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="flex gap-4 mr-4">
+            {[{ n: '', img: '367960b11c1c44ba89cd1582fd1b5776', p: '/serie/reyes-la-decadencia' }, 
+              { n: 'en', img: '35112d9ffe234d6f9dcef16cf8f7544e', p: '/en/serie/reyes-la-decadencia' }, 
+              { n: 'pt', img: '830f1c20656e4d44a819bedfc13a22cc', p: '/pt/serie/reyes-la-decadencia' }].map((l) => (
+              <Link key={l.n} href={l.p}><img src={`https://static.wixstatic.com/media/859174_${l.img}~mv2.png`} className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" /></Link>
+            ))}
+          </div>
+          <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
+            <IoSearchOutline className="text-white text-xl" />
+            <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-transparent border-none outline-none text-white text-sm ml-2 w-32 placeholder:text-gray-400" />
+          </form>
+          <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
+        </div>
+      </nav>
+
+      <div className="relative w-full h-[88vh]">
+        <img src="https://static.wixstatic.com/media/859174_90605155f6794a45aa7ccb10598eeff0~mv2.jpg" className="w-full h-full object-cover" alt="Banner Reyes: La Decadencia" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
+        <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
+          <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
+            {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${currentIdx + 1}`}
+          </button>
+          <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
+            {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
+          </button>
+          <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
         </div>
       </div>
-      <Footer />
+
+      <div className="h-20 bg-black"></div>
+
+      <div className="px-16 mb-20 relative z-10">
+        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
+          <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
+          <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
+        </header>
+
+        <div className="grid grid-cols-4 gap-8">
+          {reyesDecadenciaEpisodes.map((ep, index) => (
+            <div key={ep.id} className={`group rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${ep.available ? (currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20 cursor-pointer' : 'border-transparent hover:border-white/20 cursor-pointer') : 'border-white/5 opacity-60 cursor-default'}`} 
+                 onClick={() => ep.available && openEpisode(index)}>
+              <div className="relative aspect-video overflow-hidden">
+                {ep.available ? (
+                   <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
+                ) : (
+                   <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                      <span className="text-[#FF8A00] font-black text-4xl opacity-20">{ep.id}</span>
+                   </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] opacity-60" />
+                <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-md border border-white/10">
+                    <span className="text-[11px] font-black uppercase text-white">Episodio <span className="text-[#FF8A00]">{ep.id}</span></span>
+                </div>
+                {ep.available && (
+                   <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
+                     <span className="text-[10px] font-bold text-white">{ep.dur}</span>
+                   </div>
+                )}
+              </div>
+              <div className="p-5 flex flex-col gap-1">
+                <h3 className={`font-bold text-base truncate uppercase ${ep.available ? 'group-hover:text-[#FF8A00]' : 'text-gray-500'}`}>{ep.title}</h3>
+                <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">
+                  {ep.available ? ep.desc : `Estreno este ${ep.date} por la noche.`}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="px-16 mb-32 flex justify-center">
+          <Link href="/serie/reyes-la-division">
+            <button className="group relative bg-white/5 text-white border border-white/10 font-black py-6 px-20 rounded-xl text-xl uppercase tracking-tighter hover:bg-[#FF8A00] hover:text-black transition-all shadow-2xl overflow-hidden">
+                <span className="relative z-10">Ver Siguiente Temporada</span>
+            </button>
+          </Link>
+      </div>
+
+      {selectedVideo && (
+        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in">
+          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
+            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
+              <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Reyes: La Decadencia</span>
+              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">{reyesDecadenciaEpisodes[currentIdx].title}</h2>
+            </div>
+            <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:scale-105 transition-all">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar</span>
+              <IoClose size={24} className="group-hover:rotate-90 group-hover:text-black transition-all" />
+            </button>
+          </div>
+          <div className="flex-grow bg-black relative">
+            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
+          </div>
+          <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] border-t border-white/5 flex items-center justify-between">
+            <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 transition-all">
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black transition-all">
+                <IoChevronBack size={24} />
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60">Anterior</span>
+                <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx}</span>
+              </div>
+            </button>
+            <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] transition-all">
+              <IoList size={28} className="text-[#FF8A00]" />
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Capítulos</span>
+            </button>
+            <button disabled={currentIdx === reyesDecadenciaEpisodes.length - 1 || !reyesDecadenciaEpisodes[currentIdx + 1].available} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 transition-all">
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
+                <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx + 2}</span>
+              </div>
+              <div className="w-16 h-16 rounded-[22px] bg-[#FF8A00] flex items-center justify-center text-black shadow-2xl group-hover:scale-110 transition-all">
+                <IoChevronForward size={32} />
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
+
+      <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
+        <div className="max-w-7xl mx-auto text-[10px] md:text-xs text-gray-500 leading-relaxed">
+           © {new Date().getFullYear()} Estudios 421. El contenido audiovisual pertenece a sus respectivos propietarios. Plataforma sin fines de lucro para la difusión bíblica.
+        </div>
+      </footer>
+      <style jsx global>{`
+        .unselectable { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        img { pointer-events: none !important; }
+      `}</style>
     </div>
   );
 };
-export default ReyesLaDecadenciaPC;
+
+export default ReyesDecadenciaPC;
