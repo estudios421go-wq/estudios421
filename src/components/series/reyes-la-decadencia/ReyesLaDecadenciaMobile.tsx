@@ -10,27 +10,27 @@ import { allSeries } from '../../../data/series';
 
 // --- CONFIGURACIÓN DE EPISODIOS (ID: 29) ---
 const reyesDecadenciaEpisodes = [
-  { id: 1, title: "El Día Siguiente", dur: "48:11", desc: "En un escenario que refleja paz y armonía, Salomón disfruta de la compañía de su familia...", thumb: "https://static.wixstatic.com/media/859174_07288c0a3d8e4891b810a15ce13ba86b~mv2.jpg", url: "https://ok.ru/videoembed/14703822867968", available: true },
-  { id: 2, title: "La Venganza del Duelo", dur: "42:15", desc: "Sin imaginar lo que le costaría, Naamã acepta la ayuda de una persona querida de su pasado...", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14703822862968", available: true },
-  { id: 3, title: "Episodio 03", date: "3 de febrero", available: false },
-  { id: 4, title: "Episodio 04", date: "4 de febrero", available: false },
-  { id: 5, title: "Episodio 05", date: "5 de febrero", available: false },
-  { id: 6, title: "Episodio 06", date: "6 de febrero", available: false },
-  { id: 7, title: "Episodio 07", date: "9 de febrero", available: false },
-  { id: 8, title: "Episodio 08", date: "10 de febrero", available: false },
-  { id: 9, title: "Episodio 09", date: "11 de febrero", available: false },
-  { id: 10, title: "Episodio 10", date: "12 de febrero", available: false },
-  { id: 11, title: "Episodio 11", date: "13 de febrero", available: false },
-  { id: 12, title: "Episodio 12", date: "16 de febrero", available: false },
-  { id: 13, title: "Episodio 13", date: "17 de febrero", available: false },
-  { id: 14, title: "Episodio 14", date: "18 de febrero", available: false },
-  { id: 15, title: "Episodio 15", date: "19 de febrero", available: false },
-  { id: 16, title: "Episodio 16", date: "20 de febrero", available: false },
-  { id: 17, title: "Episodio 17", date: "23 de febrero", available: false },
-  { id: 18, title: "Episodio 18", date: "24 de febrero", available: false },
-  { id: 19, title: "Episodio 19", date: "25 de febrero", available: false },
-  { id: 20, title: "Episodio 20", date: "26 de febrero", available: false },
-  { id: 21, title: "Episodio 21", date: "27 de febrero", available: false },
+  { id: 1, title: "EL DÍA SIGUIENTE", dur: "48:11", thumb: "https://static.wixstatic.com/media/859174_07288c0a3d8e4891b810a15ce13ba86b~mv2.jpg", url: "https://ok.ru/videoembed/14918896323072", available: true },
+  { id: 2, title: "LA VENGANZA DEL DUELO", dur: "42:15", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14918896454144", available: true },
+  { id: 3, title: "ESTRENO 3 DE FEBRERO", available: false },
+  { id: 4, title: "ESTRENO 4 DE FEBRERO", available: false },
+  { id: 5, title: "ESTRENO 5 DE FEBRERO", available: false },
+  { id: 6, title: "ESTRENO 6 DE FEBRERO", available: false },
+  { id: 7, title: "ESTRENO 9 DE FEBRERO", available: false },
+  { id: 8, title: "ESTRENO 10 DE FEBRERO", available: false },
+  { id: 9, title: "ESTRENO 11 DE FEBRERO", available: false },
+  { id: 10, title: "ESTRENO 12 DE FEBRERO", available: false },
+  { id: 11, title: "ESTRENO 13 DE FEBRERO", available: false },
+  { id: 12, title: "ESTRENO 16 DE FEBRERO", available: false },
+  { id: 13, title: "ESTRENO 17 DE FEBRERO", available: false },
+  { id: 14, title: "ESTRENO 18 DE FEBRERO", available: false },
+  { id: 15, title: "ESTRENO 19 DE FEBRERO", available: false },
+  { id: 16, title: "ESTRENO 20 DE FEBRERO", available: false },
+  { id: 17, title: "ESTRENO 23 DE FEBRERO", available: false },
+  { id: 18, title: "ESTRERENO 24 DE FEBRERO", available: false },
+  { id: 19, title: "ESTRENO 25 DE FEBRERO", available: false },
+  { id: 20, title: "ESTRENO 26 DE FEBRERO", available: false },
+  { id: 21, title: "ESTRENO 27 DE FEBRERO", available: false },
 ];
 
 const ReyesDecadenciaMobile = () => {
@@ -58,14 +58,13 @@ const ReyesDecadenciaMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // BUSCADOR COMPLETO Y PROFESIONAL
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
       const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo'],
-        reyes: ['reyes', 'salomon', 'decadencia', 'division'],
+        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida'],
+        reyes: ['reyes', 'salomon', 'decadencia', 'david'],
         jesus: ['jesus', 'milagros', 'pasion']
       };
       const relatedTerms = new Set<string>();
@@ -172,7 +171,7 @@ const ReyesDecadenciaMobile = () => {
           <Link href="/series-tv" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Series TV</Link>
           <Link href="/peliculas" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold text-white">Películas</Link>
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2 mt-4">Idioma</p>
-          <div className="flex gap-6 text-center">
+          <div className="flex gap-6">
             {[{l:'ESP', i:'367960b11c1c44ba89cd1582fd1b5776', p:'/serie/reyes-la-decadencia'}, {l:'ENG', i:'35112d9ffe234d6f9dcef16cf8f7544e', p:'/en/serie/reyes-la-decadencia'}, {l:'PT', i:'830f1c20656e4d44a819bedfc13a22cc', p:'/pt/serie/reyes-la-decadencia'}].map((lang) => (
               <Link key={lang.l} href={lang.p} className="flex flex-col items-center gap-2 active:scale-95 transition-transform">
                 <img src={`https://static.wixstatic.com/media/859174_${lang.i}~mv2.png`} alt={lang.l} className="w-10 h-10 object-contain" /><span className="text-[10px] text-white font-bold">{lang.l}</span>
@@ -205,11 +204,9 @@ const ReyesDecadenciaMobile = () => {
           <div className="w-1 h-5 bg-[#F09800]"></div>
           <h2 className="text-[11px] font-black text-white/50 tracking-[0.3em] uppercase">Episodios Disponibles</h2>
         </header>
-        <div className="flex flex-col gap-6 text-left">
+        <div className="grid grid-cols-2 gap-5 text-left">
           {reyesDecadenciaEpisodes.map((ep, index) => (
-            <div key={ep.id} 
-                 className={`flex flex-col gap-3 transition-all ${ep.available ? 'active:scale-95' : 'opacity-40'}`} 
-                 onClick={() => ep.available && openEpisode(index)}>
+            <div key={ep.id} className={`flex flex-col gap-2.5 transition-all ${ep.available ? 'active:scale-95' : 'opacity-40'}`} onClick={() => ep.available && openEpisode(index)}>
               <div className={`relative aspect-video rounded-lg overflow-hidden border-2 ${ep.available ? (currentIdx === index ? 'border-[#F09800] shadow-[0_0_15px_rgba(240,152,0,0.2)]' : 'border-white/5') : 'border-white/5'}`}>
                 {ep.available ? (
                    <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
@@ -223,12 +220,9 @@ const ReyesDecadenciaMobile = () => {
                    <span className="absolute bottom-1.5 right-1.5 bg-black/80 backdrop-blur-md px-2 py-0.5 text-[8px] font-black rounded border border-white/10 uppercase">{ep.dur}</span>
                 )}
               </div>
-              <div className="px-1">
-                <h3 className={`font-bold text-[11px] truncate uppercase tracking-tight ${ep.available ? 'text-white' : 'text-gray-500'}`}>EP. {ep.id} {ep.available ? ep.title : '(PRÓXIMAMENTE)'}</h3>
-                <p className="text-[10px] leading-relaxed text-gray-400 mt-1 line-clamp-2">
-                    {ep.available ? ep.desc : `Estreno este ${ep.date} por la noche.`}
-                </p>
-              </div>
+              <h3 className={`font-bold text-[10px] truncate uppercase tracking-tight ${ep.available ? 'text-white/90' : 'text-gray-500'}`}>
+                {ep.available ? `EP. ${ep.id} ${ep.title}` : `EP. ${ep.id} ${ep.title}`}
+              </h3>
             </div>
           ))}
         </div>
@@ -250,8 +244,11 @@ const ReyesDecadenciaMobile = () => {
           <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="active:text-[#F09800] transition-colors"><FaYoutube /></a>
           <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="active:text-[#F09800] transition-colors"><FaXTwitter /></a>
         </div>
-        <p className="text-[10px] leading-relaxed mb-8">© {new Date().getFullYear()} Estudios 421. Contenido audiovisual de sus respectivos propietarios. Plataforma sin fines de lucro.</p>
-        <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8 text-left">
+        <div className="space-y-4 mb-8 text-[10px]">
+          <p className="leading-relaxed">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
+          <p className="leading-relaxed text-gray-600">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
+        </div>
+        <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
           <Link href="/politica-de-privacidad">Política de privacidad</Link>
           <Link href="/terminos-de-uso">Términos de uso</Link>
           <Link href="/cookies">Configuración de cookies</Link>
