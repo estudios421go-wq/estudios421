@@ -12,7 +12,7 @@ import { allSeries } from '../../../data/series';
 const reyesDecadenciaEpisodes = [
   { id: 1, title: "El Día Siguiente", dur: "00:48:11", desc: "En un escenario que refleja paz y armonía, Salomón disfruta de la compañía de su familia. En Damasco, se encarga un ritual al dios Nergal...", thumb: "https://static.wixstatic.com/media/859174_07288c0a3d8e4891b810a15ce13ba86b~mv2.jpg", url: "https://ok.ru/videoembed/14918896323072", available: true },
   { id: 2, title: "La Venganza del Duelo", dur: "00:42:15", desc: "Sin imaginar lo que le costaría, Naamã acepta la ayuda de una persona querida de su pasado. Con la tensión casi palpable...", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14918896454144", available: true },
-  { id: 3, title: "Episodio 03", date: "3 de febrero", available: false },
+  { id: 3, title: "Intento de Comenzar de Nuevo", dur: "00:51:45", desc: "En la incansable búsqueda de los bebés secuestrados, los soldados se encuentran con una posibilidad aún más aterradora.", thumb: "https://static.wixstatic.com/media/859174_b0de23d52b1244398f856ca3e330795f~mv2.jpg", url: "https://ok.ru/videoembed/14945256147456", available: true },
   { id: 4, title: "Episodio 04", date: "4 de febrero", available: false },
   { id: 5, title: "Episodio 05", date: "5 de febrero", available: false },
   { id: 6, title: "Episodio 06", date: "6 de febrero", available: false },
