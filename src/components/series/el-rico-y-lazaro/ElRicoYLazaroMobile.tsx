@@ -157,7 +157,7 @@ const RicoLazaroMobile = () => {
           </button>
         </div>
         <div className="flex-grow flex flex-col relative bg-black items-center justify-center">
-          <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" allow="autoplay; fullscreen" allowFullScreen />
+          <iframe src={selectedVideo} className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" allow="autoplay; fullscreen" allowFullScreen />
           <div className="absolute inset-x-0 bottom-8 flex justify-around items-center px-6">
             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="flex flex-col items-center gap-2 group disabled:opacity-5">
               <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-xl border border-white/10 flex items-center justify-center active:bg-[#F09800] transition-all"><IoChevronBack size={20} /></div>
@@ -181,7 +181,7 @@ const RicoLazaroMobile = () => {
     <div className="bg-black min-h-screen text-white font-sans selection:bg-[#F09800] text-left">
       <Head><title>El Rico y Lázaro — Estudios 421</title></Head>
       
-      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${ RicoLazaroMobileisScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
+      <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${ isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <IoCloseOutline /> : <IoMenuOutline />}
@@ -267,7 +267,7 @@ const RicoLazaroMobile = () => {
         </div>
         <div className="space-y-4 mb-8">
           <p className="text-[10px] leading-relaxed">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-          <p className="text-[9px] leading-relaxed text-gray-600">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
+          <p className="text-[9px] leading-relaxed text-gray-600 font-medium">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
         </div>
         <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
           <Link href="/politica-de-privacidad">Política de privacidad</Link>
