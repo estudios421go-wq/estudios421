@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -34,15 +34,18 @@ const LaVidaDeJobPC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   useEffect(() => {
-    // BLINDAJE
-    const handleGlobalPrevent = (e) => e.preventDefault();
-    document.addEventListener('contextmenu', handleGlobalPrevent);
-    document.addEventListener('dragstart', handleGlobalPrevent);
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || (e.metaKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || e.key === 'F12') {
+    // BLINDAJE CON TIPADO PARA TYPESCRIPT
+    const handleGlobalPrevent = (e: MouseEvent | DragEvent) => e.preventDefault();
+    document.addEventListener('contextmenu', handleGlobalPrevent as any);
+    document.addEventListener('dragstart', handleGlobalPrevent as any);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || 
+          (e.metaKey && (e.key === 'u' || e.key === 's' || e.key === 'i')) || 
+          e.key === 'F12') {
         e.preventDefault();
       }
     };
@@ -58,8 +61,8 @@ const LaVidaDeJobPC = () => {
     }
 
     return () => {
-      document.removeEventListener('contextmenu', handleGlobalPrevent);
-      document.removeEventListener('dragstart', handleGlobalPrevent);
+      document.removeEventListener('contextmenu', handleGlobalPrevent as any);
+      document.removeEventListener('dragstart', handleGlobalPrevent as any);
       document.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', handleScroll);
     };
@@ -67,7 +70,7 @@ const LaVidaDeJobPC = () => {
 
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
-      const normalize = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
       const filtered = allSeries.filter(serie => {
         const titleNormalized = normalize(serie.title);
@@ -78,10 +81,9 @@ const LaVidaDeJobPC = () => {
     } else { setSearchResults([]); }
   }, [searchQuery]);
 
-  const openEpisode = (idx) => {
+  const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
     localStorage.setItem('job_last_ep', idx.toString());
-    // ABRIR EN PESTAÑA NUEVA
     window.open(jobEpisodes[idx].url, '_blank');
   };
 
@@ -113,17 +115,6 @@ const LaVidaDeJobPC = () => {
         </div>
       </nav>
 
-      {searchQuery.length > 0 && (
-        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
-          <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
-          <div className="grid grid-cols-6 gap-x-4 gap-y-10">
-            {searchResults.map((m) => (
-              <Link key={m.id} href={m.path}><div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group"><Image src={m.banner} alt={m.title} fill className="object-cover rounded-md" unoptimized /></div></Link>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_f2663a3ee1e64c0e872790d28c7f659e~mv2.jpg" className="w-full h-full object-cover" alt="Banner Job" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
@@ -131,28 +122,21 @@ const LaVidaDeJobPC = () => {
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${jobEpisodes[currentIdx].id}`}
           </button>
-          {/* BOTÓN MI LISTA DESHABILITADO SEGÚN SOLICITUD */}
-          <button className="border py-4 px-10 rounded-sm bg-white/5 border-white/10 text-white/40 cursor-not-allowed uppercase font-bold">
-            + Mi Lista
-          </button>
+          <button className="border py-4 px-10 rounded-sm bg-white/5 border-white/10 text-white/40 cursor-not-allowed uppercase font-bold">+ Mi Lista</button>
           <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
         </div>
       </div>
 
-      <div className="h-20 bg-black"></div>
-
-      <div className="px-16 mb-32 relative z-10">
+      <div className="px-16 mt-32 mb-32 relative z-10">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
         </header>
-
         <div className="grid grid-cols-4 gap-8">
           {jobEpisodes.map((ep, index) => (
-            <div key={ep.id} className={`group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 border-transparent hover:border-[#FF8A00]`} onClick={() => openEpisode(index)}>
+            <div key={ep.id} className="group cursor-pointer rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 border-transparent hover:border-[#FF8A00]" onClick={() => openEpisode(index)}>
               <div className="relative aspect-video overflow-hidden">
                 <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] opacity-60" />
                 <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-md border border-white/10">
                     <span className="text-[11px] font-black uppercase text-white">Episodio <span className="text-[#FF8A00]">{ep.id}</span></span>
                 </div>
@@ -171,36 +155,22 @@ const LaVidaDeJobPC = () => {
 
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-start md:justify-end gap-6 mb-10">
-            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
-            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
-            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
-            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
-            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
+          <div className="flex justify-start md:justify-end gap-6 mb-10 text-xl">
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors"><FaFacebookF /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors"><FaInstagram /></a>
+            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors"><FaYoutube /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4">
-            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
-          </div>
-          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
-            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
-            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
-            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
-            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
-            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
+            <p className="text-xs">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
+            <p className="text-[10px] text-gray-600">Aviso Legal: El contenido audiovisual pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro.</p>
           </div>
         </div>
       </footer>
       <style jsx global>{`
-        .unselectable {
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-        img {
-          pointer-events: none !important;
-        }
+        .unselectable { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
+        img { pointer-events: none !important; }
       `}</style>
     </div>
   );
