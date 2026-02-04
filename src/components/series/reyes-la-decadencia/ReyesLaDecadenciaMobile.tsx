@@ -13,7 +13,7 @@ const reyesDecadenciaEpisodes = [
   { id: 1, title: "EL DÍA SIGUIENTE", dur: "48:11", thumb: "https://static.wixstatic.com/media/859174_07288c0a3d8e4891b810a15ce13ba86b~mv2.jpg", url: "https://ok.ru/videoembed/14918896323072", available: true },
   { id: 2, title: "LA VENGANZA DEL DUELO", dur: "42:15", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14918896454144", available: true },
   { id: 3, title: "INTENTO DE COMENZAR DE NUEVO", dur: "51:45", thumb: "https://static.wixstatic.com/media/859174_b0de23d52b1244398f856ca3e330795f~mv2.jpg", url: "https://ok.ru/videoembed/14945256147456", available: true },
-  { id: 4, title: "UNA NUEVA EN SU LUGAR", dur: "50:04", thumb: "https://static.wixstatic.com/media/859174_52aaae224ab5423cb243db8ee1074f14~mv2.jpg", url: "https://ok.ru/videoembed/14948256147456", available: true },
+  { id: 4, title: "UNA NUEVA EN SU LUGAR", dur: "50:04", thumb: "https://static.wixstatic.com/media/859174_52aaae224ab5423cb243db8ee1074f14~mv2.jpg", url: "https://ok.ru/videoembed/14973211183616", available: true },
   { id: 5, title: "ESTRENO 5 DE FEBRERO", available: false },
   { id: 6, title: "ESTRENO 6 DE FEBRERO", available: false },
   { id: 7, title: "ESTRENO 9 DE FEBRERO", available: false },
