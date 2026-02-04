@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'router';
+import { useRouter } from 'next/router';
 import { IoSearchOutline, IoMenuOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
