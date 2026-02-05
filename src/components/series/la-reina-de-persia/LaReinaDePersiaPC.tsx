@@ -169,7 +169,7 @@ const ReinaPersiaPC = () => {
       )}
 
       <div className="relative w-full h-[88vh]">
-        <img src="https://static.wixstatic.com/media/859174_9077120f20214a278326945924df896d~mv2.jpg" className="w-full h-full object-cover" alt="Banner La Reina de Persia" />
+        <img src="https://static.wixstatic.com/media/859174_569b703977e44e3d88611b7d8e63a2dc~mv2.jpg" className="w-full h-full object-cover" alt="Banner La Reina de Persia" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
