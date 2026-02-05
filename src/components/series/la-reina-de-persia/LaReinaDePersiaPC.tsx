@@ -27,7 +27,7 @@ const persiaEpisodes = [
   { id: 15, title: "Estamos a mano", dur: "00:46:37", desc: "En Grecia, las provocaciones de Pericles contra Jerjes aumentan la tensión, dejando la expectativa de un conflicto inminente. Aprovechando la ausencia del rey y de Ester, Amestris hace una gran revelación.", thumb: "https://static.wixstatic.com/media/859174_18a1bd77ce504e0b93e4e89eb93d7407~mv2.jpg", url: "https://ok.ru/videoembed/14973197486592" },
   { id: 16, title: "Nunca lo vas a entender", dur: "00:53:37", desc: "Desde las aguas, una vieja aliada de Amestris regresa a Susá. Después de revelar a Ester la sorpresa que preparó, Jerjes y la reina discuten hasta llegar a un ultimátum.", thumb: "https://static.wixstatic.com/media/859174_4d1e71aef9d94f2a8682e5c2d51e3f95~mv2.jpg", url: "https://ok.ru/videoembed/14973197814272" },
   { id: 17, title: "En el decimotercer día", dur: "00:45:08", desc: "Llevando a las gemelas ante el rey, Amestris no esperaba la rápida reacción de Jerjes. Prometiendo asegurar el poder del rey de reyes, Amán pide la aniquilación de los judíos.", thumb: "https://static.wixstatic.com/media/859174_076a07d11152470b9c8dbf487e0aaf73~mv2.jpg", url: "https://ok.ru/videoembed/14973198141952" },
-  { id: 18, title: "Entonces, ¿ eres Hadassah?", dur: "00:44:25", desc: "En rebelión y dolor, los judíos de Susá se reúnen frente al palacio. Contando con un nuevo aliado, Ester recibe noticias de Mardoqueo y con ellas se entera del último decreto del emperador.", thumb: "https://static.wixstatic.com/media/859174_8b1d9a993b734ac79d50d9149c7ba84f~mv2.jpg", url: "https://ok.ru/videoembed/14973198535168" },
+  { id: 18, title: "Entonces, ¿eres Hadassah?", dur: "00:44:25", desc: "En rebelión y dolor, los judíos de Susá se reúnen frente al palacio. Contando con un nuevo aliado, Ester recibe noticias de Mardoqueo y con ellas se entera del último decreto del emperador.", thumb: "https://static.wixstatic.com/media/859174_8b1d9a993b734ac79d50d9149c7ba84f~mv2.jpg", url: "https://ok.ru/videoembed/14973198535168" },
   { id: 19, title: "No voy a morir", dur: "00:46:44", desc: "En un intento de provocar a la reina y llenar su ausencia, Jerjes llama a Amirah, pero su permanencia allí depende de una curiosa condición. Ayunando durante tres días, Ester se prepara para ir ante el rey.", thumb: "https://static.wixstatic.com/media/859174_9243597cb05b46a88014fd145b9b781c~mv2.jpg", url: "https://ok.ru/videoembed/14973198731776" },
   { id: 20, title: "¿Cuál es tu pedido?", dur: "00:45:06", desc: "Ante la gran sorpresa de Jerjes por tener a Ester en su presencia, la tensión de todos se concentra en la expectativa por la reacción del rey. En conversación con Mardoqueo, Hegai hace revelaciones sobre su pasado.", thumb: "https://static.wixstatic.com/media/859174_e71dfd724abf4442aa2e32775097f33c~mv2.jpg", url: "https://ok.ru/videoembed/14973199059456" },
   { id: 21, title: "No esperar nada", dur: "00:38:43", desc: "Después de rechazar a Aria, Jerjes es enfrentado por la concubina. Mientras se prepara para un ataque fatal, Amán celebra con sus hijos la finalización de la horca destinada a Mardoqueo.", thumb: "https://static.wixstatic.com/media/859174_997eecbb23864da48f48a46cfa8b2799~mv2.jpg", url: "https://ok.ru/videoembed/14973199190528" },
@@ -92,8 +92,8 @@ const ReinaPersiaPC = () => {
         moises: ['moises', 'diez mandamientos', 'egipto'],
         jesus: ['jesus', 'milagros', 'pasion'],
         reyes: ['reyes', 'david', 'saul', 'salomon', 'ester', 'persia'],
-        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'jerjes', 'hadassah'],
-        biblia: ['biblia', 'milagros', 'testamento']
+        ester: ['ester', 'reina de persia', 'persia', 'jerjes', 'hadassah'],
+        biblia: ['biblia', 'milagros']
       };
       const relatedTerms = new Set<string>();
       relatedTerms.add(term);
@@ -175,7 +175,7 @@ const ReinaPersiaPC = () => {
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
             {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${persiaEpisodes[currentIdx].id}`}
           </button>
-          <button toggleMyList onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
+          <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
             {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
           </button>
           <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
@@ -229,8 +229,8 @@ const ReinaPersiaPC = () => {
           </div>
           <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] border-t border-white/5 flex items-center justify-between">
             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 transition-all">
-              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black transition-all">
-                <IoChevronBack className="text-xl" />
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black transition-all shadow-xl">
+                <IoChevronBack className="text-2xl" />
               </div>
               <div className="flex flex-col items-start text-left">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60">Anterior</span>
@@ -238,7 +238,7 @@ const ReinaPersiaPC = () => {
               </div>
             </button>
             <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] transition-all">
-              <IoList className="text-2xl text-[#FF8A00]" />
+              <IoList size={28} className="text-[#FF8A00]" />
               <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Capítulos</span>
             </button>
             <button disabled={currentIdx === persiaEpisodes.length - 1} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 transition-all">
@@ -277,8 +277,15 @@ const ReinaPersiaPC = () => {
         </div>
       </footer>
       <style jsx global>{`
-        .unselectable { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        img { pointer-events: none !important; }
+        .unselectable {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        img {
+          pointer-events: none !important;
+        }
       `}</style>
     </div>
   );
