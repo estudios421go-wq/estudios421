@@ -14,7 +14,7 @@ const reyesDecadenciaEpisodes = [
   { id: 2, title: "La Venganza del Duelo", dur: "00:42:15", desc: "Sin imaginar lo que le costaría, Naamã acepta la ayuda de una persona querida de su pasado. Con la tensión casi palpable...", thumb: "https://static.wixstatic.com/media/859174_c6e9b142404b4136be7ef6b7afb8f553~mv2.jpg", url: "https://ok.ru/videoembed/14918896454144", available: true },
   { id: 3, title: "Intento de Comenzar de Nuevo", dur: "00:51:45", desc: "En la incansable búsqueda de los bebés secuestrados, los soldados se encuentran con una posibilidad aún más aterradora.", thumb: "https://static.wixstatic.com/media/859174_b0de23d52b1244398f856ca3e330795f~mv2.jpg", url: "https://ok.ru/videoembed/14945256147456", available: true },
   { id: 4, title: "Una Nueva en su Lugar", dur: "00:50:04", desc: "De camino a Jerusalén, Salomón es sorprendido por una persona peculiar. En el palacio, Nebset es atormentada por sus preocupaciones.", thumb: "https://static.wixstatic.com/media/859174_52aaae224ab5423cb243db8ee1074f14~mv2.jpg", url: "https://ok.ru/videoembed/14973211183616", available: true },
-  { id: 5, title: "Episodio 05", date: "5 de febrero", available: false },
+  { id: 5, title: "Él volvió, Ella se perdió", dur: "00:47:38", desc: "En medio de un banquete real, Salomón recibe un regalo muy especial. Con el interés de Kéfira en el rey, Hiram hace una propuesta.", thumb: "https://static.wixstatic.com/media/859174_d7964bdc7d37438ebeb8fcb700dcc44b~mv2.jpg", url: "https://ok.ru/videoembed/15003115915776", available: true },
   { id: 6, title: "Episodio 06", date: "6 de febrero", available: false },
   { id: 7, title: "Episodio 07", date: "9 de febrero", available: false },
   { id: 8, title: "Episodio 08", date: "10 de febrero", available: false },
