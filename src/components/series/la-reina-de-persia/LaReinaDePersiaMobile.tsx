@@ -69,11 +69,13 @@ const ReinaPersiaMobile = () => {
       const term = normalize(searchQuery);
       
       const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'egipto'],
-        jesus: ['jesus', 'milagros', 'pasion'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'ester', 'persia'],
-        ester: ['ester', 'reina de persia', 'persia', 'jerjes', 'hadassah'],
-        biblia: ['biblia', 'milagros']
+        moises: ['moises', 'diez mandamientos', 'testamento', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
       };
 
       const relatedTerms = new Set<string>();
@@ -112,7 +114,7 @@ const ReinaPersiaMobile = () => {
   if (selectedVideo) {
     return (
       <div className="fixed inset-0 z-[2000] bg-[#050608] flex flex-col overflow-hidden text-left">
-        <Head><title>EPISODIO {persiaEpisodes[currentIdx].id} — LA REINA DE PERSIA</title></Head>
+        <Head><title>REPRODUCIENDO: {persiaEpisodes[currentIdx].title}</title></Head>
         <div className="px-6 h-[85px] flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent border-b border-white/5 z-10">
           <div className="flex flex-col border-l-4 border-[#F09800] pl-4 py-1">
             <span className="text-[9px] font-black text-[#F09800] uppercase tracking-[0.3em] mb-1">SERIE: LA REINA DE PERSIA</span>
@@ -194,7 +196,7 @@ const ReinaPersiaMobile = () => {
 
       <div className="relative w-full pt-0 bg-black shadow-2xl">
         <div className="w-full aspect-[4/3] relative">
-          <img src="https://static.wixstatic.com/media/859174_569b703977e44e3d88611b7d8e63a2dc~mv2.jpg" className="w-full h-full object-cover" alt="Banner" />
+          <img src="https://static.wixstatic.com/media/859174_569b703977e44e3d88611b7d8e63a2dc~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
         </div>
         <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20">
@@ -239,10 +241,10 @@ const ReinaPersiaMobile = () => {
         </div>
         <div className="space-y-4 mb-8">
           <p className="text-[10px] leading-relaxed">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
-          <p className="text-[9px] leading-relaxed text-gray-600">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
+          <p className="text-[9px] leading-relaxed text-gray-600 font-medium tracking-tight">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios. Estudios 421 es una plataforma sin fines de lucro para la difusión de contenido bíblico.</p>
         </div>
         <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
-          <Link href="/politica-de-privacidad">PÓLITICA DE PRIVACIDAD</Link>
+          <Link href="/politica-de-privacidad">POLÍTICA DE PRIVACIDAD</Link>
           <Link href="/terminos-de-uso">TÉRMINOS DE USO</Link>
           <Link href="/cookies">CONFIGURACIÓN DE COOKIES</Link>
           <Link href="/anuncios">ESPECIFICACIONES DE ANUNCIOS</Link>
