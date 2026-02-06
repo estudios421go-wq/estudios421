@@ -15,7 +15,7 @@ const reyesDecadenciaEpisodes = [
   { id: 3, title: "INTENTO DE COMENZAR DE NUEVO", dur: "51:45", thumb: "https://static.wixstatic.com/media/859174_b0de23d52b1244398f856ca3e330795f~mv2.jpg", url: "https://ok.ru/videoembed/14945256147456", available: true },
   { id: 4, title: "UNA NUEVA EN SU LUGAR", dur: "50:04", thumb: "https://static.wixstatic.com/media/859174_52aaae224ab5423cb243db8ee1074f14~mv2.jpg", url: "https://ok.ru/videoembed/14973211183616", available: true },
   { id: 5, title: "ÉL VOLVIÓ, ELLA SE PERDIÓ", dur: "47:38", thumb: "https://static.wixstatic.com/media/859174_d7964bdc7d37438ebeb8fcb700dcc44b~mv2.jpg", url: "https://ok.ru/videoembed/15003115915776", available: true },
-  { id: 6, title: "ESTRENO 6 DE FEBRERO", available: false },
+  { id: 6, title: "LA FIESTA DE LA SABIDURÍA", dur: "54:00", thumb: "https://static.wixstatic.com/media/859174_40e24fc08ed443e0a15a973d3ea212ca~mv2.jpg", url: "https://ok.ru/videoembed/15030437612032", available: true },
   { id: 7, title: "ESTRENO 9 DE FEBRERO", available: false },
   { id: 8, title: "ESTRENO 10 DE FEBRERO", available: false },
   { id: 9, title: "ESTRENO 11 DE FEBRERO", available: false },
