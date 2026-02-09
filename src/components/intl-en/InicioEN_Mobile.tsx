@@ -145,9 +145,9 @@ const InicioEN_Mobile = () => {
                 <div className="relative w-[140px] h-[55px] mb-1.5"><Image src={item.logo} alt="Logo" fill className="object-contain object-left" unoptimized /></div>
                 <p className="text-[9px] leading-tight text-gray-300 mb-4 max-w-[55%] text-left font-medium opacity-90">{item.desc}</p>
                 <div className="flex gap-2">
-                  <button onClick={() => router.push(item.path)} className="bg-[#FF8A00] text-white px-5 py-2 rounded font-black text-[9px] flex items-center gap-1.5 active:scale-95">WATCH</button>
+                  <button onClick={() => router.push(item.path)} className="bg-[#FF8A00] text-white px-5 py-2 rounded font-black text-[9px] flex items-center gap-1.5 active:scale-95"><FaPlay size={8}/> WATCH</button>
                   <button onClick={() => {setActiveTrailer({url: item.trailer, path: item.path}); setShowModal(true)}} className="bg-white/10 backdrop-blur-md text-white px-5 py-2 rounded font-black text-[9px] border border-white/20 active:scale-95">INFO</button>
-                  <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="bg-black/40 text-white px-4 py-2 rounded font-black text-[9px] border border-[#FF8A00]/50 active:scale-95 flex items-center gap-1.5 uppercase">Donate</button>
+                  <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="bg-black/40 text-white px-4 py-2 rounded font-black text-[9px] border border-[#FF8A00]/50 active:scale-95 flex items-center gap-1.5 uppercase"><BiDonateHeart className="text-[#FF8A00]"/> DONATE</button>
                 </div>
               </div>
             </div>
