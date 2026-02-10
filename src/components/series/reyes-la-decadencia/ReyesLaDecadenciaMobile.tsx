@@ -17,7 +17,7 @@ const reyesDecadenciaEpisodes = [
   { id: 5, title: "ÉL VOLVIÓ, ELLA SE PERDIÓ", dur: "47:38", thumb: "https://static.wixstatic.com/media/859174_d7964bdc7d37438ebeb8fcb700dcc44b~mv2.jpg", url: "https://ok.ru/videoembed/15003115915776", available: true },
   { id: 6, title: "LA FIESTA DE LA SABIDURÍA", dur: "54:00", thumb: "https://static.wixstatic.com/media/859174_40e24fc08ed443e0a15a973d3ea212ca~mv2.jpg", url: "https://ok.ru/videoembed/15030437612032", available: true },
   { id: 7, title: "LA INAGURACIÓN DEL BOSQUE", dur: "42:52", thumb: "https://static.wixstatic.com/media/859174_3fa658019e914e1caf9b41b3216e9a65~mv2.jpg", url: "https://ok.ru/videoembed/15136793037312", available: true },
-  { id: 8, title: "VERDADES DOLOROSAS", dur: "54:36", thumb: "https://static.wixstatic.com/media/859174_4e06dd7944614ab3b76fd63dce4b9b8d~mv2.jpg", url: "https://ok.ru/videoembed/15136893037312", available: true },
+  { id: 8, title: "VERDADES DOLOROSAS", dur: "54:36", thumb: "https://static.wixstatic.com/media/859174_4e06dd7944614ab3b76fd63dce4b9b8d~mv2.jpg", url: "https://ok.ru/videoembed/15137032178176", available: true },
   { id: 9, title: "ESTRENO 11 DE FEBRERO", available: false },
   { id: 10, title: "ESTRENO 12 DE FEBRERO", available: false },
   { id: 11, title: "ESTRENO 13 DE FEBRERO", available: false },
