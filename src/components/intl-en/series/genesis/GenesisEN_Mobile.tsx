@@ -8,7 +8,7 @@ import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BiDonateHeart } from 'react-icons/bi';
 // Importamos la base de datos en inglés como en InicioEN_Mobile
-import { allSeriesEn } from '../../../data/en/seriesEn';
+import { allSeriesEn } from '../../../../data/en/seriesEn';
 
 const genesisEpisodes = [
   { id: 1, title: "Eden", dur: "43:16", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c103d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/8415267654160" },
