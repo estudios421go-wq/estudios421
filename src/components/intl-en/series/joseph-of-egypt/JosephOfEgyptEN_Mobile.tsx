@@ -232,7 +232,7 @@ const JosephOfEgyptEN_Mobile = () => {
         </div>
         <div className="space-y-4 mb-8">
           <p className="text-[10px] leading-relaxed">© {new Date().getFullYear()} Estudios 421. All rights reserved.</p>
-          <p className="text-[9px] leading-relaxed text-gray-600 text-justify">Legal Notice: Non-profit platform dedicated to the dissemination of biblical content.</p>
+          <p className="text-[9px] leading-relaxed text-gray-600 text-justify">Legal Notice: The audiovisual content shared on this site belongs to its respective owners and production companies. Estudios 421 is a non-profit platform destined to the dissemination of biblical content.</p>
         </div>
         <div className="flex flex-col gap-4 text-[10px] font-bold uppercase tracking-widest border-t border-white/5 pt-8">
           <Link href="/en/privacy-policy">Privacy Policy</Link>
