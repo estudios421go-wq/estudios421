@@ -178,7 +178,7 @@ const LeahEN_PC = () => {
           </p>
           <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
             <p className="text-[#FF8A00] font-bold text-sm uppercase tracking-wider">
-              If you feel it in your heart, your support helps us continue translating these powerful biblical stories into English.
+              IF IT IS WITHIN YOUR MEANS, SUPPORT US WITH YOUR DONATION SO WE CAN CONTINUE SHARING THESE BEAUTIFUL SERIES.
             </p>
             <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="bg-[#FF8A00] text-black font-black py-3 px-8 rounded-full hover:scale-105 transition-all text-xs uppercase shadow-lg">
               Support Our Work
