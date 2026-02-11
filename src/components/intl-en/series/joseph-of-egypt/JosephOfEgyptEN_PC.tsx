@@ -271,7 +271,7 @@ const JosephOfEgyptEN_PC = () => {
           </div>
           <div className="mb-10 space-y-4 text-left">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. All rights reserved on the design and editing of the platform.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Legal Notice: Non-profit platform dedicated to the dissemination of biblical content for the community.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Legal Notice: The audiovisual content shared on this site belongs to its respective owners and production companies. Estudios 421 is a non-profit platform dedicated to the dissemination of biblical content for the community.</p>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/en/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
