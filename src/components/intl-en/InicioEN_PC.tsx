@@ -63,7 +63,7 @@ const InicioEN_PC = () => {
     { title: "Leah", banner: "https://static.wixstatic.com/media/859174_7c2a70bbc834445080d5e766bdbede85~mv2.jpg", path: "/en/series/leah", audio: "Soon" },
     { title: "The Life of Job", banner: "https://static.wixstatic.com/media/859174_fcd6cc01ecfc4a0abddcd5de84f34ed5~mv2.png", path: "/en/series/the-life-of-job", audio: "Subtitled" },
     { title: "Joseph of Egypt", banner: "https://static.wixstatic.com/media/859174_bc24808a34974a11b96a36a0eb55ac41~mv2.jpg", path: "/en/series/joseph-of-egypt", audio: "Soon" },
-    { title: "The Ten Commandments", banner: "https://static.wixstatic.com/media/859174_bb89fe35d7044bb1bb0d66a1cc84e3f1~mv2.jpg", path: "/en/series/the-ten-commandments", audio: "English" },
+    { title: "The Ten Commandments", banner: "https://static.wixstatic.com/media/859174_bb89fe35d7044bb1bb0d66a1cc84e3f1~mv2.jpg", path: "/en/series/moses-and-the-ten-commandments", audio: "English" },
     { title: "The Promised Land", banner: "https://static.wixstatic.com/media/859174_163f17ddceb64833a51f70657759a927~mv2.jpg", path: "/en/series/the-promised-land", audio: "English" },
     { title: "Samson and Delilah", banner: "https://static.wixstatic.com/media/859174_c7b91353c78d412299b8f5793fcb831f~mv2.jpg", path: "/en/series/samson-and-delilah", audio: "Soon" },
     { title: "King David", banner: "https://static.wixstatic.com/media/859174_5a421ba28d1946c18e7c842966b62cb8~mv2.jpg", path: "/en/series/king-david", audio: "English" },
