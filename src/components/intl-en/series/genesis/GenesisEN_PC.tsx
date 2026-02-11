@@ -10,7 +10,7 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { allSeriesEn } from '../../../../data/en/seriesEn';
 
 const genesisEpisodes = [
-{ id: 1, title: "Eden", dur: "00:43:16", desc: "This is the story of how everything was created by God and the beginning of humanity with Adam and Eve, the first man and woman on earth.", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/8415267654160" },
+  { id: 1, title: "Eden", dur: "00:43:16", desc: "This is the story of how everything was created by God and the beginning of humanity with Adam and Eve, the first man and woman on earth.", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/8415267654160" },
   { id: 2, title: "The Consequences", dur: "00:43:09", desc: "Adam and Eve must live with the consequences of eating the forbidden fruit. They were expelled from paradise.", thumb: "https://static.wixstatic.com/media/859174_ecc4e327ec1b460aaa9939ab537584f2~mv2.jpg", url: "https://ok.ru/videoembed/8415269161488" },
   { id: 3, title: "Brothers", dur: "00:42:59", desc: "Cain and Abel are the sons of Adam and Eve; both try to survive, but they are very different: Abel is noble and thankful.", thumb: "https://static.wixstatic.com/media/859174_bb68e238fa014ecfada9c2468e0cdd7f~mv2.jpg", url: "https://ok.ru/videoembed/8415389485584" },
   { id: 4, title: "The Choice", dur: "00:43:00", desc: "Cain and Abel manage to catch God's attention, but Cain is sure He only responded to Abel's gifts.", thumb: "https://static.wixstatic.com/media/859174_766dd812e5ed40beb8d7a2520e797b6b~mv2.jpg", url: "https://ok.ru/videoembed/8421067065872" },
