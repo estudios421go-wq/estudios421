@@ -199,7 +199,7 @@ const LeahEN_Mobile = () => {
             there is hope for you. Your story is not over."
           </p>
           <p className="text-[#FF8A00] text-[9px] font-black uppercase tracking-wider mb-4 leading-tight">
-            Your support helps us bring more biblical series in English.
+            IF IT IS WITHIN YOUR MEANS, SUPPORT US WITH YOUR DONATION SO WE CAN CONTINUE SHARING THESE BEAUTIFUL SERIES.
           </p>
           <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="w-full bg-[#FF8A00] text-black font-black py-3 rounded-lg text-[10px] uppercase shadow-lg active:scale-95 transition-transform">
             Support Our Work
