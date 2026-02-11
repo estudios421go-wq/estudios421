@@ -231,6 +231,7 @@ const genesisEpisodes = [
   { id: 219, title: "Before Dying", dur: "00:43:40", desc: "Israel learns that Joseph is alive. Everyone prepares for the move.", thumb: "https://static.wixstatic.com/media/859174_96f482dc4ea0452dbecb5a2e2f2aed42~mv2.jpg", url: "https://ok.ru/videoembed/10340360391184" },
   { id: 220, title: "Necessary Caress", dur: "00:42:00", desc: "Israel arrives in Egypt and the meeting with Joseph is emotional and necessary.", thumb: "https://static.wixstatic.com/media/859174_e26b65ee655a40f48a00fb5efdffe2fe~mv2.jpg", url: "https://ok.ru/videoembed/10340360653328" },
   { id: 221, title: "All United", dur: "00:43:54", desc: "Wedding with all the men of Israel in Egypt. End of the story of Genesis.", thumb: "https://static.wixstatic.com/media/859174_ac6e61ae8f7b46fd91b24fe79a1b6cda~mv2.jpg", url: "https://ok.ru/videoembed/10340360915472" }
+];
 
 const GenesisEN_PC = () => {
   const router = useRouter();
