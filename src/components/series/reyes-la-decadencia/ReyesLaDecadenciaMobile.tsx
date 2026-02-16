@@ -21,7 +21,7 @@ const reyesDecadenciaEpisodes = [
   { id: 9, title: "GIRO BRUSCO", dur: "44:59", thumb: "https://static.wixstatic.com/media/859174_8491d466715a4469ab69b19b02378b62~mv2.jpg", url: "https://ok.ru/videoembed/15168962890240", available: true },
   { id: 10, title: "LA REINA DE SABÁ", dur: "37:03", thumb: "https://static.wixstatic.com/media/859174_51b15aa4a4a14991b5a6031dc0ef3ca8~mv2.jpg", url: "https://ok.ru/videoembed/15202729331200", available: true },
   { id: 11, title: "INTERACCIÓN PELIGROSA", dur: "55:03", thumb: "https://static.wixstatic.com/media/859174_25b6db2ff4ca475c94aac9a5b1cf5e1a~mv2.jpg", url: "https://ok.ru/videoembed/15233382812160", available: true },
-  { id: 12, title: "ESTRENO 16 DE FEBRERO", available: false },
+  { id: 12, title: "SIENDO ÚNICO", dur: "43:21", thumb: "https://static.wixstatic.com/media/859174_0e277c465e4d4d43a9e43e6e6c5db055~mv2.jpg", url: "https://ok.ru/videoembed/15323206781440", available: true },
   { id: 13, title: "ESTRENO 17 DE FEBRERO", available: false },
   { id: 14, title: "ESTRENO 18 DE FEBRERO", available: false },
   { id: 15, title: "ESTRENO 19 DE FEBRERO", available: false },
