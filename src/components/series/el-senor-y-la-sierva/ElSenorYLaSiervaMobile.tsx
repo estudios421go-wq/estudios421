@@ -10,7 +10,7 @@ import { allSeries } from '../../../data/series';
 
 // --- CONFIGURACIÓN DE EPISODIOS (ID: 18) ---
 const siervaEpisodes = [
-  { id: 1, title: "¿QUIÉN ES ESA MUCHACHA?", dur: "01:02:00", thumb: "https://static.wixstatic.com/media/859174_dbb10d52f53a41f7aed2e390783740fd~mv2.jpg", url: "https://ok.ru/videoembed/9975122102967" },
+  { id: 1, title: "¿QUIÉN ES ESA MUCHACHA?", dur: "01:02:00", thumb: "https://static.wixstatic.com/media/859174_dbb10d52f53a41f7aed2e39d783740fd~mv2.jpg", url: "https://ok.ru/videoembed/9975122102967" },
   { id: 2, title: "¿SON USTEDES CRISTIANOS?", dur: "44:25", thumb: "https://static.wixstatic.com/media/859174_78639d3a543b446a9096bf8f9165323f~mv2.jpg", url: "https://ok.ru/videoembed/9975245638327" },
   { id: 3, title: "NO SOY COMO LAS DEMÁS", dur: "55:05", thumb: "https://static.wixstatic.com/media/859174_0f9c8f80ffe749a7a0f935b6f2987cc2~mv2.jpg", url: "https://ok.ru/videoembed/9975489170103" },
   { id: 4, title: "ERES DEMASIADO PURA", dur: "57:56", thumb: "https://static.wixstatic.com/media/859174_864da2c039c3414c905c12b6a560f692~mv2.jpg", url: "https://ok.ru/videoembed/10012444396215" },
