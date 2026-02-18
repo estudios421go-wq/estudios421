@@ -104,14 +104,31 @@ const PabloElApostol_PC = () => {
     };
   }, []);
 
+  // --- LÓGICA DE BÚSQUEDA IDÉNTICA A LA SERIE MAESTRA (REINA DE PERSIA) ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
+      
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'ester', 'persia'],
+        ester: ['ester', 'reina de persia', 'persia', 'jerjes', 'hadassah'],
+        pablo: ['pablo', 'apostol', 'saulo', 'roma', 'lucas', 'hechos'],
+        biblia: ['biblia', 'milagros', 'hechos']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+
       const filtered = allSeries.filter(serie => {
         const titleNormalized = normalize(serie.title);
         const categoryNormalized = normalize(serie.category || "");
-        return titleNormalized.includes(term) || categoryNormalized.includes(term);
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
       });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
@@ -168,7 +185,7 @@ const PabloElApostol_PC = () => {
       </nav>
 
       {searchQuery.length > 0 && (
-        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
+        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20 text-left">
           <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
           <div className="grid grid-cols-6 gap-x-4 gap-y-10">
             {searchResults.map((m) => (
@@ -194,7 +211,7 @@ const PabloElApostol_PC = () => {
 
       <div className="h-20 bg-black"></div>
 
-      <div className="px-16 mb-32 relative z-10">
+      <div className="px-16 mb-32 relative z-10 text-left">
         <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
