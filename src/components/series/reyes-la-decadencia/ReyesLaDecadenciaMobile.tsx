@@ -23,7 +23,7 @@ const reyesDecadenciaEpisodes = [
   { id: 11, title: "INTERACCIÓN PELIGROSA", dur: "55:03", thumb: "https://static.wixstatic.com/media/859174_25b6db2ff4ca475c94aac9a5b1cf5e1a~mv2.jpg", url: "https://ok.ru/videoembed/15233382812160", available: true },
   { id: 12, title: "SIENDO ÚNICO", dur: "43:21", thumb: "https://static.wixstatic.com/media/859174_0e277c465e4d4d43a9e43e6e6c5db055~mv2.jpg", url: "https://ok.ru/videoembed/15323206781440", available: true },
   { id: 13, title: "SE QUEDA PARA SIEMPRE", dur: "52:05", thumb: "https://static.wixstatic.com/media/859174_d5fececdf8b444aa92dbff946c6ec831~mv2.jpg", url: "https://ok.ru/videoembed/15375883307520", available: true },
-  { id: 14, title: "MAR ROJO", dur: "50:54", thumb: "https://static.wixstatic.com/media/859174_13e3ed8b816f4a81bc536d07cd26d146~mv2.jpg", url: "https://ok.ru/liveembed/15391903456768", available: true },
+  { id: 14, title: "MAR ROJO", dur: "50:54", thumb: "https://static.wixstatic.com/media/859174_13e3ed8b816f4a81bc536d07cd26d146~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 15, title: "ESTRENO 19 DE FEBRERO", available: false },
   { id: 16, title: "ESTRENO 20 DE FEBRERO", available: false },
   { id: 17, title: "ESTRENO 23 DE FEBRERO", available: false },
