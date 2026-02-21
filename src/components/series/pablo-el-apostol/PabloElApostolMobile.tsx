@@ -58,8 +58,8 @@ const pabloEpisodes = [
   { id: 46, title: "NAUFRAGIO", dur: "36:05", thumb: "https://static.wixstatic.com/media/859174_132383fd0c584ed7b3f3fc55f08e265d~mv2.jpg", url: "https://ok.ru/videoembed/15392796707328" },
   { id: 47, title: "LA VÍBORA", dur: "37:03", thumb: "https://static.wixstatic.com/media/859174_5c1999eb78184a6caa74be444eb8aeb7~mv2.jpg", url: "https://ok.ru/videoembed/15392796969472" },
   { id: 48, title: "MUERTE EN JERUSALÉN", dur: "46:21", thumb: "https://static.wixstatic.com/media/859174_969d22d6b7db4bd588c753b8348bbac2~mv2.jpg", url: "https://ok.ru/videoembed/15392797362688" },
-  { id: 49, title: "EL JUICIO DE PABLO", dur: "54:23", thumb: "https://static.wixstatic.com/media/859174_8e0784c1cc3b46e5b765f7a38372444c~mv2.jpg", url: "https://ok.ru/videoembed/10221145623103" },
-  { id: 50, title: "EL FIN", dur: "70:07", thumb: "https://static.wixstatic.com/media/859174_feda1b846fad4ae0b3a7aec08be13a76~mv2.jpg", url: "https://ok.ru/videoembed/10221146540607" }
+  { id: 49, title: "EL JUICIO DE PABLO", dur: "54:23", thumb: "https://static.wixstatic.com/media/859174_8e0784c1cc3b46e5b765f7a38372444c~mv2.jpg", url: "https://ok.ru/videoembed/15460301146624" },
+  { id: 50, title: "EL FIN", dur: "70:07", thumb: "https://static.wixstatic.com/media/859174_feda1b846fad4ae0b3a7aec08be13a76~mv2.jpg", url: "https://ok.ru/videoembed/15460341975552" }
 ];
 
 const PabloElApostol_Mobile = () => {
