@@ -26,7 +26,7 @@ const pabloEpisodes = [
   { id: 14, title: "¿POR QUÉ, PEDRO?", dur: "44:51", thumb: "https://static.wixstatic.com/media/859174_fd5467fe1e384aa3be14dabf9baecce7~mv2.jpg", url: "https://ok.ru/videoembed/15080759822848" },
   { id: 15, title: "¡MARCOS NO VA!", dur: "45:05", thumb: "https://static.wixstatic.com/media/859174_351a542876c048278d86c2989359d880~mv2.jpg", url: "https://ok.ru/videoembed/15080760084992" },
   { id: 16, title: "HOLA, LUCAS", dur: "49:03", thumb: "https://static.wixstatic.com/media/859174_77aa8aba96ab45f78dab6118caa7e65c~mv2.jpg", url: "https://ok.ru/videoembed/15080760347136" },
-  { id: 17, title: "SÍ, YO SOY NERO", dur: "48:09", thumb: "https://static.wixstatic.com/media/859174_264ee56696b042dba62dbf6470cd9456~mv2.jpg", url: "https://ok.ru/videoembed/15080760478208" },
+  { id: 17, title: "SÍ, YO SOY NERO", dur: "48:09", thumb: "https://static.wixstatic.com/media/859174_264ee56696b042dba62dbf6470cd9456~mv2.jpg", url: "https://ok.ru/videoembed/15460298328576" },
   { id: 18, title: "QUITA DE MÍ ESTE DESEO", dur: "48:09", thumb: "https://static.wixstatic.com/media/859174_b57dbd2a47ff485d8c32d6f278adb6be~mv2.jpg", url: "https://ok.ru/videoembed/15080760674816" },
   { id: 19, title: "¡UN TERREMOTO!", dur: "58:16", thumb: "https://static.wixstatic.com/media/859174_2d7e61bd557a49e4810bc6f0bd04dc10~mv2.jpg", url: "https://ok.ru/videoembed/15166752164352" },
   { id: 20, title: "¿ME AMAS?", dur: "51:15", thumb: "https://static.wixstatic.com/media/859174_80645a67b00a47e78cfb1442d995dbad~mv2.jpg", url: "https://ok.ru/videoembed/15166754130432" },
