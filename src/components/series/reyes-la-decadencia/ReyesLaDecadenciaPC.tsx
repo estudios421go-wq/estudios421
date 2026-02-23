@@ -26,11 +26,11 @@ const reyesDecadenciaEpisodes = [
   { id: 14, title: "Mar Rojo", dur: "00:50:54", desc: "Con celos del rey, Naamá no pierde la oportunidad de humillar a la reina de Saba. Después de un paseo especial, Salomón es sorprendido por una decisión", thumb: "https://static.wixstatic.com/media/859174_8eff6c4739524e95b6af2472ab9c1b9f~mv2.jpg", url: "https://ok.ru/videoembed/15406760200704", available: true },
   { id: 15, title: "Él me Quiere", dur: "00:43:48", desc: "En conversación con Adoniram, Jeroboam se enfurece al descubrir al verdadero comprador del lugar. Completamente agobiada por todo lo que ha ocurrido", thumb: "https://static.wixstatic.com/media/859174_a072c65ce1944532ad0cc9c6b8e064cf~mv2.jpg", url: "https://ok.ru/videoembed/15425348700672", available: true },
   { id: 16, title: "El Inicio de la Ruina", dur: "00:55:59", desc: "Lleno de esperanza, Salomón decide viajar al reino de Saba. En una conversación con Roboam y las esposas del rey, Naamá demuestra señales de su cambio.", thumb: "https://static.wixstatic.com/media/859174_cd58be30737d485ba76009067a7fb31a~mv2.jpg", url: "https://ok.ru/videoembed/15458861124096", available: true },
-  { id: 17, title: "Episodio 17", date: "23 de febrero", available: false },
-  { id: 18, title: "Episodio 18", date: "24 de febrero", available: false },
-  { id: 19, title: "Episodio 19", date: "25 de febrero", available: false },
-  { id: 20, title: "Episodio 20", date: "26 de febrero", available: false },
-  { id: 21, title: "Episodio 21", date: "27 de febrero", available: false },
+  { id: 17, title: "Sin Vuelta Atrás", dur: "00:41:33", desc: "Afectado por la visita repentina de la reina de Saba, Salomón la invita a una enérgica presentación con el rey de Egipto. Asustado, Roboam se desespera al", thumb: "https://static.wixstatic.com/media/859174_b32fc9badb62428bb3d7a89d24e19202~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 18, title: "Ya no eres él", dur: "00:43:37", desc: "Con la fiesta aún en marcha, Nebset recibe un mensaje que amenaza con revelar su mayor secreto. Al partir de Jerusalén, Jeroboam es abordado y recibe una", thumb: "https://static.wixstatic.com/media/859174_269abf36e5c34a969506d479a3dd09b4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 19, title: "Otros Altares", dur: "00:52:32", desc: "Influenciado por su reina, Salomón cede a una petición peligrosa. En conflicto por la presencia de Maacá, se revela más sobre el pasado de la hija de", thumb: "https://static.wixstatic.com/media/859174_aef616ad4cbe405299e43f72dbe99ba4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 20, title: "Casa Dividida", dur: "00:57:49", desc: "Al no gustarle la presencia del profeta Ahías, Salomón se intriga con la revelación de quién fue elegido para ser el nuevo rey. En la recta final de su plan", thumb: "https://static.wixstatic.com/media/859174_7383861e0d3240a69fa985f670cebcd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 21, title: "Conclusiones", dur: "01:11:12", desc: "Al llegar a una conclusión sobre su vida, Salomón sufre un arrebato. Al ver a Roboam angustiado por los últimos acontecimientos, Maacá intenta apoyarlo", thumb: "https://static.wixstatic.com/media/859174_a28ffd421b17470b82be7e646167e565~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
 ];
 
 const ReyesDecadenciaPC = () => {
@@ -223,8 +223,9 @@ const ReyesDecadenciaPC = () => {
 
       <div className="px-16 mb-32 flex justify-center">
           <Link href="/serie/reyes-la-division">
-            <button className="group relative bg-white/5 text-white border border-white/10 font-black py-6 px-20 rounded-xl text-xl uppercase tracking-tighter hover:bg-[#FF8A00] hover:text-black transition-all shadow-2xl overflow-hidden">
+            <button className="group relative bg-[#FF8A00] text-black font-black py-6 px-20 rounded-xl text-xl uppercase tracking-tighter hover:scale-110 transition-all shadow-[0_0_50px_rgba(255,138,0,0.4)] overflow-hidden">
                 <span className="relative z-10">Ver Siguiente Temporada</span>
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
             </button>
           </Link>
       </div>
