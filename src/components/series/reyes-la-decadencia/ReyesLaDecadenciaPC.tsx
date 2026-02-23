@@ -105,7 +105,7 @@ const ReyesDecadenciaPC = () => {
   }, [searchQuery]);
 
   const openEpisode = (idx: number) => {
-    if (!reyesDecadenciaEpisodes[idx].available) return;
+    // if (!reyesDecadenciaEpisodes[idx].available) return;
     setCurrentIdx(idx);
     setSelectedVideo(reyesDecadenciaEpisodes[idx].url || null);
     localStorage.setItem('reyes_decadencia_last_ep', idx.toString());
@@ -213,7 +213,7 @@ const ReyesDecadenciaPC = () => {
               <div className="p-5 flex flex-col gap-1">
                 <h3 className={`font-bold text-base truncate uppercase ${ep.available ? 'group-hover:text-[#FF8A00]' : 'text-gray-500'}`}>{ep.title}</h3>
                 <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8">
-                  {ep.available ? ep.desc : `Estreno este ${ep.date} por la noche.`}
+                  {ep.available ? ep.desc : "Próximamente disponible"}
                 </p>
               </div>
             </div>
