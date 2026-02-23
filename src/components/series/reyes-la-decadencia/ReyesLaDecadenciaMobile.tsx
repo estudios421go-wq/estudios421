@@ -26,11 +26,11 @@ const reyesDecadenciaEpisodes = [
   { id: 14, title: "MAR ROJO", dur: "50:54", thumb: "https://static.wixstatic.com/media/859174_8eff6c4739524e95b6af2472ab9c1b9f~mv2.jpg", url: "https://ok.ru/videoembed/15406760200704", available: true },
   { id: 15, title: "ÉL ME QUIERE", dur: "43:48", thumb: "https://static.wixstatic.com/media/859174_a072c65ce1944532ad0cc9c6b8e064cf~mv2.jpg", url: "https://ok.ru/videoembed/15425348700672", available: true },
   { id: 16, title: "EL INICIO DE LA RUINA", dur: "55:59", thumb: "https://static.wixstatic.com/media/859174_cd58be30737d485ba76009067a7fb31a~mv2.jpg", url: "https://ok.ru/videoembed/15458861124096", available: true },
-  { id: 17, title: "ESTRENO 23 DE FEBRERO", available: false },
-  { id: 18, title: "ESTRERENO 24 DE FEBRERO", available: false },
-  { id: 19, title: "ESTRENO 25 DE FEBRERO", available: false },
-  { id: 20, title: "ESTRENO 26 DE FEBRERO", available: false },
-  { id: 21, title: "ESTRENO 27 DE FEBRERO", available: false },
+  { id: 17, title: "SIN VUELTA ATRÁS", dur: "41:33", thumb: "https://static.wixstatic.com/media/859174_b32fc9badb62428bb3d7a89d24e19202~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 18, title: "YA NO ERES ÉL", dur: "43:37", thumb: "https://static.wixstatic.com/media/859174_269abf36e5c34a969506d479a3dd09b4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 19, title: "OTROS ALTARES", dur: "52:32", thumb: "https://static.wixstatic.com/media/859174_aef616ad4cbe405299e43f72dbe99ba4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 20, title: "CASA DIVIDIDA", dur: "57:49", thumb: "https://static.wixstatic.com/media/859174_7383861e0d3240a69fa985f670cebcd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 21, title: "CONCLUSIONES", dur: "01:11:12", thumb: "https://static.wixstatic.com/media/859174_a28ffd421b17470b82be7e646167e565~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
 ];
 
 const ReyesDecadenciaMobile = () => {
@@ -230,7 +230,7 @@ const ReyesDecadenciaMobile = () => {
 
       <div className="px-5 mb-24">
           <Link href="/serie/reyes-la-division">
-              <button className="w-full bg-white/5 text-white border border-white/10 font-black py-4 rounded-xl text-[10px] uppercase tracking-widest active:bg-[#F09800] active:text-black transition-all">
+              <button className="w-full bg-[#FF8A00] text-black font-black py-4 rounded-xl text-xs uppercase tracking-widest active:scale-95 transition-all shadow-xl">
                   Ver Siguiente Temporada
               </button>
           </Link>
