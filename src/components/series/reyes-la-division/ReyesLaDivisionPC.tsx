@@ -164,7 +164,7 @@ const ReyesDivisionPC = () => {
         <div className="max-w-4xl bg-white/[0.02] border border-white/5 rounded-[40px] p-16 shadow-2xl">
             <h3 className="text-4xl font-black uppercase mb-6 tracking-tighter">Reyes: La División</h3>
             <p className="text-xl text-gray-400 font-medium leading-relaxed mb-12">
-                Estamos preparando la temporada final. Ayúdanos a crecer compartiendo este sitio con más personas mientras esperamos el estreno.
+                Estamos preparando los episodios más impactantes de la historia de Israel. Ayúdanos a llevar este mensaje a más personas compartiendo el sitio oficial.
             </p>
             
             <button 
@@ -173,7 +173,7 @@ const ReyesDivisionPC = () => {
             >
                 <span className="relative z-10 flex items-center justify-center gap-3">
                     <IoShareSocialOutline size={28} />
-                    {copied ? "ENLACE COPIADO" : "COMPARTIR ESTA TEMPORADA"}
+                    {copied ? "ENLACE COPIADO" : "COMPARTIR ESTE SITIO"}
                 </span>
                 <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
             </button>
