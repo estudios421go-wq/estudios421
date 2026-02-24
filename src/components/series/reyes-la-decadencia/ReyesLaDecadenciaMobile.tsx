@@ -27,7 +27,7 @@ const reyesDecadenciaEpisodes = [
   { id: 15, title: "ÉL ME QUIERE", dur: "43:48", thumb: "https://static.wixstatic.com/media/859174_a072c65ce1944532ad0cc9c6b8e064cf~mv2.jpg", url: "https://ok.ru/videoembed/15425348700672", available: true },
   { id: 16, title: "EL INICIO DE LA RUINA", dur: "55:59", thumb: "https://static.wixstatic.com/media/859174_cd58be30737d485ba76009067a7fb31a~mv2.jpg", url: "https://ok.ru/videoembed/15458861124096", available: true },
   { id: 17, title: "SIN VUELTA ATRÁS", dur: "43:10", thumb: "https://static.wixstatic.com/media/859174_b32fc9badb62428bb3d7a89d24e19202~mv2.jpg", url: "https://ok.ru/videoembed/15553873709568", available: true },
-  { id: 18, title: "YA NO ERES ÉL", dur: "43:37", thumb: "https://static.wixstatic.com/media/859174_269abf36e5c34a969506d479a3dd09b4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 18, title: "YA NO ERES ÉL", dur: "43:37", thumb: "https://static.wixstatic.com/media/859174_269abf36e5c34a969506d479a3dd09b4~mv2.jpg", url: "https://ok.ru/videoembed/15586327398912", available: true },
   { id: 19, title: "OTROS ALTARES", dur: "52:32", thumb: "https://static.wixstatic.com/media/859174_aef616ad4cbe405299e43f72dbe99ba4~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 20, title: "CASA DIVIDIDA", dur: "57:49", thumb: "https://static.wixstatic.com/media/859174_7383861e0d3240a69fa985f670cebcd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 21, title: "CONCLUSIONES", dur: "01:11:12", thumb: "https://static.wixstatic.com/media/859174_a28ffd421b17470b82be7e646167e565~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
