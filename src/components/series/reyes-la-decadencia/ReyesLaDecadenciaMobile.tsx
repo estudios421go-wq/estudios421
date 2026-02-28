@@ -17,7 +17,7 @@ const reyesDecadenciaEpisodes = [
   { id: 5, title: "ÉL VOLVIÓ, ELLA SE PERDIÓ", dur: "47:38", thumb: "https://static.wixstatic.com/media/859174_d7964bdc7d37438ebeb8fcb700dcc44b~mv2.jpg", url: "https://ok.ru/videoembed/15003115915776", available: true },
   { id: 6, title: "LA FIESTA DE LA SABIDURÍA", dur: "54:00", thumb: "https://static.wixstatic.com/media/859174_40e24fc08ed443e0a15a973d3ea212ca~mv2.jpg", url: "https://ok.ru/videoembed/15030437612032", available: true },
   { id: 7, title: "LA INAGURACIÓN DEL BOSQUE", dur: "42:52", thumb: "https://static.wixstatic.com/media/859174_3fa658019e914e1caf9b41b3216e9a65~mv2.jpg", url: "https://ok.ru/videoembed/15136793037312", available: true },
-  { id: 8, title: "VERDADES DOLOROSAS", dur: "54:36", thumb: "https://static.wixstatic.com/media/859174_4e06dd7944614ab3b76fd63dce4b9b8d~mv2.jpg", url: "https://ok.ru/videoembed/15137032178176", available: true },
+  { id: 8, title: "VERDADES DOLOROSAS", dur: "54:36", thumb: "https://static.wixstatic.com/media/859174_4e06dd7944614ab3b76fd63dce4b9b8d~mv2.jpg", url: "https://ok.ru/videoembed/15685694458368", available: true },
   { id: 9, title: "GIRO BRUSCO", dur: "44:59", thumb: "https://static.wixstatic.com/media/859174_8491d466715a4469ab69b19b02378b62~mv2.jpg", url: "https://ok.ru/videoembed/15168962890240", available: true },
   { id: 10, title: "LA REINA DE SABÁ", dur: "37:03", thumb: "https://static.wixstatic.com/media/859174_51b15aa4a4a14991b5a6031dc0ef3ca8~mv2.jpg", url: "https://ok.ru/videoembed/15202729331200", available: true },
   { id: 11, title: "INTERACCIÓN PELIGROSA", dur: "55:03", thumb: "https://static.wixstatic.com/media/859174_25b6db2ff4ca475c94aac9a5b1cf5e1a~mv2.jpg", url: "https://ok.ru/videoembed/15233382812160", available: true },
@@ -29,7 +29,7 @@ const reyesDecadenciaEpisodes = [
   { id: 17, title: "SIN VUELTA ATRÁS", dur: "43:10", thumb: "https://static.wixstatic.com/media/859174_b32fc9badb62428bb3d7a89d24e19202~mv2.jpg", url: "https://ok.ru/videoembed/15553873709568", available: true },
   { id: 18, title: "YA NO ERES ÉL", dur: "43:37", thumb: "https://static.wixstatic.com/media/859174_269abf36e5c34a969506d479a3dd09b4~mv2.jpg", url: "https://ok.ru/videoembed/15586327398912", available: true },
   { id: 19, title: "OTROS ALTARES", dur: "52:32", thumb: "https://static.wixstatic.com/media/859174_aef616ad4cbe405299e43f72dbe99ba4~mv2.jpg", url: "https://ok.ru/videoembed/15615666686464", available: true },
-  { id: 20, title: "CASA DIVIDIDA", dur: "57:49", thumb: "https://static.wixstatic.com/media/859174_7383861e0d3240a69fa985f670cebcd2~mv2.jpg", url: "https://ok.ru/videoembed/15639599385088", available: true },
+  { id: 20, title: "CASA DIVIDIDA", dur: "57:49", thumb: "https://static.wixstatic.com/media/859174_7383861e0d3240a69fa985f670cebcd2~mv2.jpg", url: "https://ok.ru/videoembed/15685764385280", available: true },
   { id: 21, title: "CONCLUSIONES", dur: "01:11:12", thumb: "https://static.wixstatic.com/media/859174_a28ffd421b17470b82be7e646167e565~mv2.jpg", url: "https://ok.ru/videoembed/15639608166912", available: true },
 ];
 
