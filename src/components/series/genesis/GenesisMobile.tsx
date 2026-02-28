@@ -15,7 +15,7 @@ const genesisEpisodes = [
   { id: 5, title: "Una Idea", dur: "43:08", thumb: "https://static.wixstatic.com/media/859174_a96889e87ab8424c9e72f665c45af4dc~mv2.jpg", url: "https://ok.ru/videoembed/13889027836416" },
   { id: 6, title: "El Arca", dur: "43:10", thumb: "https://static.wixstatic.com/media/859174_6e462903bfa94004aa1ac07c2c929f08~mv2.jpg", url: "https://ok.ru/videoembed/14047823858176" },
   { id: 7, title: "Diversión", dur: "43:17", thumb: "https://static.wixstatic.com/media/859174_d469b477a1934dbca44c93001dbcc677~mv2.jpg", url: "https://ok.ru/videoembed/14047824251392" },
-  { id: 8, title: "El Diluvio", dur: "43:13", thumb: "https://static.wixstatic.com/media/859174_1b0e1a7eccee4d7aaf17fdc70a7995f6~mv2.jpg", url: "https://ok.ru/videoembed/14150140692992" },
+  { id: 8, title: "El Diluvio", dur: "43:13", thumb: "https://static.wixstatic.com/media/859174_1b0e1a7eccee4d7aaf17fdc70a7995f6~mv2.jpg", url: "https://ok.ru/videoembed/14047824644608" },
   { id: 9, title: "En El Arca", dur: "43:23", thumb: "https://static.wixstatic.com/media/859174_73e1cf8e8bb34aaa9cee8a1849cf6ed6~mv2.jpg", url: "https://ok.ru/videoembed/14047825103360" },
   { id: 10, title: "El Cazador", dur: "44:01", thumb: "https://static.wixstatic.com/media/859174_67ba82bba9da42e7a37ebfec57fbb009~mv2.jpg", url: "https://ok.ru/videoembed/14047825234432" },
   { id: 11, title: "Una Torre", dur: "43:31", thumb: "https://static.wixstatic.com/media/859174_034a79b100044cd8a0d4da76448fd8d8~mv2.jpg", url: "https://ok.ru/videoembed/14047825562112" },
