@@ -10,8 +10,8 @@ import { allSeries } from '../../../data/series';
 
 // --- CONFIGURACIÓN DE EPISODIOS REAL (ID: 30) ---
 const reyesDivisionEpisodes = [
-  { id: 1, title: "ME QUEDÉ SOLO", dur: "57:20", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
-  { id: 2, title: "ESTRENO 03 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
+  { id: 1, title: "ME QUEDÉ SOLO", dur: "57:20", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15777259588096", available: true },
+  { id: 2, title: "NO TE TRAICIONES A TI MISMO", dur: "44:25", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 3, title: "ESTRENO 04 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
   { id: 4, title: "ESTRENO 05 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
   { id: 5, title: "ESTRENO 06 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
