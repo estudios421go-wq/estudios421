@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoCheckmarkCircle, IoPlayCircleOutline, IoAlertCircleOutline } from 'react-icons/io5';
-import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
+import { IoSearchOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle, IoShareSocialOutline, IoAlertCircleOutline } from 'react-icons/io5';
+import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
 
 const ReyesDivisionPC = () => {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   
   // Estados para la Encuesta y Contador
-  const [votosSi, setVotosSi] = useState(0);
-  const [votosNo, setVotosNo] = useState(0);
+  const [votedSi, setVotedSi] = useState(false);
+  const [votosSi, setVotosSi] = useState(145); // Simulación de conteo global
+  const [votedNo, setVotedNo] = useState(false);
+  const [votosNo, setVotosNo] = useState(12);  // Simulación de conteo global
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 0, seconds: 0 });
 
   const SERIES_ID = 30; 
   const VIDEO_TEST_URL = "https://ok.ru/videoembed/15751107119616";
 
   useEffect(() => {
-    // --- BLINDAJE TOTAL ---
     const handleGlobalPrevent = (e: any) => e.preventDefault();
     document.addEventListener('contextmenu', handleGlobalPrevent);
     document.addEventListener('dragstart', handleGlobalPrevent);
@@ -33,27 +35,16 @@ const ReyesDivisionPC = () => {
       }
     };
     document.addEventListener('keydown', handleKeyDown);
-
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
-
-    // Inicializar votos locales para simulación
-    const savedSi = localStorage.getItem('votos_si_test');
-    const savedNo = localStorage.getItem('votos_no_test');
-    if (savedSi) setVotosSi(parseInt(savedSi));
-    if (savedNo) setVotosNo(parseInt(savedNo));
 
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
 
-    // --- LÓGICA DEL CONTADOR (14 HORAS) ---
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         const totalSeconds = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
-        if (totalSeconds <= 0) {
-          clearInterval(timer);
-          return { hours: 0, minutes: 0, seconds: 0 };
-        }
+        if (totalSeconds <= 0) { clearInterval(timer); return { hours: 0, minutes: 0, seconds: 0 }; }
         return {
           hours: Math.floor(totalSeconds / 3600),
           minutes: Math.floor((totalSeconds % 3600) / 60),
@@ -71,7 +62,6 @@ const ReyesDivisionPC = () => {
     };
   }, []);
 
-  // --- BUSCADOR ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -88,23 +78,10 @@ const ReyesDivisionPC = () => {
     localStorage.setItem('myList', JSON.stringify(list));
   };
 
-  const handleVoto = (tipo: 'si' | 'no') => {
-    if (tipo === 'si') {
-      const nuevoTotal = votosSi + 1;
-      setVotosSi(nuevoTotal);
-      localStorage.setItem('votos_si_test', nuevoTotal.toString());
-    } else {
-      const nuevoTotal = votosNo + 1;
-      setVotosNo(nuevoTotal);
-      localStorage.setItem('votos_no_test', nuevoTotal.toString());
-    }
-  };
-
   return (
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
-      <Head><title>Prueba de Conectividad — Estudios 421</title></Head>
+      <Head><title>Reyes: La División — Estudios 421</title></Head>
 
-      {/* --- NAVEGACIÓN --- */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
@@ -131,88 +108,105 @@ const ReyesDivisionPC = () => {
         </div>
       </nav>
 
-      {/* --- BANNER --- */}
+      {searchQuery.length > 0 && (
+        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
+          <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
+          <div className="grid grid-cols-6 gap-x-4 gap-y-10">
+            {searchResults.map((m) => (
+              <Link key={m.id} href={m.path}><div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group"><Image src={m.banner} alt={m.title} fill className="object-cover rounded-md" unoptimized /></div></Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_8ccb6683bc06431d9cd0c56fa070ce80~mv2.jpg" className="w-full h-full object-cover" alt="Banner Reyes: La División" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
-        <div className="absolute bottom-[20px] left-16 flex flex-col gap-4 z-20 items-start">
-          <div className="bg-[#FF8A00] text-black font-black py-2 px-6 rounded-md text-3xl shadow-2xl flex gap-4 font-mono">
-            <span>{String(timeLeft.hours).padStart(2, '0')}</span>:
-            <span>{String(timeLeft.minutes).padStart(2, '0')}</span>:
-            <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
+        <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
+          <div className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg shadow-2xl uppercase select-none cursor-default">
+            ⏳ Hoy Gran Estreno
           </div>
-          <div className="flex gap-6">
-            <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
-              {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
-            </button>
-            <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
-          </div>
+          <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
+            {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
+          </button>
+          <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
         </div>
       </div>
 
       <div className="h-20 bg-black"></div>
 
-      {/* --- SECCIÓN DE ENCUESTA Y VIDEO (NUEVA) --- */}
       <div className="px-16 mb-40 relative z-10 flex flex-col items-center">
-        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4 w-full">
+        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4 w-full text-left">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
-          <h2 className="text-2xl font-bold tracking-tight uppercase">Control de Calidad de Video</h2>
+          <h2 className="text-2xl font-bold tracking-tight uppercase">Próximo Estreno</h2>
         </header>
 
-        <div className="max-w-5xl w-full bg-[#111] border border-white/10 rounded-[40px] p-12 shadow-3xl text-center">
-            <h3 className="text-5xl font-black uppercase mb-4 text-white tracking-tighter">LEA Y ENTIENDA BIEN</h3>
-            <p className="text-lg text-gray-400 font-medium leading-relaxed mb-10 max-w-3xl mx-auto">
-                Debido a reportes de algunos usuarios que no pueden visualizar el contenido, estamos realizando esta encuesta técnica. Por favor, intente reproducir el video de abajo y vote según su resultado.
+        {/* --- CRONÓMETRO UBICADO DEBAJO DEL HEADER --- */}
+        <div className="mb-10 bg-[#FF8A00] text-black font-black py-3 px-10 rounded-xl text-4xl shadow-[0_0_30px_rgba(255,138,0,0.3)] font-mono flex gap-4">
+          <span>{String(timeLeft.hours).padStart(2, '0')}</span>:
+          <span>{String(timeLeft.minutes).padStart(2, '0')}</span>:
+          <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
+        </div>
+
+        <div className="max-w-4xl w-full bg-white/[0.02] border border-white/5 rounded-[40px] p-16 shadow-2xl text-center">
+            <h3 className="text-4xl font-black uppercase mb-6 tracking-tighter">LEA Y ENTIENDA BIEN</h3>
+            <p className="text-xl text-gray-400 font-medium leading-relaxed mb-12">
+                Debido a reportes de que algunos usuarios no pueden visualizar el video, se realiza la siguiente encuesta técnica. Por favor, intente reproducir el video inferior antes de marcar su respuesta.
             </p>
 
-            <div className="flex justify-center gap-8 mb-16">
+            <div className="flex justify-center gap-10 mb-16">
                 <button 
-                  onClick={() => handleVoto('si')}
-                  className="group flex-1 bg-white/5 border border-white/10 p-8 rounded-3xl hover:border-green-500 transition-all transform hover:scale-105"
+                  onClick={() => { setVotedSi(!votedSi); if(votedSi) setVotosSi(votosSi-1); else setVotosSi(votosSi+1); }}
+                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${votedSi ? 'bg-green-600 border-green-400 shadow-[0_0_30px_rgba(34,197,94,0.3)]' : 'bg-white/5 border-white/10'}`}
                 >
-                    <span className="block text-4xl font-black text-green-500 mb-2">{votosSi}</span>
-                    <span className="text-sm font-bold uppercase tracking-widest text-white">SÍ puedo ver el video</span>
+                    <span className="block text-5xl font-black mb-2">{votosSi}</span>
+                    <span className="text-xs font-black uppercase tracking-widest">SÍ puedo ver el video</span>
                 </button>
 
                 <button 
-                  onClick={() => handleVoto('no')}
-                  className="group flex-1 bg-white/5 border border-white/10 p-8 rounded-3xl hover:border-red-500 transition-all transform hover:scale-105"
+                  onClick={() => { setVotedNo(!votedNo); if(votedNo) setVotosNo(votosNo-1); else setVotosNo(votosNo+1); }}
+                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${votedNo ? 'bg-red-600 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)]' : 'bg-white/5 border-white/10'}`}
                 >
-                    <span className="block text-4xl font-black text-red-500 mb-2">{votosNo}</span>
-                    <span className="text-sm font-bold uppercase tracking-widest text-white">NO puedo ver el video</span>
+                    <span className="block text-5xl font-black mb-2">{votosNo}</span>
+                    <span className="text-xs font-black uppercase tracking-widest">NO puedo ver el video</span>
                 </button>
             </div>
 
-            {/* VIDEO DE PRUEBA */}
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(255,138,0,0.2)] bg-black border border-white/5">
-                <iframe 
-                    src={VIDEO_TEST_URL} 
-                    className="absolute inset-0 w-full h-full" 
-                    allow="autoplay; fullscreen" 
-                    allowFullScreen 
-                />
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-black">
+                <iframe src={VIDEO_TEST_URL} className="absolute inset-0 w-full h-full" allow="autoplay; fullscreen" allowFullScreen />
             </div>
-            <p className="mt-6 text-gray-500 text-xs italic flex items-center justify-center gap-2">
-                <IoAlertCircleOutline size={16} /> Pruebe la reproducción antes de emitir su voto.
-            </p>
         </div>
       </div>
 
+      <div className="px-16 mb-32 flex justify-center">
+          <Link href="/serie/reyes-la-emboscada">
+            <button className="group relative bg-[#FF8A00] text-black font-black py-6 px-20 rounded-xl text-xl uppercase tracking-tighter hover:scale-110 transition-all shadow-[0_0_50px_rgba(255,138,0,0.4)] overflow-hidden">
+                <span className="relative z-10">Ver Siguiente Temporada</span>
+                <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
+            </button>
+          </Link>
+      </div>
+
+      {/* --- PIE DE PÁGINA RESTAURADO AL 100% --- */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-start md:justify-end gap-6 mb-10 text-xl">
-            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white"><FaFacebookF /></a>
-            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white"><FaInstagram /></a>
-            <a href="https://www.tiktok.com/@estudios421_com" target="_blank" rel="noreferrer" className="hover:text-white"><FaTiktok /></a>
-            <a href="https://youtube.com/@estudios421max" target="_blank" rel="noreferrer" className="hover:text-white"><FaYoutube /></a>
+          <div className="flex justify-start md:justify-end gap-6 mb-10">
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
+            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
-          <p className="text-xs text-gray-500 leading-relaxed mb-10 text-justify italic italic-none">
-            Aviso: Esta encuesta es temporal para optimizar la experiencia de usuario en Reyes: La División.
-          </p>
-          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] font-medium uppercase tracking-widest border-t border-white/5 pt-8">
-            <Link href="/politica-de-privacidad" className="hover:text-white">Política de privacidad</Link>
-            <Link href="/terminos-de-uso" className="hover:text-white">Términos de uso</Link>
-            <Link href="/ayuda" className="hover:text-white">Centro de ayuda</Link>
+          <div className="mb-10 space-y-4 text-left">
+            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
+          </div>
+          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
+            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
+            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
+            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
+            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
           </div>
         </div>
       </footer>
