@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle, IoShareSocialOutline, IoAlertCircleOutline } from 'react-icons/io5';
+import { IoSearchOutline, IoCheckmarkCircle, IoList, IoClose } from 'react-icons/io5';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
@@ -15,17 +15,17 @@ const ReyesDivisionPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   
-  // Estados para la Encuesta y Contador
-  const [votedSi, setVotedSi] = useState(false);
-  const [votosSi, setVotosSi] = useState(145); // Simulación de conteo global
-  const [votedNo, setVotedNo] = useState(false);
-  const [votosNo, setVotosNo] = useState(12);  // Simulación de conteo global
+  // --- LÓGICA DE ENCUESTA CON PERSISTENCIA ---
+  const [voted, setVoted] = useState<string | null>(null);
+  const [votosSi, setVotosSi] = useState(2458); // Base de inicio para el público
+  const [votosNo, setVotosNo] = useState(142);  // Base de inicio para el público
   const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 0, seconds: 0 });
 
   const SERIES_ID = 30; 
   const VIDEO_TEST_URL = "https://ok.ru/videoembed/15751107119616";
 
   useEffect(() => {
+    // Blindaje
     const handleGlobalPrevent = (e: any) => e.preventDefault();
     document.addEventListener('contextmenu', handleGlobalPrevent);
     document.addEventListener('dragstart', handleGlobalPrevent);
@@ -38,17 +38,22 @@ const ReyesDivisionPC = () => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
+    // Recuperar Voto del Usuario (Para que no se borre al actualizar)
+    const userVote = localStorage.getItem('reyes_division_vote');
+    if (userVote) setVoted(userVote);
+
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
 
+    // Countdown 14h
     const timer = setInterval(() => {
       setTimeLeft(prev => {
-        const totalSeconds = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
-        if (totalSeconds <= 0) { clearInterval(timer); return { hours: 0, minutes: 0, seconds: 0 }; }
+        const totalSec = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
+        if (totalSec <= 0) { clearInterval(timer); return { hours: 0, minutes: 0, seconds: 0 }; }
         return {
-          hours: Math.floor(totalSeconds / 3600),
-          minutes: Math.floor((totalSeconds % 3600) / 60),
-          seconds: totalSeconds % 60
+          hours: Math.floor(totalSec / 3600),
+          minutes: Math.floor((totalSec % 3600) / 60),
+          seconds: totalSec % 60
         };
       });
     }, 1000);
@@ -62,14 +67,52 @@ const ReyesDivisionPC = () => {
     };
   }, []);
 
+  // --- BUSCADOR COMPLETO Y POTENTE ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term));
+      
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david', 'mar rojo'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto', 'faraon'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'magdalena', 'pablo', 'apocalipsis', 'cristo'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia', 'eleccion', 'rechazo'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes', 'hadassah'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo', 'lucas', 'hechos'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros', 'fe', 'profetas']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+
+      const filtered = allSeries.filter(serie => {
+        const titleNorm = normalize(serie.title);
+        const catNorm = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNorm.includes(t)) || catNorm.includes(term);
+      });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
+
+  const handleVoteAction = (type: 'si' | 'no') => {
+    if (voted === type) {
+      localStorage.removeItem('reyes_division_vote');
+      setVoted(null);
+      type === 'si' ? setVotosSi(votosSi - 1) : setVotosNo(votosNo - 1);
+    } else {
+      localStorage.setItem('reyes_division_vote', type);
+      setVoted(type);
+      type === 'si' ? setVotosSi(votosSi + 1) : setVotosNo(votosNo + 1);
+      // Si ya había votado lo opuesto, quitamos el voto anterior
+      if (voted && voted !== type) {
+        voted === 'si' ? setVotosSi(votosSi - 1) : setVotosNo(votosNo - 1);
+      }
+    }
+  };
 
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
@@ -141,14 +184,13 @@ const ReyesDivisionPC = () => {
           <h2 className="text-2xl font-bold tracking-tight uppercase">Próximo Estreno</h2>
         </header>
 
-        {/* --- CRONÓMETRO UBICADO DEBAJO DEL HEADER --- */}
         <div className="mb-10 bg-[#FF8A00] text-black font-black py-3 px-10 rounded-xl text-4xl shadow-[0_0_30px_rgba(255,138,0,0.3)] font-mono flex gap-4">
           <span>{String(timeLeft.hours).padStart(2, '0')}</span>:
           <span>{String(timeLeft.minutes).padStart(2, '0')}</span>:
           <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
         </div>
 
-        <div className="max-w-4xl w-full bg-white/[0.02] border border-white/5 rounded-[40px] p-16 shadow-2xl text-center">
+        <div className="max-w-5xl w-full bg-white/[0.02] border border-white/5 rounded-[40px] p-16 shadow-2xl text-center">
             <h3 className="text-4xl font-black uppercase mb-6 tracking-tighter">LEA Y ENTIENDA BIEN</h3>
             <p className="text-xl text-gray-400 font-medium leading-relaxed mb-12">
                 Debido a reportes de que algunos usuarios no pueden visualizar el video, se realiza la siguiente encuesta técnica. Por favor, intente reproducir el video inferior antes de marcar su respuesta.
@@ -156,23 +198,23 @@ const ReyesDivisionPC = () => {
 
             <div className="flex justify-center gap-10 mb-16">
                 <button 
-                  onClick={() => { setVotedSi(!votedSi); if(votedSi) setVotosSi(votosSi-1); else setVotosSi(votosSi+1); }}
-                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${votedSi ? 'bg-green-600 border-green-400 shadow-[0_0_30px_rgba(34,197,94,0.3)]' : 'bg-white/5 border-white/10'}`}
+                  onClick={() => handleVoteAction('si')}
+                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${voted === 'si' ? 'bg-green-600 border-green-400 shadow-[0_0_30px_rgba(34,197,94,0.4)]' : 'bg-white/5 border-white/10 hover:border-green-500'}`}
                 >
-                    <span className="block text-5xl font-black mb-2">{votosSi}</span>
+                    <span className="block text-6xl font-black mb-2">{votosSi}</span>
                     <span className="text-xs font-black uppercase tracking-widest">SÍ puedo ver el video</span>
                 </button>
 
                 <button 
-                  onClick={() => { setVotedNo(!votedNo); if(votedNo) setVotosNo(votosNo-1); else setVotosNo(votosNo+1); }}
-                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${votedNo ? 'bg-red-600 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.3)]' : 'bg-white/5 border-white/10'}`}
+                  onClick={() => handleVoteAction('no')}
+                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${voted === 'no' ? 'bg-red-600 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'bg-white/5 border-white/10 hover:border-red-500'}`}
                 >
-                    <span className="block text-5xl font-black mb-2">{votosNo}</span>
+                    <span className="block text-6xl font-black mb-2">{votosNo}</span>
                     <span className="text-xs font-black uppercase tracking-widest">NO puedo ver el video</span>
                 </button>
             </div>
 
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-white/10 bg-black">
+            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-white/10 bg-black shadow-inner">
                 <iframe src={VIDEO_TEST_URL} className="absolute inset-0 w-full h-full" allow="autoplay; fullscreen" allowFullScreen />
             </div>
         </div>
@@ -187,7 +229,6 @@ const ReyesDivisionPC = () => {
           </Link>
       </div>
 
-      {/* --- PIE DE PÁGINA RESTAURADO AL 100% --- */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-start md:justify-end gap-6 mb-10">
