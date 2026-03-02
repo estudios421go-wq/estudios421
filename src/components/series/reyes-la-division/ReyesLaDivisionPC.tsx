@@ -10,8 +10,8 @@ import { allSeries } from '../../../data/series';
 
 // --- CONFIGURACIÓN DE EPISODIOS REAL (ID: 30) ---
 const reyesDivisionEpisodes = [
-  { id: 1, title: "Me quedé solo", dur: "00:57:20", desc: "Con un vistazo al futuro, una mujer de notable opulencia comienza a narrar la historia a un oyente enigmático. Aún lidiando con la muerte de sus padres, Roboam es confrontado por los gobernadores, y una pequeña.", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
-  { id: 2, title: "Estreno 03 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 1, title: "Me quedé solo", dur: "00:57:20", desc: "Con un vistazo al futuro, una mujer de notable opulencia comienza a narrar la historia a un oyente enigmático. Aún lidiando con la muerte de sus padres, Roboam es confrontado por los gobernadores, y una pequeña.", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15777259588096", available: true },
+  { id: 2, title: "No te traiciones a ti mismo", dur: "00:44:25", desc: "Procedente de una infancia conflictiva, el pasado de Jeroboam es revelado y fragmentos inéditos de su historia muestran cómo el elegido para ser el nuevo rey llegó hasta aquí. Superando el impacto", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 3, title: "Estreno 04 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
   { id: 4, title: "Estreno 05 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
   { id: 5, title: "Estreno 06 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
