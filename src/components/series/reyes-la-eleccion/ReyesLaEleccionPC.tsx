@@ -216,7 +216,7 @@ const ReyesEleccionPC = () => {
               <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">Capítulo {reyesEleccionEpisodes[currentIdx].id} <span className="text-white/10 mx-3">/</span> {reyesEleccionEpisodes[currentIdx].title}</h2>
             </div>
             <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:scale-105 transition-all">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar Reproductor</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar</span>
               <IoClose size={24} className="group-hover:rotate-90 group-hover:text-black transition-all" />
             </button>
           </div>
