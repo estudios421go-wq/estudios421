@@ -1,31 +1,49 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoCheckmarkCircle, IoList, IoClose } from 'react-icons/io5';
-import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaWhatsapp } from 'react-icons/fa';
+import { IoSearchOutline, IoCloseOutline, IoChevronBack, IoChevronForward, IoList, IoClose, IoCheckmarkCircle } from 'react-icons/io5';
+import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
+
+// --- CONFIGURACIÓN DE EPISODIOS REAL (ID: 30) ---
+const reyesDivisionEpisodes = [
+  { id: 1, title: "Me quedé solo", dur: "00:57:20", desc: "Con un vistazo al futuro, una mujer de notable opulencia comienza a narrar la historia a un oyente enigmático. Aún lidiando con la muerte de sus padres, Roboam es confrontado por los gobernadores, y una pequeña.", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
+  { id: 2, title: "Estreno 02 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 3, title: "Estreno 03 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 4, title: "Estreno 04 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 5, title: "Estreno 05 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 6, title: "Estreno 06 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 7, title: "Estreno 09 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 8, title: "Estreno 10 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 9, title: "Estreno 11 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 10, title: "Estreno 12 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 11, title: "Estreno 13 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 12, title: "Estreno 16 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 13, title: "Estreno 17 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 14, title: "Estreno 18 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 15, title: "Estreno 19 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 16, title: "Estreno 20 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 17, title: "Estreno 23 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 18, title: "Estreno 24 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+  { id: 19, title: "Estreno 25 de Marzo", dur: "--:--", desc: "Próximamente disponible", thumb: "", url: "", available: false },
+];
 
 const ReyesDivisionPC = () => {
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [inMyList, setInMyList] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  
-  // --- LÓGICA DE ENCUESTA CON PERSISTENCIA ---
-  const [voted, setVoted] = useState<string | null>(null);
-  const [votosSi, setVotosSi] = useState(2458); // Base de inicio para el público
-  const [votosNo, setVotosNo] = useState(142);  // Base de inicio para el público
-  const [timeLeft, setTimeLeft] = useState({ hours: 14, minutes: 0, seconds: 0 });
 
-  const SERIES_ID = 30; 
-  const VIDEO_TEST_URL = "https://ok.ru/videoembed/15751107119616";
+  const SERIES_ID = 30;
 
   useEffect(() => {
-    // Blindaje
+    // --- BLINDAJE TOTAL ---
     const handleGlobalPrevent = (e: any) => e.preventDefault();
     document.addEventListener('contextmenu', handleGlobalPrevent);
     document.addEventListener('dragstart', handleGlobalPrevent);
@@ -35,89 +53,69 @@ const ReyesDivisionPC = () => {
       }
     };
     document.addEventListener('keydown', handleKeyDown);
+
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
-    // Recuperar Voto del Usuario (Para que no se borre al actualizar)
-    const userVote = localStorage.getItem('reyes_division_vote');
-    if (userVote) setVoted(userVote);
+    const savedEp = localStorage.getItem('reyes_division_last_ep');
+    if (savedEp) {
+      const idx = parseInt(savedEp);
+      if (idx < reyesDivisionEpisodes.length && reyesDivisionEpisodes[idx].available) setCurrentIdx(idx);
+    }
 
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(SERIES_ID)) setInMyList(true);
-
-    // Countdown 14h
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        const totalSec = prev.hours * 3600 + prev.minutes * 60 + prev.seconds - 1;
-        if (totalSec <= 0) { clearInterval(timer); return { hours: 0, minutes: 0, seconds: 0 }; }
-        return {
-          hours: Math.floor(totalSec / 3600),
-          minutes: Math.floor((totalSec % 3600) / 60),
-          seconds: totalSec % 60
-        };
-      });
-    }, 1000);
 
     return () => {
       document.removeEventListener('contextmenu', handleGlobalPrevent);
       document.removeEventListener('dragstart', handleGlobalPrevent);
       document.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('scroll', handleScroll);
-      clearInterval(timer);
     };
   }, []);
 
-  // --- BUSCADOR COMPLETO Y POTENTE ---
+  // --- BUSCADOR COMPLETO ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      
       const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david', 'mar rojo'],
-        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto', 'faraon'],
-        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'magdalena', 'pablo', 'apocalipsis', 'cristo'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia', 'eleccion', 'rechazo'],
-        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes', 'hadassah'],
-        pablo: ['pablo', 'apostol', 'cristo', 'saulo', 'lucas', 'hechos'],
-        biblia: ['biblia', 'continua', 'testamento', 'milagros', 'fe', 'profetas']
+        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'division', 'decadencia', 'jerusalen'],
+        jesus: ['jesus', 'milagros', 'pasion']
       };
-
       const relatedTerms = new Set<string>();
       relatedTerms.add(term);
       Object.entries(themeMap).forEach(([key, values]) => {
         if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
       });
-
       const filtered = allSeries.filter(serie => {
-        const titleNorm = normalize(serie.title);
-        const catNorm = normalize(serie.category || "");
-        return Array.from(relatedTerms).some(t => titleNorm.includes(t)) || catNorm.includes(term);
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
       });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
 
-  const handleVoteAction = (type: 'si' | 'no') => {
-    if (voted === type) {
-      localStorage.removeItem('reyes_division_vote');
-      setVoted(null);
-      type === 'si' ? setVotosSi(votosSi - 1) : setVotosNo(votosNo - 1);
-    } else {
-      localStorage.setItem('reyes_division_vote', type);
-      setVoted(type);
-      type === 'si' ? setVotosSi(votosSi + 1) : setVotosNo(votosNo + 1);
-      // Si ya había votado lo opuesto, quitamos el voto anterior
-      if (voted && voted !== type) {
-        voted === 'si' ? setVotosSi(votosSi - 1) : setVotosNo(votosNo - 1);
-      }
-    }
+  const openEpisode = (idx: number) => {
+    if (!reyesDivisionEpisodes[idx].available) return;
+    setCurrentIdx(idx);
+    setSelectedVideo(reyesDivisionEpisodes[idx].url || null);
+    localStorage.setItem('reyes_division_last_ep', idx.toString());
   };
+
+  const closePlayer = () => setSelectedVideo(null);
 
   const toggleMyList = () => {
     let list = JSON.parse(localStorage.getItem('myList') || '[]');
-    if (inMyList) { list = list.filter((i: number) => i !== SERIES_ID); setInMyList(false); }
-    else { list.push(SERIES_ID); setInMyList(true); }
+    if (inMyList) { 
+      list = list.filter((i: number) => i !== SERIES_ID); 
+      setInMyList(false); 
+    } else { 
+      list.push(SERIES_ID); 
+      setInMyList(true); 
+    }
     localStorage.setItem('myList', JSON.stringify(list));
   };
 
@@ -166,9 +164,9 @@ const ReyesDivisionPC = () => {
         <img src="https://static.wixstatic.com/media/859174_8ccb6683bc06431d9cd0c56fa070ce80~mv2.jpg" className="w-full h-full object-cover" alt="Banner Reyes: La División" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
-          <div className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg shadow-2xl uppercase select-none cursor-default">
-            ⏳ Hoy Gran Estreno
-          </div>
+          <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
+            {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${currentIdx + 1}`}
+          </button>
           <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
             {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
           </button>
@@ -178,45 +176,42 @@ const ReyesDivisionPC = () => {
 
       <div className="h-20 bg-black"></div>
 
-      <div className="px-16 mb-40 relative z-10 flex flex-col items-center">
-        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4 w-full text-left">
+      <div className="px-16 mb-20 relative z-10 text-left">
+        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
-          <h2 className="text-2xl font-bold tracking-tight uppercase">Próximo Estreno</h2>
+          <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
         </header>
 
-        <div className="mb-10 bg-[#FF8A00] text-black font-black py-3 px-10 rounded-xl text-4xl shadow-[0_0_30px_rgba(255,138,0,0.3)] font-mono flex gap-4">
-          <span>{String(timeLeft.hours).padStart(2, '0')}</span>:
-          <span>{String(timeLeft.minutes).padStart(2, '0')}</span>:
-          <span>{String(timeLeft.seconds).padStart(2, '0')}</span>
-        </div>
-
-        <div className="max-w-5xl w-full bg-white/[0.02] border border-white/5 rounded-[40px] p-16 shadow-2xl text-center">
-            <h3 className="text-4xl font-black uppercase mb-6 tracking-tighter">LEA Y ENTIENDA BIEN</h3>
-            <p className="text-xl text-gray-400 font-medium leading-relaxed mb-12">
-                Debido a reportes de que algunos usuarios no pueden visualizar el video, se realiza la siguiente encuesta técnica. Por favor, intente reproducir el video inferior antes de marcar su respuesta.
-            </p>
-
-            <div className="flex justify-center gap-10 mb-16">
-                <button 
-                  onClick={() => handleVoteAction('si')}
-                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${voted === 'si' ? 'bg-green-600 border-green-400 shadow-[0_0_30px_rgba(34,197,94,0.4)]' : 'bg-white/5 border-white/10 hover:border-green-500'}`}
-                >
-                    <span className="block text-6xl font-black mb-2">{votosSi}</span>
-                    <span className="text-xs font-black uppercase tracking-widest">SÍ puedo ver el video</span>
-                </button>
-
-                <button 
-                  onClick={() => handleVoteAction('no')}
-                  className={`group flex-1 p-8 rounded-3xl border-2 transition-all transform hover:scale-105 ${voted === 'no' ? 'bg-red-600 border-red-400 shadow-[0_0_30px_rgba(239,68,68,0.4)]' : 'bg-white/5 border-white/10 hover:border-red-500'}`}
-                >
-                    <span className="block text-6xl font-black mb-2">{votosNo}</span>
-                    <span className="text-xs font-black uppercase tracking-widest">NO puedo ver el video</span>
-                </button>
+        <div className="grid grid-cols-4 gap-8 text-left">
+          {reyesDivisionEpisodes.map((ep, index) => (
+            <div key={ep.id} className={`group rounded-xl overflow-hidden transition-all duration-300 bg-[#2C2F33] border-2 ${ep.available ? (currentIdx === index ? 'border-[#FF8A00] ring-4 ring-[#FF8A00]/20 cursor-pointer' : 'border-transparent hover:border-white/20 cursor-pointer') : 'border-white/5 opacity-60 cursor-default'}`} 
+                 onClick={() => ep.available && openEpisode(index)}>
+              <div className="relative aspect-video overflow-hidden">
+                {ep.available ? (
+                   <img src={ep.thumb} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" loading="lazy" />
+                ) : (
+                   <div className="w-full h-full bg-gray-900 flex items-center justify-center">
+                      <span className="text-[#FF8A00] font-black text-4xl opacity-20">{ep.id}</span>
+                   </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2C2F33] opacity-60" />
+                <div className="absolute bottom-2 left-2 bg-black/40 backdrop-blur-md px-3 py-1 rounded-md border border-white/10 text-left">
+                    <span className="text-[11px] font-black uppercase text-white">Episodio <span className="text-[#FF8A00]">{ep.id}</span></span>
+                </div>
+                {ep.available && (
+                   <div className="absolute bottom-2 right-2 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-md border border-white/10">
+                     <span className="text-[10px] font-bold text-white">{ep.dur}</span>
+                   </div>
+                )}
+              </div>
+              <div className="p-5 flex flex-col gap-1 text-left">
+                <h3 className={`font-bold text-base truncate uppercase ${ep.available ? 'group-hover:text-[#FF8A00]' : 'text-gray-500'}`}>{ep.title}</h3>
+                <p className="text-[11px] text-gray-400 line-clamp-2 leading-relaxed h-8 text-justify">
+                  {ep.desc}
+                </p>
+              </div>
             </div>
-
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden border-2 border-white/10 bg-black shadow-inner">
-                <iframe src={VIDEO_TEST_URL} className="absolute inset-0 w-full h-full" allow="autoplay; fullscreen" allowFullScreen />
-            </div>
+          ))}
         </div>
       </div>
 
@@ -229,13 +224,55 @@ const ReyesDivisionPC = () => {
           </Link>
       </div>
 
+      {selectedVideo && (
+        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in text-left">
+          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
+            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
+              <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Reyes: La División</span>
+              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">{reyesDivisionEpisodes[currentIdx].title}</h2>
+            </div>
+            <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:scale-105 transition-all">
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar</span>
+              <IoClose size={24} className="group-hover:rotate-90 group-hover:text-black transition-all" />
+            </button>
+          </div>
+          <div className="flex-grow bg-black relative">
+            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
+          </div>
+          <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] border-t border-white/5 flex items-center justify-between">
+            <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 transition-all">
+              <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center bg-white/[0.02] group-hover:bg-white group-hover:text-black transition-all shadow-xl">
+                <IoChevronBack size={24} />
+              </div>
+              <div className="flex flex-col items-start text-left">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]/60">Anterior</span>
+                <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx}</span>
+              </div>
+            </button>
+            <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] transition-all">
+              <IoList size={28} className="text-[#FF8A00]" />
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Capítulos</span>
+            </button>
+            <button disabled={currentIdx === reyesDivisionEpisodes.length - 1 || !reyesDivisionEpisodes[currentIdx + 1].available} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 transition-all">
+              <div className="flex flex-col items-end text-right">
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
+                <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx + 2}</span>
+              </div>
+              <div className="w-16 h-16 rounded-[22px] bg-[#FF8A00] flex items-center justify-center text-black shadow-2xl group-hover:scale-110 transition-all">
+                <IoChevronForward size={32} />
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
+
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-start md:justify-end gap-6 mb-10">
+          <div className="flex justify-start md:justify-end gap-6 mb-10 text-left">
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
-            <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
-            <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
+            <a href="https://www.tiktok.com/@estudios421_com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
+            <a href="https://youtube.com/@estudios421max" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4 text-left">
