@@ -11,8 +11,8 @@ import { allSeries } from '../../../data/series';
 // --- CONFIGURACIÓN DE EPISODIOS REAL (ID: 30) ---
 const reyesDivisionEpisodes = [
   { id: 1, title: "ME QUEDÉ SOLO", dur: "57:20", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15777259588096", available: true },
-  { id: 2, title: "NO TE TRAICIONES A TI MISMO", dur: "44:25", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
-  { id: 3, title: "ESTRENO 04 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
+  { id: 2, title: "NO TE TRAICIONES A TI MISMO", dur: "42:13", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/15796254607872", available: true },
+  { id: 3, title: "¿DE QUIÉN ES ISRAEL?", dur: "48:35", thumb: "https://static.wixstatic.com/media/859174_92933f124d1d47088e8fa079feb9e528~mv2.jpg", url: "https://ok.ru/videoembed/15391903456768", available: true },
   { id: 4, title: "ESTRENO 05 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
   { id: 5, title: "ESTRENO 06 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
   { id: 6, title: "ESTRENO 09 DE MARZO", dur: "--:--", thumb: "", url: "", available: false },
