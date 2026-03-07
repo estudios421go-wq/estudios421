@@ -87,34 +87,24 @@ const ApocalipsisPC = () => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      
-      // Mapeo completo de temas para que reconozca palabras clave
       const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida'],
-        sanson: ['sanson', 'dalila', 'fuerza', 'filisteos'],
-        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'cristo'],
-        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen'],
-        apocalipsis: ['apocalipsis', 'fin del mundo', 'profecia', 'revelacion']
+        moises: ['moises', 'diez mandamientos', 'egipto', 'tierra prometida'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion'],
+        reyes: ['reyes', 'david', 'saul']
       };
-
       const relatedTerms = new Set<string>();
       relatedTerms.add(term);
-      
       Object.entries(themeMap).forEach(([key, values]) => {
-        if (term.includes(key) || key.includes(term)) {
-          values.forEach(v => relatedTerms.add(v));
-        }
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
       });
-
       const filtered = allSeries.filter(serie => {
         const titleNormalized = normalize(serie.title);
         const categoryNormalized = normalize(serie.category || "");
         return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
       });
       setSearchResults(filtered);
-    } else {
-      setSearchResults([]);
-    }
+    } else { setSearchResults([]); }
   }, [searchQuery]);
 
   const openEpisode = (idx: number) => {
