@@ -8,23 +8,20 @@ import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
 
-// --- DEFINICIÓN DE INTERFAZ PARA EVITAR EL ERROR DE RENDER ---
 interface Episode {
   id: number;
   title: string;
   dur: string;
   thumb: string;
   url: string;
-  releaseDate: Date | null; // Permite tanto fecha como null
+  releaseDate: Date | null;
 }
 
-// --- CONFIGURACIÓN DE EPISODIOS EXTENDIDA (155 CAPÍTULOS) ---
 const apocalipsis155Episodes: Episode[] = [
   { id: 1, title: "Episodio 001 | Apocalipsis", dur: "00:43:53", thumb: "https://static.wixstatic.com/media/859174_cfd920337c02422ea0f20ab5c91213db~mv2.jpg", url: "https://ok.ru/videoembed/15921806969344", releaseDate: null },
   { id: 2, title: "Episodio 002 | Apocalipsis", dur: "00:45:01", thumb: "https://static.wixstatic.com/media/859174_86e41341db694515aaa880c62602ec6c~mv2.jpg", url: "https://ok.ru/videoembed/15921807362560", releaseDate: null },
 ];
 
-// Generador de cronograma automático corregido
 const startDate = new Date(2026, 2, 9); 
 let currentEpDate = new Date(startDate);
 
@@ -37,7 +34,6 @@ for (let i = 3; i <= 155; i++) {
     url: "",
     releaseDate: new Date(currentEpDate)
   });
-
   currentEpDate.setDate(currentEpDate.getDate() + 1);
   if (currentEpDate.getDay() === 6) currentEpDate.setDate(currentEpDate.getDate() + 2);
   if (currentEpDate.getDay() === 0) currentEpDate.setDate(currentEpDate.getDate() + 1);
@@ -88,10 +84,11 @@ const ApocalipsisPC = () => {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
       const themeMap: { [key: string]: string[] } = {
-        moises: ['moises', 'diez mandamientos', 'egipto', 'tierra prometida'],
-        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
-        jesus: ['jesus', 'milagros', 'pasion'],
-        reyes: ['reyes', 'david', 'saul']
+        moises: ['moises', 'diez mandamientos', 'egipto'],
+        sanson: ['sanson', 'dalila', 'fuerza', 'filisteos'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'cristo'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen'],
+        apocalipsis: ['apocalipsis', 'fin del mundo', 'profecia', 'revelacion']
       };
       const relatedTerms = new Set<string>();
       relatedTerms.add(term);
@@ -152,6 +149,18 @@ const ApocalipsisPC = () => {
           <Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={30} height={30} className="rounded-full ring-1 ring-white/20 hover:ring-[#FF8A00] cursor-pointer" />
         </div>
       </nav>
+
+      {/* BLOQUE DE RESULTADOS DE BÚSQUEDA RESTAURADO */}
+      {searchQuery.length > 0 && (
+        <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
+          <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
+          <div className="grid grid-cols-6 gap-x-4 gap-y-10">
+            {searchResults.map((m) => (
+              <Link key={m.id} href={m.path}><div className="relative aspect-[2/3] rounded-md transition-all duration-500 hover:scale-110 hover:z-[110] cursor-pointer shadow-2xl group"><Image src={m.banner} alt={m.title} fill className="object-cover rounded-md" unoptimized /></div></Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_f73133cc2267477786433f55120ea643~mv2.jpg" className="w-full h-full object-cover" alt="Banner Apocalipsis" />
@@ -223,7 +232,7 @@ const ApocalipsisPC = () => {
           <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
             <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1">
               <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Apocalipsis (155)</span>
-              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">Episodio {currentIdx + 1}</h2>
+              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">{apocalipsis155Episodes[currentIdx].title}</h2>
             </div>
             <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:scale-105 transition-all">
               <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar</span>
@@ -262,7 +271,7 @@ const ApocalipsisPC = () => {
 
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-start md:justify-end gap-6 mb-10">
+          <div className="flex justify-start md:justify-end gap-6 mb-10 text-left">
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
             <a href="https://www.tiktok.com/@estudios421_com?_r=1&_t=ZS-93K0Cjg8TzM" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
@@ -273,7 +282,7 @@ const ApocalipsisPC = () => {
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
             <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify font-medium">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
-          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
+          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8 text-left">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
             <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
             <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
