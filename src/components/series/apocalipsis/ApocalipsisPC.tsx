@@ -8,14 +8,24 @@ import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
 
+// --- DEFINICIÓN DE INTERFAZ PARA EVITAR EL ERROR DE RENDER ---
+interface Episode {
+  id: number;
+  title: string;
+  dur: string;
+  thumb: string;
+  url: string;
+  releaseDate: Date | null; // Permite tanto fecha como null
+}
+
 // --- CONFIGURACIÓN DE EPISODIOS EXTENDIDA (155 CAPÍTULOS) ---
-const apocalipsis155Episodes = [
+const apocalipsis155Episodes: Episode[] = [
   { id: 1, title: "Episodio 001 | Apocalipsis", dur: "00:43:53", thumb: "https://static.wixstatic.com/media/859174_cfd920337c02422ea0f20ab5c91213db~mv2.jpg", url: "https://ok.ru/videoembed/15921806969344", releaseDate: null },
   { id: 2, title: "Episodio 002 | Apocalipsis", dur: "00:45:01", thumb: "https://static.wixstatic.com/media/859174_86e41341db694515aaa880c62602ec6c~mv2.jpg", url: "https://ok.ru/videoembed/15921807362560", releaseDate: null },
 ];
 
-// Generador de cronograma automático (Ep 3 en adelante - Lunes a Viernes)
-const startDate = new Date(2026, 2, 9); // Lunes 9 de Marzo, 2026
+// Generador de cronograma automático corregido
+const startDate = new Date(2026, 2, 9); 
 let currentEpDate = new Date(startDate);
 
 for (let i = 3; i <= 155; i++) {
@@ -28,7 +38,6 @@ for (let i = 3; i <= 155; i++) {
     releaseDate: new Date(currentEpDate)
   });
 
-  // Lógica: Sumar 1 día, si cae Sábado (6) sumar 2 días más para llegar a Lunes
   currentEpDate.setDate(currentEpDate.getDate() + 1);
   if (currentEpDate.getDay() === 6) currentEpDate.setDate(currentEpDate.getDate() + 2);
   if (currentEpDate.getDay() === 0) currentEpDate.setDate(currentEpDate.getDate() + 1);
@@ -74,7 +83,6 @@ const ApocalipsisPC = () => {
     };
   }, []);
 
-  // --- BUSCADOR (INTOUCHABLE) ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -104,7 +112,6 @@ const ApocalipsisPC = () => {
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
       <Head><title>Apocalipsis (155 Episodios) — Estudios 421</title></Head>
 
-      {/* --- NAV (INTOUCHABLE) --- */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
@@ -131,7 +138,6 @@ const ApocalipsisPC = () => {
         </div>
       </nav>
 
-      {/* --- BANNER (INTOUCHABLE) --- */}
       <div className="relative w-full h-[88vh]">
         <img src="https://static.wixstatic.com/media/859174_f73133cc2267477786433f55120ea643~mv2.jpg" className="w-full h-full object-cover" alt="Banner Apocalipsis" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
@@ -148,14 +154,12 @@ const ApocalipsisPC = () => {
 
       <div className="h-24 bg-black"></div>
 
-      {/* --- SECCIÓN DE EPISODIOS MODIFICADA --- */}
-      <div className="px-16 mb-40 relative z-10">
+      <div className="px-16 mb-40 relative z-10 text-left">
         <header className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase">Episodios Disponibles</h2>
         </header>
 
-        {/* BOTÓN INTERCONEXIÓN (NARANJA BRILLANTE) */}
         <div className="mb-12">
           <Link href="/serie/apocalipsis-88">
             <button className="flex items-center gap-3 bg-[#FF8A00] text-black font-black py-4 px-10 rounded-full text-sm uppercase tracking-widest hover:scale-105 transition-all shadow-[0_0_30px_rgba(255,138,0,0.4)]">
@@ -165,7 +169,6 @@ const ApocalipsisPC = () => {
           </Link>
         </div>
 
-        {/* LISTA DE EPISODIOS FONDO 100% NEGRO */}
         <div className="grid grid-cols-4 gap-x-8 gap-y-12">
           {apocalipsis155Episodes.map((ep, index) => (
             <div 
@@ -180,7 +183,7 @@ const ApocalipsisPC = () => {
                   <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center">
                     <span className="text-white/20 font-black text-4xl mb-2">{ep.id}</span>
                     <span className="text-[10px] font-black text-white uppercase tracking-widest bg-white/5 px-3 py-1 rounded">
-                      ESTRENO: {ep.releaseDate.toLocaleDateString('es-ES', { day: '2-digit', month: 'long' }).toUpperCase()}
+                      ESTRENO: {ep.releaseDate?.toLocaleDateString('es-ES', { day: '2-digit', month: 'long' }).toUpperCase()}
                     </span>
                   </div>
                 )}
@@ -194,25 +197,21 @@ const ApocalipsisPC = () => {
                 <h3 className={`font-bold text-sm uppercase truncate ${!ep.releaseDate ? 'group-hover:text-[#FF8A00]' : 'text-gray-600'}`}>
                   {ep.title}
                 </h3>
-                {ep.releaseDate && (
-                  <span className="text-[9px] font-bold text-[#FF8A00] uppercase tracking-tighter">Próximamente</span>
-                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* --- PLAYER (INTOUCHABLE) --- */}
       {selectedVideo && (
-        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in">
-          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5 text-left">
-            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1 text-left">
+        <div className="fixed inset-0 z-[1000] bg-[#050608] flex flex-col animate-fade-in text-left">
+          <div className="h-[12vh] min-h-[85px] px-12 flex items-center justify-between bg-gradient-to-b from-[#0a0b0d] to-[#050608] border-b border-white/5">
+            <div className="flex flex-col border-l-4 border-[#FF8A00] pl-6 py-1">
               <span className="text-[10px] font-black text-[#FF8A00]/80 uppercase tracking-[0.5em] mb-1">Apocalipsis (155)</span>
-              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">{apocalipsis155Episodes[currentIdx].title}</h2>
+              <h2 className="text-2xl font-black tracking-tighter uppercase leading-none">Episodio {currentIdx + 1}</h2>
             </div>
             <button onClick={closePlayer} className="group flex items-center gap-4 bg-white/[0.03] px-8 py-3.5 rounded-full border border-white/10 hover:bg-[#FF8A00] hover:scale-105 transition-all">
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar Reproductor</span>
+              <span className="text-[11px] font-black uppercase tracking-[0.2em] group-hover:text-black">Cerrar</span>
               <IoClose size={24} className="group-hover:rotate-90 group-hover:text-black transition-all" />
             </button>
           </div>
@@ -231,9 +230,9 @@ const ApocalipsisPC = () => {
             </button>
             <button onClick={closePlayer} className="flex items-center gap-4 bg-white/[0.03] px-10 py-4 rounded-2xl border border-white/5 hover:bg-white/[0.08] transition-all">
               <IoList size={28} className="text-[#FF8A00]" />
-              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Lista de Capítulos</span>
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-white/60">Capítulos</span>
             </button>
-            <button disabled={currentIdx === apocalipsis155Episodes.length - 1 || apocalipsis155Episodes[currentIdx + 1].releaseDate} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 transition-all">
+            <button disabled={currentIdx === apocalipsis155Episodes.length - 1 || apocalipsis155Episodes[currentIdx + 1].releaseDate !== null} onClick={() => openEpisode(currentIdx + 1)} className="group flex items-center gap-6 disabled:opacity-5 transition-all">
               <div className="flex flex-col items-end text-right">
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF8A00]">Siguiente</span>
                 <span className="text-sm font-bold uppercase text-white/80">Episodio {currentIdx + 2}</span>
@@ -246,7 +245,6 @@ const ApocalipsisPC = () => {
         </div>
       )}
 
-      {/* --- FOOTER (INTOUCHABLE) --- */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-start md:justify-end gap-6 mb-10">
@@ -256,9 +254,9 @@ const ApocalipsisPC = () => {
             <a href="https://youtube.com/@estudios421max?si=IXSltDZuOmclG7KL" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
-          <div className="mb-10 space-y-4">
+          <div className="mb-10 space-y-4 text-left">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify font-medium">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
