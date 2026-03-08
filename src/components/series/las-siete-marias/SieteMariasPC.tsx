@@ -23,7 +23,7 @@ const SieteMariasPC = () => {
             ¿Deseas ayudarnos a llevar este mensaje de fe a más hogares?
           </p>
           <p className="text-sm text-gray-400 max-w-2xl mx-auto">
-            Tu generosidad permite que sigamos adquiriendo contenidos que inspiran el alma. Si está en tus posibilidades, apóyanos con una donación para garantizar la mejor calidad en audio latino para este gran estreno.
+            Tu generosidad permite que sigamos compartiendo contenidos que inspiran el alma. Si está en tus posibilidades, apóyanos con una donación para garantizar la mejor calidad en audio latino para este gran estreno.
           </p>
           <button 
             onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')}
