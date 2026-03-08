@@ -23,7 +23,7 @@ const IraHerederoPC = () => {
             Apoya la difusión de estas historias de redención
           </p>
           <p className="text-sm text-gray-400 max-w-2xl mx-auto">
-            Llevar estos relatos bíblicos a tu pantalla con la mejor calidad requiere de tu apoyo. Si está en tus posibilidades, realiza una donación para ayudarnos con los costos de adquisición y doblaje. ¡Tu aporte hace la diferencia!
+            Llevar estos relatos bíblicos a tu pantalla con la mejor calidad requiere de tu apoyo. Si está en tus posibilidades, realiza una donación para ayudarnos con los costos de mantener este sitio web. ¡Tu aporte hace la diferencia!
           </p>
           <button 
             onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')}
