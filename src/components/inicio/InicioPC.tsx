@@ -48,7 +48,7 @@ const InicioPC = () => {
     { title: "Ben-Hur: La Serie", banner: "https://static.wixstatic.com/media/859174_4d59c45f63c84539b1e383a4289f0c73~mv2.jpg", path: "serie/ben-hur", audio: "Latino" },
     { title: "Amor en Ruinas", banner: "https://static.wixstatic.com/media/859174_d0b47539f9cb48ccb7302576d7c2a026~mv2.jpg", path: "serie/amor-en-ruinas", audio: "Latino" },
     { title: "Las Siete Marías", banner: "https://static.wixstatic.com/media/859174_7a0e35b0cded4ad58d8df0b5d4d6464e~mv2.jpg", path: "serie/las-siete-marias", audio: "Latino" },
-    { title: "La Ira del Heredero", banner: "https://static.wixstatic.com/media/859174_69d642074f9a438a890712e21ccfe53f~mv2.jpg", path: "serie/la-ira-del-heredero", audio: "Latino" },
+    { title: "La Ira del Heredero", banner: "https://static.wixstatic.com/media/859174_187bcd28360641f8b3150361aec85495~mv2.jpg", path: "serie/la-ira-del-heredero", audio: "Latino" },
     { title: "Apocalispis", banner: "https://static.wixstatic.com/media/859174_ace5fbe133b3490593913ede8144fe06~mv2.jpg", path: "serie/apocalipsis", audio: "Latino" },
     { title: "Reyes La División", banner: "https://static.wixstatic.com/media/859174_6986effb4d7a48c1925babb9425be472~mv2.jpg", path: "serie/reyes-la-division", audio: "Latino" },
     { title: "Reyes La Decadencia", banner: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", path: "serie/reyes-la-decadencia", audio: "Latino" },
