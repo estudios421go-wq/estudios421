@@ -23,7 +23,7 @@ const AmorRuinasPC = () => {
             ¡Ayúdanos a reconstruir la fe a través de la pantalla!
           </p>
           <p className="text-sm text-gray-400 max-w-2xl mx-auto">
-            Tu apoyo financiero nos permite adquirir y doblar estas joyas brasileñas en alta definición. Si está en tus posibilidades, haz una donación hoy para que estas historias lleguen a cada rincón con la mejor calidad posible.
+            Tu apoyo financiero nos permite compartir y seguir trayéndote estas joyas brasileñas en alta definición. Si está en tus posibilidades, haz una donación hoy para que estas historias lleguen a cada rincón con la mejor calidad posible.
           </p>
           <button 
             onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')}
