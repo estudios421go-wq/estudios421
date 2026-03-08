@@ -24,7 +24,7 @@ const BenHurMobile = () => {
         <div className="bg-white/[0.03] border-l-4 border-[#FF8A00] p-6 space-y-4">
           <p className="text-xs font-black text-[#FF8A00] uppercase tracking-widest">Apóyanos</p>
           <p className="text-xs text-gray-500 leading-relaxed">
-            Tu donación nos ayuda a traer nuevas series en alta calidad y audio latino. ¡Sé parte de este ministerio!
+            Tu donación nos ayuda a traer nuevas series en alta calidad y audio latino. ¡Sé parte de este proyecto!
           </p>
           <button 
             onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')}
