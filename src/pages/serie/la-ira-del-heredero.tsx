@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import dynamic from 'dynamic';
+import dynamic from 'next/dynamic';
 
 const IraHerederoPC = dynamic(() => import('../../components/series/la-ira-del-heredero/IraHerederoPC'), { ssr: false });
 const IraHerederoMobile = dynamic(() => import('../../components/series/la-ira-del-heredero/IraHerederoMobile'), { ssr: false });
