@@ -24,7 +24,7 @@ const BenHurPC = () => {
         {/* Bloque de Donación */}
         <div className="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-md space-y-4">
           <p className="text-[#FF8A00] text-lg font-bold uppercase tracking-widest">
-            ¿Deseas ayudarnos a acelerar este estreno?
+            Si esta en tus posibilidades ayudar a este sitio, puedes hacerlo mediante el botón de donación
           </p>
           <p className="text-sm text-gray-400 max-w-2xl mx-auto">
             Tu generosidad es la semilla que permite traer estas historias de fe en la más alta calidad y audio latino. Si está en tus posibilidades, apóyanos para seguir expandiendo el mensaje bíblico a todo el mundo.
