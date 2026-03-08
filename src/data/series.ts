@@ -46,7 +46,7 @@ export const allSeries: Serie[] = [
   { id: 33, title: "Ben-Hur: La Serie", path: "/serie/ben-hur", audio: 'Latino', category: 'Serie Bíblica', banner: "https://static.wixstatic.com/media/859174_4d59c45f63c84539b1e383a4289f0c73~mv2.jpg" },
   { id: 34, title: "Amor en Ruinas", path: "/serie/amor-en-ruinas", audio: 'Latino', category: 'Serie Bíblica', banner: "https://static.wixstatic.com/media/859174_d0b47539f9cb48ccb7302576d7c2a026~mv2.jpg" },
   { id: 35, title: "Las Siete Marías", path: "/serie/las-siete-marias", audio: 'Latino', category: 'Serie Bíblica', banner: "https://static.wixstatic.com/media/859174_7a0e35b0cded4ad58d8df0b5d4d6464e~mv2.jpg" },
-  { id: 36, title: "La Ira del Heredero", path: "/serie/la-ira-del-heredero", audio: 'Latino', category: 'Serie Bíblica', banner: "https://static.wixstatic.com/media/859174_69d642074f9a438a890712e21ccfe53f~mv2.jpg" },
+  { id: 36, title: "La Ira del Heredero", path: "/serie/la-ira-del-heredero", audio: 'Latino', category: 'Serie Bíblica', banner: "https://static.wixstatic.com/media/859174_187bcd28360641f8b3150361aec85495~mv2.jpg" },
 
   // --- SERIES TV ---
   { id: 40, title: "La Casa De David", path: "/serie-tv/la-casa-de-david", audio: 'Latino', category: 'Serie de TV', banner: "https://static.wixstatic.com/media/859174_cc2c878f7a0a4fffa5b63ef31048fb75~mv2.jpg" },
