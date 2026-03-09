@@ -9,13 +9,11 @@ import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../data/series';
 
 const SeriesBiblicasMobile = () => {
-  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  // MAPEO DE TODAS LAS SERIES BÍBLICAS (38 POSTERS)
   const bibleSeries = [
     { id: 1, title: "Génesis", path: "/serie/genesis", banner: "https://static.wixstatic.com/media/859174_cb6e3b25765e45c6ae58bc0fc1b74217~mv2.jpg" },
     { id: 2, title: "Lea", path: "/serie/lea", banner: "https://static.wixstatic.com/media/859174_f60859f86c8b433c98ac32aeab2eb9f6~mv2.jpg" },
@@ -61,21 +59,44 @@ const SeriesBiblicasMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // BUSCADOR SENSIBLE Y TEMA MAP
+  // BUSCADOR ULTRA SENSIBLE Y EXTENSO
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term) || normalize(serie.category || "").includes(term));
+
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto', 'liberacion', 'exodo'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'maestro'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'israel', 'jerusalen'],
+        ester: ['ester', 'reina de persia', 'persia', 'jerjes', 'hadassah'],
+        pablo: ['pablo', 'saulo', 'apostol', 'cristo']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) {
+          values.forEach(v => relatedTerms.add(v));
+        }
+      });
+
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => 
+          titleNormalized.includes(t) || categoryNormalized.includes(term)
+        );
+      });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
 
   return (
-    <div className="bg-black min-h-screen text-white font-sans text-left selection:bg-[#F09800]">
+    <div className="bg-black min-h-screen text-white font-sans text-left selection:bg-[#F09800] unselectable">
       <Head><title>SERIES BÍBLICAS — ESTUDIOS 421</title></Head>
 
-      {/* NAV MÓVIL REPLICADA */}
       <nav className={`fixed top-0 w-full z-[110] px-4 py-3 flex items-center gap-4 transition-all duration-300 ${isScrolled || isMenuOpen || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black/90 to-transparent'}`}>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="text-white text-3xl active:scale-90 transition-transform" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -83,16 +104,15 @@ const SeriesBiblicasMobile = () => {
           </button>
           <Link href="/"><div className="relative w-[110px] h-[30px]"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
         </div>
-        <form onSubmit={(e) => e.preventDefault()} className="flex-grow relative group">
+        <form onSubmit={(e) => e.preventDefault()} className="flex-grow relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><IoSearchOutline size={16} /></div>
           <input type="text" placeholder="Buscar..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-white/10 border border-white/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white outline-none focus:bg-white/20 focus:border-[#F09800] transition-all" />
         </form>
         <div className="flex-shrink-0"><Image src="https://static.wixstatic.com/media/859174_26ca840644ce4f519c0458c649f44f34~mv2.png" alt="User" width={32} height={32} className="rounded-full ring-2 ring-white/10" /></div>
       </nav>
 
-      {/* BUSCADOR RESULTADOS */}
       {searchQuery.length > 0 && (
-        <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20">
+        <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20 animate-fade-in">
           <h2 className="text-white text-sm font-black mb-6 uppercase tracking-widest flex items-center gap-2"><span className="w-1 h-4 bg-[#F09800]" />RESULTADOS: "{searchQuery}"</h2>
           <div className="grid grid-cols-2 gap-4">
             {searchResults.map((m) => (
@@ -102,7 +122,6 @@ const SeriesBiblicasMobile = () => {
         </div>
       )}
 
-      {/* MENÚ DE HAMBURGUESA REPLICADO */}
       <div className={`fixed inset-0 bg-black/98 z-[100] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full pt-24 px-8 gap-8 text-left">
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">NAVEGACIÓN</p>
@@ -121,7 +140,6 @@ const SeriesBiblicasMobile = () => {
         </div>
       </div>
 
-      {/* CONTENIDO PRINCIPAL */}
       <main className="pt-24 px-4 pb-20">
         <header className="flex flex-col gap-4 mb-10 border-b border-white/5 pb-6">
           <div className="flex items-center gap-3">
@@ -144,7 +162,7 @@ const SeriesBiblicasMobile = () => {
                   <Image src={serie.banner} alt={serie.title} fill className="object-cover" unoptimized />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 </div>
-                <h3 className="text-[10px] font-bold uppercase tracking-tight text-white/80 text-center truncate">
+                <h3 className="text-[10px] font-bold uppercase tracking-tight text-white/80 text-center truncate px-1">
                   {serie.title}
                 </h3>
               </div>
@@ -153,12 +171,11 @@ const SeriesBiblicasMobile = () => {
         </div>
       </main>
 
-      {/* FOOTER MÓVIL REPLICADO */}
       <footer className="bg-[#0a0a0a] text-gray-500 py-10 px-6 border-t border-white/5 text-left">
         <div className="flex justify-start gap-6 mb-8 text-xl">
-          <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer"><FaFacebookF /></a>
-          <a href="https://www.tiktok.com/@estudios421_com" target="_blank" rel="noreferrer"><FaTiktok /></a>
-          <a href="https://youtube.com/@estudios421max" target="_blank" rel="noreferrer"><FaYoutube /></a>
+          <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="active:text-[#F09800]"><FaFacebookF /></a>
+          <a href="https://www.tiktok.com/@estudios421_com" target="_blank" rel="noreferrer" className="active:text-[#F09800]"><FaTiktok /></a>
+          <a href="https://youtube.com/@estudios421max" target="_blank" rel="noreferrer" className="active:text-[#F09800]"><FaYoutube /></a>
         </div>
         <div className="space-y-4 mb-8">
           <p className="text-[10px] leading-relaxed">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
@@ -172,6 +189,11 @@ const SeriesBiblicasMobile = () => {
           <Link href="/ayuda">CENTRO DE AYUDA</Link>
         </div>
       </footer>
+
+      <style jsx global>{`
+        .unselectable { -webkit-user-select: none; user-select: none; }
+        img { pointer-events: none !important; }
+      `}</style>
     </div>
   );
 };
