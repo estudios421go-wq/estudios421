@@ -19,7 +19,7 @@ const SeriesBiblicasPC = () => {
   const bibleSeries = [
     { id: 1, title: "Génesis", path: "/serie/genesis", banner: "https://static.wixstatic.com/media/859174_cb6e3b25765e45c6ae58bc0fc1b74217~mv2.jpg" },
     { id: 2, title: "Lea", path: "/serie/lea", banner: "https://static.wixstatic.com/media/859174_f60859f86c8b433c98ac32aeab2eb9f6~mv2.jpg" },
-    { id: 3, title: "La Vida de Job", path: "/serie/la-vida-of-job", banner: "https://static.wixstatic.com/media/859174_d44fd5197e95499f82ecbfcbcd9edd0f~mv2.jpg" },
+    { id: 3, title: "La Vida de Job", path: "/serie/la-vida-de-job", banner: "https://static.wixstatic.com/media/859174_d44fd5197e95499f82ecbfcbcd9edd0f~mv2.jpg" },
     { id: 4, title: "José de Egipto", path: "/serie/jose-de-egipto", banner: "https://static.wixstatic.com/media/859174_c758bbc293a64584a5c0f6618c774438~mv2.jpg" },
     { id: 5, title: "Moisés y los Diez Mandamientos", path: "/serie/moises-y-los-diez-mandamientos", banner: "https://static.wixstatic.com/media/859174_3c12a4bdb6554faf8f6a98f9192a4495~mv2.jpg" },
     { id: 6, title: "La Tierra Prometida", path: "/serie/la-tierra-prometida", banner: "https://static.wixstatic.com/media/859174_8bc7796b62004142b6305588765b4bb1~mv2.jpg" },
