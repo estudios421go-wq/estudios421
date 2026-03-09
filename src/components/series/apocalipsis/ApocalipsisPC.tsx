@@ -23,7 +23,7 @@ const apocalipsis155Episodes: Episode[] = [
   { id: 3, title: "Episodio 003 | Apocalipsis", dur: "00:44:38", thumb: "https://static.wixstatic.com/media/859174_bbe9bf9b8cc14f24804c54d25ba80ddc~mv2.jpg", url: "https://ok.ru/videoembed/15921807559168", releaseDate: null },
 ];
 
-const startDate = new Date(2026, 2, 9); 
+const startDate = new Date(2026, 2, 10); 
 let currentEpDate = new Date(startDate);
 
 for (let i = 4; i <= 155; i++) {
