@@ -3,10 +3,12 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoHeart, IoCheckmarkCircle } from 'react-icons/io5';
+import { IoSearchOutline, IoHeart } from 'react-icons/io5';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
-import { allSeries } from '../../../data/series';
+
+// CORRECCIÓN DE RUTA DE IMPORTACIÓN (Línea 9)
+import { allSeries } from '../../data/series'; 
 
 const SeriesBiblicasPC = () => {
   const router = useRouter();
@@ -14,7 +16,6 @@ const SeriesBiblicasPC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  // MAPEO DE TODAS LAS SERIES CON SUS PÓSTERS Y RUTAS
   const bibleSeries = [
     { id: 1, title: "Génesis", path: "/serie/genesis", banner: "https://static.wixstatic.com/media/859174_cb6e3b25765e45c6ae58bc0fc1b74217~mv2.jpg" },
     { id: 2, title: "Lea", path: "/serie/lea", banner: "https://static.wixstatic.com/media/859174_f60859f86c8b433c98ac32aeab2eb9f6~mv2.jpg" },
@@ -80,7 +81,6 @@ const SeriesBiblicasPC = () => {
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
       <Head><title>Series Bíblicas — Estudios 421</title></Head>
 
-      {/* NAV REPLICADA DE SERIE MAESTRA */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
@@ -100,7 +100,6 @@ const SeriesBiblicasPC = () => {
         </div>
       </nav>
 
-      {/* BUSCADOR */}
       {searchQuery.length > 0 && (
         <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
           <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -112,7 +111,6 @@ const SeriesBiblicasPC = () => {
         </div>
       )}
 
-      {/* CUERPO PRINCIPAL */}
       <main className="pt-32 px-16 pb-32">
         <div className="flex items-center justify-between mb-16 border-b border-white/5 pb-8">
           <div className="flex items-center gap-6">
@@ -144,15 +142,12 @@ const SeriesBiblicasPC = () => {
         </div>
       </main>
 
-      {/* FOOTER REPLICADO */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-16 border-t border-white/5">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto text-right">
           <div className="flex justify-end gap-6 mb-10">
             <a href="https://www.facebook.com/profile.php?id=61573132405808" className="hover:text-white transition-colors text-xl"><FaFacebookF /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaInstagram /></a>
             <a href="https://www.tiktok.com/@estudios421_com" className="hover:text-white transition-colors text-xl"><FaTiktok /></a>
             <a href="https://youtube.com/@estudios421max" className="hover:text-white transition-colors text-xl"><FaYoutube /></a>
-            <a href="#" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4 text-xs">
             <p>© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
