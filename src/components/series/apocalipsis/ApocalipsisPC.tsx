@@ -20,12 +20,13 @@ interface Episode {
 const apocalipsis155Episodes: Episode[] = [
   { id: 1, title: "Episodio 001 | Apocalipsis", dur: "00:43:53", thumb: "https://static.wixstatic.com/media/859174_cfd920337c02422ea0f20ab5c91213db~mv2.jpg", url: "https://ok.ru/videoembed/15921806969344", releaseDate: null },
   { id: 2, title: "Episodio 002 | Apocalipsis", dur: "00:45:01", thumb: "https://static.wixstatic.com/media/859174_86e41341db694515aaa880c62602ec6c~mv2.jpg", url: "https://ok.ru/videoembed/15921807362560", releaseDate: null },
+  { id: 3, title: "Episodio 003 | Apocalipsis", dur: "00:44:38", thumb: "https://static.wixstatic.com/media/859174_bbe9bf9b8cc14f24804c54d25ba80ddc~mv2.jpg", url: "https://ok.ru/videoembed/15921807559168", releaseDate: null },
 ];
 
 const startDate = new Date(2026, 2, 9); 
 let currentEpDate = new Date(startDate);
 
-for (let i = 3; i <= 155; i++) {
+for (let i = 4; i <= 155; i++) {
   apocalipsis155Episodes.push({
     id: i,
     title: `Episodio ${String(i).padStart(3, '0')} | Apocalipsis`,
