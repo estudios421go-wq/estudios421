@@ -18,7 +18,7 @@ const reyesDivisionEpisodes = [
   { id: 6, title: "¿SOY O NO SOY EL REY?", dur: "36:47", thumb: "https://static.wixstatic.com/media/859174_bc84c278b1a94b85ac7ad7dc75c3acf0~mv2.jpg", url: "https://ok.ru/videoembed/16024452729344", available: true },
   { id: 7, title: "ME ACOSTUMBRÉ", dur: "34:31", thumb: "https://static.wixstatic.com/media/859174_86b2e631972a400bbb8fad2188339dd4~mv2.jpg", url: "https://ok.ru/videoembed/16058433276416", available: true },
   { id: 8, title: "ME IRRITAS", dur: "53:52", thumb: "https://static.wixstatic.com/media/859174_03b83bd91ff949b79697902a856cb303~mv2.jpg", url: "https://ok.ru/videoembed/16059254639104", available: true },
-  { id: 9, title: "ESTRENO 12 DE MARZO", dur: "46:26", thumb: "https://static.wixstatic.com/media/859174_708e23d17b4a42c7b40643e95a652406~mv2.jpg", url: "https://ok.ru/videoembed/16059255294464", available: true },
+  { id: 9, title: "LIBERTAD DE CADENAS", dur: "46:26", thumb: "https://static.wixstatic.com/media/859174_708e23d17b4a42c7b40643e95a652406~mv2.jpg", url: "https://ok.ru/videoembed/16059255294464", available: true },
   { id: 10, title: "ESTRENO 13 DE MARZO", dur: "38:35", thumb: "https://static.wixstatic.com/media/859174_6097d9e18b6146608c20aba4e04e4060~mv2.jpg", url: "https://ok.ru/videoembed/16059256605184", available: true },
   { id: 11, title: "ESTRENO 16 DE MARZO", dur: "41:32", thumb: "https://static.wixstatic.com/media/859174_ef4eb8ef50244e8a955296e4c54155cf~mv2.jpg", url: "https://ok.ru/videoembed/16059259357696", available: true },
   { id: 12, title: "ESTRENO 17 DE MARZO", dur: "47:10", thumb: "https://static.wixstatic.com/media/859174_a4cc78e48cd244bca26e16625e112fcc~mv2.jpg", url: "https://ok.ru/videoembed/16061125626368", available: true },
