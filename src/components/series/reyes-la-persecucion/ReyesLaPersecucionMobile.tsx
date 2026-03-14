@@ -21,7 +21,7 @@ const reyesPersecucionEpisodes = [
   { id: 9, title: "NO ES GRACIAS A TI", dur: "44:37", thumb: "https://static.wixstatic.com/media/859174_47638a391ad04496b727f31efc339dd3~mv2.jpg", url: "https://ok.ru/videoembed/16051237095936" },
   { id: 10, title: "MARIDO Y MUJER", dur: "45:40", thumb: "https://static.wixstatic.com/media/859174_375d0dd276f54ad49502a842c2468d7c~mv2.jpg", url: "https://ok.ru/videoembed/16051238799872" },
   { id: 11, title: "MATARLO", dur: "44:41", thumb: "https://static.wixstatic.com/media/859174_ae69cdf4befa4a30a35c72aa8e555e59~mv2.jpg", url: "https://ok.ru/videoembed/16051242142208" },
-  { id: 12, title: "¿LISTO?", dur: "45:41", thumb: "https://static.wixstatic.com/media/859174_7756e45ace91413f9368c85f5d014f~mv2.jpg", url: "https://ok.ru/videoembed/16128596183552" },
+  { id: 12, title: "¿LISTO?", dur: "45:41", thumb: "https://static.wixstatic.com/media/859174_7756e45ace91413f9368c85f5e5d014f~mv2.jpg", url: "https://ok.ru/videoembed/16128596183552" },
   { id: 13, title: "ESTUVO CERCA", dur: "45:07", thumb: "https://static.wixstatic.com/media/859174_ce66d2a0492947969811b403406f8d30~mv2.jpg", url: "https://ok.ru/videoembed/16128596642304" },
   { id: 14, title: "¿ESTÁS SEGURO?", dur: "44:07", thumb: "https://static.wixstatic.com/media/859174_03eaf21b3d484d8db5d0eb5c8a6e9ef0~mv2.jpg", url: "https://ok.ru/videoembed/16128597297664" },
   { id: 15, title: "¿POR QUÉ VOLVISTE?", dur: "45:52", thumb: "https://static.wixstatic.com/media/859174_19403403816e467da89fd320ac7aa32a~mv2.jpg", url: "https://ok.ru/videoembed/16128597494272" },
