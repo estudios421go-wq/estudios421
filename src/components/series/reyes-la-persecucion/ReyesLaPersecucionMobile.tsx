@@ -76,11 +76,39 @@ const ReyesPersecucionMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // --- BUSCADOR COMPLETO Y EXTENSO (REPLICADO DE MAESTRA) ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term));
+
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia', 'rechazo', 'eleccion', 'persecucion'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) {
+          values.forEach(v => relatedTerms.add(v));
+        }
+      });
+
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => 
+          titleNormalized.includes(t) || categoryNormalized.includes(term)
+        );
+      });
+
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
