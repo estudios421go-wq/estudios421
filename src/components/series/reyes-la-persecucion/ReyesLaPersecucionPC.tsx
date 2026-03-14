@@ -159,7 +159,7 @@ const ReyesPersecucionPC = () => {
       )}
 
       <div className="relative w-full h-[88vh]">
-        <img src="https://static.wixstatic.com/media/859174_cbbb6c8a10cf48608758b692d9de48a9~mv2.jpg" className="w-full h-full object-cover" alt="Banner Reyes: La Persecución" />
+        <img src="https://static.wixstatic.com/media/859174_ccbfd31f76744490a6e324ca35f95c90~mv2.jpg" className="w-full h-full object-cover" alt="Banner Reyes: La Persecución" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
