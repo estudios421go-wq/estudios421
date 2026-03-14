@@ -32,7 +32,7 @@ const reyesPersecucionEpisodes = [
   { id: 20, title: "ESTAMOS CONTIGO", dur: "45:56", thumb: "https://static.wixstatic.com/media/859174_d3e87ac3f0284bb1abdd5e6c57247499~mv2.jpg", url: "https://ok.ru/videoembed/16128601098752" },
   { id: 21, title: "EL FAMOSO DAVID", dur: "45:54", thumb: "https://static.wixstatic.com/media/859174_5468906674404f9e8f1c48ddd2be447d~mv2.jpg", url: "https://ok.ru/videoembed/16128601623040" },
   { id: 22, title: "POBRE DE TI", dur: "45:28", thumb: "https://static.wixstatic.com/media/859174_fba73b78a0234bc1bebef0f433fcf120~mv2.jpg", url: "https://ok.ru/videoembed/16128602343936" },
-  { id: 23, title: "¿QUIÉN VENDRÁ CONMIGO?", dur: "45:59", thumb: "https://static.wixstatic.com/media/859174_cce3f7f39ea74b2eb36e3ec5ab405db2~mv2.jpg", url: "https://ok.ru/videoembed/16128602999296" },
+  { id: 23, title: "¿QUIÉN VENDRÁ CONMIGO?", dur: "45:59", thumb: "https://static.wixstatic.com/media/859174_cce3f7f39ea74b2eb36e3ec5ab405db2~mv2.jpg", url: "https://ok.ru/videoembed/16162583480832" },
   { id: 24, title: "¿TODAVÍA ME AMA?", dur: "45:56", thumb: "https://static.wixstatic.com/media/859174_6c4fb5cf042040ff95f3a51da0a702d5~mv2.jpg", url: "https://ok.ru/videoembed/16128717949440" },
   { id: 25, title: "ESTE ES TU PROBLEMA", dur: "44:53", thumb: "https://static.wixstatic.com/media/859174_48166a8ce11341b0802ad88e6306b633~mv2.jpg", url: "https://ok.ru/videoembed/16128718342656" },
   { id: 26, title: "PIENSA UN POCO", dur: "45:31", thumb: "https://static.wixstatic.com/media/859174_609e69ac4f9c4820b6d8e18bbabd99e1~mv2.jpg", url: "https://ok.ru/videoembed/16148645808640" },
