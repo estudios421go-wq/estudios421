@@ -88,11 +88,39 @@ const ReyesPersecucionPC = () => {
     };
   }, []);
 
+  // --- BUSCADOR COMPLETO Y EXTENSO (REPLICADO DE MAESTRA) ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term) || normalize(serie.category || "").includes(term));
+
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto', 'exodo', 'tierra prometida', 'sanson', 'david'],
+        egipto: ['jose', 'moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion', 'nazaret', 'hijo de dios', 'vida publica', 'magdalena', 'pablo', 'apocalipsis'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'jerusalen', 'division', 'jezabel', 'el rico', 'ester', 'persia', 'rechazo', 'eleccion', 'persecucion'],
+        ester: ['ester', 'reina de persia', 'persia', 'nehemias', 'artajerjes'],
+        pablo: ['pablo', 'apostol', 'cristo', 'saulo'],
+        biblia: ['biblia', 'continua', 'testamento', 'milagros']
+      };
+
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) {
+          values.forEach(v => relatedTerms.add(v));
+        }
+      });
+
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => 
+          titleNormalized.includes(t) || categoryNormalized.includes(term)
+        );
+      });
+
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
@@ -263,7 +291,7 @@ const ReyesPersecucionPC = () => {
           </div>
           <div className="mb-10 space-y-4">
             <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify uppercase">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras. Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify uppercase">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
           </div>
           <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
             <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
