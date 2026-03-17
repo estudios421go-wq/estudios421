@@ -21,7 +21,7 @@ const reyesDivisionEpisodes = [
   { id: 9, title: "LIBERTAD DE CADENAS", dur: "46:26", thumb: "https://static.wixstatic.com/media/859174_708e23d17b4a42c7b40643e95a652406~mv2.jpg", url: "https://ok.ru/videoembed/16059255294464", available: true },
   { id: 10, title: "¿SATISFECHO AHORA?", dur: "38:35", thumb: "https://static.wixstatic.com/media/859174_6097d9e18b6146608c20aba4e04e4060~mv2.jpg", url: "https://ok.ru/videoembed/16059256605184", available: true },
   { id: 11, title: "DE HUÉRFANO A HUÉRFANO", dur: "41:32", thumb: "https://static.wixstatic.com/media/859174_ef4eb8ef50244e8a955296e4c54155cf~mv2.jpg", url: "https://ok.ru/videoembed/16059259357696", available: true },
-  { id: 12, title: "ESTRENO 17 DE MARZO", dur: "47:10", thumb: "https://static.wixstatic.com/media/859174_a4cc78e48cd244bca26e16625e112fcc~mv2.jpg", url: "https://ok.ru/videoembed/16061125626368", available: true },
+  { id: 12, title: "PARECE UN PARÁSITO", dur: "47:00", thumb: "https://static.wixstatic.com/media/859174_a4cc78e48cd244bca26e16625e112fcc~mv2.jpg", url: "https://ok.ru/videoembed/16061125626368", available: true },
   { id: 13, title: "ESTRENO 18 DE MARZO", dur: "49:36", thumb: "https://static.wixstatic.com/media/859174_d55d949485ab4ab6b1a1043c4a0d904d~mv2.jpg", url: "https://ok.ru/videoembed/16061126937088", available: true },
   { id: 14, title: "ESTRENO 19 DE MARZO", dur: "46:33", thumb: "https://static.wixstatic.com/media/859174_a0cf01916d504c709520ee0f7ce610f5~mv2.jpg", url: "https://ok.ru/videoembed/16061128772096", available: true },
   { id: 15, title: "ESTRENO 20 DE MARZO", dur: "44:20", thumb: "https://static.wixstatic.com/media/859174_f708519ca27947b28d89a438b2ae336f~mv2.jpg", url: "https://ok.ru/videoembed/16061129427456", available: true },
