@@ -30,12 +30,13 @@ const apocalipsis155Episodes: Episode[] = [
   { id: 10, title: "Episodio 010 | Apocalipsis", dur: "00:45:31", thumb: "https://static.wixstatic.com/media/859174_1b1d997f83294344818cdc28e676309f~mv2.jpg", url: "https://ok.ru/videoembed/15945741175296", releaseDate: null },
   { id: 11, title: "Episodio 011 | Apocalipsis", dur: "00:45:30", thumb: "https://static.wixstatic.com/media/859174_583a8d6d10e24d04abebe9644ebc61da~mv2.jpg", url: "https://ok.ru/videoembed/15945743403520", releaseDate: null },
   { id: 12, title: "Episodio 012 | Apocalipsis", dur: "00:45:30", thumb: "https://static.wixstatic.com/media/859174_bf6aa85cf6f54137831b86c97881ad58~mv2.jpg", url: "https://ok.ru/videoembed/15947176020480", releaseDate: null },
+  { id: 13, title: "Episodio 013 | Apocalipsis", dur: "00:45:16", thumb: "https://static.wixstatic.com/media/859174_f6d1f4734bdb47f188b207f22b450077~mv2.jpg", url: "https://ok.ru/videoembed/15947177396736", releaseDate: null },
 ];
 
-const startDate = new Date(2026, 2, 23); 
+const startDate = new Date(2026, 2, 24); 
 let currentEpDate = new Date(startDate);
 
-for (let i = 13; i <= 155; i++) {
+for (let i = 14; i <= 155; i++) {
   apocalipsis155Episodes.push({
     id: i,
     title: `Episodio ${String(i).padStart(3, '0')} | Apocalipsis`,
