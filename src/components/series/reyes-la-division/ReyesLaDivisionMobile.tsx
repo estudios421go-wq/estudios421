@@ -28,7 +28,7 @@ const reyesDivisionEpisodes = [
   { id: 16, title: "POBRECITOS USTEDES", dur: "42:56", thumb: "https://static.wixstatic.com/media/859174_0e33347809ac404b9cead95e01c8ec85~mv2.jpg", url: "https://ok.ru/videoembed/16061130213888", available: true },
   { id: 17, title: "PADRE, ¿QUÉ PASA?", dur: "42:46", thumb: "https://static.wixstatic.com/media/859174_2ab275e32dc3421b91e3e298178c11e4~mv2.jpg", url: "https://ok.ru/videoembed/16061131328000", available: true },
   { id: 18, title: "ABRE LOS OJOS, ROBOAM", dur: "38:18", thumb: "https://static.wixstatic.com/media/859174_26537bde4bb04ae4a99f954c30ad3979~mv2.jpg", url: "https://ok.ru/videoembed/16061134277120", available: true },
-  { id: 19, title: "ESTRENO 26 DE MARZO", dur: "38:38", thumb: "https://static.wixstatic.com/media/859174_286593b61f58427dac87a3b7e0162b3d~mv2.jpg", url: "https://ok.ru/videoembed/16061145352704", available: true },
+  { id: 19, title: "SOLO ACÉPTALO", dur: "38:38", thumb: "https://static.wixstatic.com/media/859174_286593b61f58427dac87a3b7e0162b3d~mv2.jpg", url: "https://ok.ru/videoembed/16061145352704", available: true },
 ];
 
 const ReyesDivisionMobile = () => {
