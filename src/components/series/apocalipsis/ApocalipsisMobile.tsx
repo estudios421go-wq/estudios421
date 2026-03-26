@@ -35,13 +35,14 @@ const apocalipsis155Episodes: Episode[] = [
   { id: 13, title: "Episodio 013 | Apocalipsis", dur: "00:45:16", thumb: "https://static.wixstatic.com/media/859174_f6d1f4734bdb47f188b207f22b450077~mv2.jpg", url: "https://ok.ru/videoembed/15947177396736", releaseDate: null },
   { id: 14, title: "Episodio 014 | Apocalipsis", dur: "00:45:33", thumb: "https://static.wixstatic.com/media/859174_809a9766b45144559e1347a189aad90d~mv2.jpg", url: "https://ok.ru/videoembed/15947178314240", releaseDate: null },
   { id: 15, title: "Episodio 015 | Apocalipsis", dur: "00:43:56", thumb: "https://static.wixstatic.com/media/859174_8e5fde4e809843eaaa97a94ebe79597b~mv2.jpg", url: "https://ok.ru/videoembed/15947179428352", releaseDate: null },
+  { id: 16, title: "Episodio 016 | Apocalipsis", dur: "00:45:32", thumb: "https://static.wixstatic.com/media/859174_0f10b35af82d41e2b4657a65038d46ac~mv2.jpg", url: "https://ok.ru/videoembed/16048056175104", releaseDate: null },
 ];
 
-// Generador de cronograma automático (Ep 16 en adelante - Lunes a Viernes)
-const startDate = new Date(2026, 2, 26); 
+// Generador de cronograma automático (Ep 17 en adelante - Lunes a Viernes)
+const startDate = new Date(2026, 2, 27); 
 let currentEpDate = new Date(startDate);
 
-for (let i = 16; i <= 155; i++) {
+for (let i = 17; i <= 155; i++) {
   apocalipsis155Episodes.push({
     id: i,
     title: `Episodio ${String(i).padStart(3, '0')} | Apocalipsis`,
