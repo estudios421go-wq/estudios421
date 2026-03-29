@@ -112,7 +112,7 @@ const HouseOfDavidMobile = () => {
           </button>
         </div>
         <div className="flex-grow flex flex-col relative bg-black items-center justify-center">
-          <iframe src={selectedVideo + "?autoplay=1"} className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" allow="autoplay; fullscreen" allowFullScreen />
+          <iframe src={selectedVideo} className="w-full aspect-video border-none shadow-[0_0_50px_rgba(0,0,0,1)]" allow="autoplay; fullscreen" allowFullScreen />
           
           {/* INSTRUCCIÓN DRIVE PANTALLA COMPLETA */}
           <div className="mt-6 px-8 text-center">
