@@ -99,6 +99,8 @@ const HouseOfDavidPC = () => {
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
+    // Para Google Drive, la reproducción automática forzada no es estándar, 
+    // pero configuramos la carga del iframe de manera directa.
     setSelectedVideo(davidEpisodes[idx].url);
     localStorage.setItem('david_last_ep', idx.toString());
   };
@@ -157,7 +159,7 @@ const HouseOfDavidPC = () => {
       )}
 
       <div className="relative w-full h-[88vh]">
-        <img src="https://static.wixstatic.com/media/859174_8ccb6683bc06431d9cd0c56fa070ce80~mv2.jpg" className="w-full h-full object-cover" alt="Banner La Casa de David" />
+        <img src="https://static.wixstatic.com/media/859174_6c9b19e53a554d6ab748a2bb44f1f9c4~mv2.jpg" className="w-full h-full object-cover" alt="Banner La Casa de David" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/10 opacity-70" />
         <div className="absolute bottom-[-30px] left-16 flex gap-6 z-20 items-center">
           <button onClick={() => openEpisode(currentIdx)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 transform hover:scale-105 shadow-2xl uppercase">
@@ -216,7 +218,7 @@ const HouseOfDavidPC = () => {
             </button>
           </div>
           <div className="flex-grow bg-black relative">
-            <iframe src={selectedVideo + "?autoplay=1"} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
+            <iframe src={selectedVideo} className="absolute inset-0 w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
           </div>
           <div className="h-[13vh] min-h-[100px] px-16 bg-gradient-to-t from-[#0a0b0d] border-t border-white/5 flex items-center justify-between">
             <button disabled={currentIdx === 0} onClick={() => openEpisode(currentIdx - 1)} className="group flex items-center gap-5 disabled:opacity-5 transition-all">
