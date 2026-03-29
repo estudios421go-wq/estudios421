@@ -189,7 +189,7 @@ const HouseOfDavidMobile = () => {
 
       <div className="relative w-full pt-0 bg-black shadow-2xl">
         <div className="w-full aspect-[4/3] relative">
-          <img src="https://static.wixstatic.com/media/859174_8ccb6683bc06431d9cd0c56fa070ce80~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
+          <img src="https://static.wixstatic.com/media/859174_6c9b19e53a554d6ab748a2bb44f1f9c4~mv2.jpg" className="w-full h-full object-contain" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
         </div>
         <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20">
