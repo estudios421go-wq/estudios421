@@ -23,7 +23,7 @@ const davidEpisodes = [
   // TEMPORADA 2 (ESTRENO)
   { id: 9, season: 2, title: "UNA HISTORIA DE DOS ESPADAS", thumb: "https://static.wixstatic.com/media/859174_5978c9d08c2e427b86eafa286dbae70c~mv2.jpg", url: "https://drive.google.com/file/d/1NSFWwtPmRVugg8MM1XdYfM6F36_bfiou/preview", isNew: true },
   { id: 10, season: 2, title: "UN VIAJE A CASA", thumb: "https://static.wixstatic.com/media/859174_270268ce0e4341d698685ee3d8d87364~mv2.jpg", url: "https://drive.google.com/file/d/1MvGA1Sg8crTOGs2DNh-j3vMcGCAQ84Ek/preview", isNew: true },
-  { id: 11, season: 2, title: "EL CAMINO INTERMEDIO", thumb: "https://static.wixstatic.com/media/859174_49a90b4238624b89994d800a64cfbe14~mv2.jpg", url: "https://drive.google.com/file/d/1jjhdFQLNvkofeqCuno2v_Nl4V1aqcppJ/preview", isNew: true },
+  { id: 11, season: 2, title: "EL CAMINO INTERMEDIO", thumb: "https://static.wixstatic.com/media/859174_49a90b4238624b89994d800a64cfbe14~mv2.jpg", url: "https://drive.google.com/file/d/1vKRcdxuV0ZWm2dpp568EZe8asV5Hhros/preview", isNew: true },
   { id: 12, season: 2, title: "CAMINO HACIA LA EXPIACIÓN", thumb: "https://static.wixstatic.com/media/859174_69c51664022b45cdaf76505b5b1fa5d6~mv2.webp", url: "https://drive.google.com/file/d/1iQz5kyT0MsI2N0P-fAvMm5dcxaXs3WCd/preview", isNew: true },
   { id: 13, season: 2, title: "DIOS DE LAS ESPADAS", thumb: "https://static.wixstatic.com/media/859174_49f65c6eb81041a1b461b8b880553ec4~mv2.jpg", url: "https://drive.google.com/file/d/1I5XsTgr_0szLDNcGX7fRZuNoP33ykCll/preview", isNew: true },
   { id: 14, season: 2, title: "FORJADO EN EL FUEGO", thumb: "https://static.wixstatic.com/media/859174_8c5c6395dd9946e18dafc5f0871671c4~mv2.jpg", url: "https://drive.google.com/file/d/1VabUK7MlCTMA4rYEeDFHxG0u_ffnOM4t/preview", isNew: true },
