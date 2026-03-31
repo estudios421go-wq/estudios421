@@ -84,6 +84,7 @@ const InicioPC = () => {
   const poolRecomendados = [
     ...dataBiblicas,
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_cc2c878f7a0a4fffa5b63ef31048fb75~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Latino" },
+    { title: "The Choosen", banner: "https://static.wixstatic.com/media/859174_bf72940f01ab4bda9d0750e5d22c6a16~mv2.jpg", path: "serie-tv/the-choosen", audio: "Latino" },
     { title: "La Biblia", banner: "https://static.wixstatic.com/media/859174_aa4a8425d9714f0aa2f96b418a408747~mv2.jpg", path: "serie-tv/la-biblia", audio: "Latino" },
     { title: "La Pasión De Cristo", banner: "https://static.wixstatic.com/media/859174_68e2caed65fb48f482bead90d49ac07a~mv2.jpg", path: "pelicula/la-pasion-de-cristo", audio: "Latino" },
     { title: "Reyes La Decepción", banner: "https://static.wixstatic.com/media/859174_e6a7e56fc1d3456c80a1be6c93eaa3ea~mv2.jpg", path: "/serie/reyes-la-decepcion", audio: "Latino" },
