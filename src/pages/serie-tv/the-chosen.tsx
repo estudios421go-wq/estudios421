@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
-// Importación dinámica para optimizar la carga según el dispositivo
-const TheChosenPC = dynamic(() => import('../../../components/series-tv/the-chosen/TheChosenPC'));
-const TheChosenMobile = dynamic(() => import('../../../components/series-tv/the-chosen/TheChosenMobile'));
-const TheChosenTV = dynamic(() => import('../../../components/series-tv/the-chosen/TheChosenTV'));
+// Corregido: Subimos 2 niveles (../../) para llegar de pages/series-tv a la raíz
+const TheChosenPC = dynamic(() => import('../../components/series-tv/the-chosen/TheChosenPC'));
+const TheChosenMobile = dynamic(() => import('../../components/series-tv/the-chosen/TheChosenMobile'));
+const TheChosenTV = dynamic(() => import('../../components/series-tv/the-chosen/TheChosenTV'));
 
 const TheChosenPage = () => {
   const [view, setView] = useState<'pc' | 'mobile' | 'tv' | null>(null);
