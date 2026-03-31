@@ -42,7 +42,7 @@ const apocalipsis155Episodes: Episode[] = [
 ];
 
 // Generador de cronograma automático (Ep 20 en adelante - Lunes a Viernes)
-const startDate = new Date(2026, 2, 01); 
+const startDate = new Date(2026, 2, 1); 
 let currentEpDate = new Date(startDate);
 
 for (let i = 20; i <= 155; i++) {
