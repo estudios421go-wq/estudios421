@@ -50,7 +50,6 @@ const InicioPC = () => {
     { title: "Las Siete Marías", banner: "https://static.wixstatic.com/media/859174_7a0e35b0cded4ad58d8df0b5d4d6464e~mv2.jpg", path: "serie/las-siete-marias", audio: "Latino" },
     { title: "La Ira del Heredero", banner: "https://static.wixstatic.com/media/859174_187bcd28360641f8b3150361aec85495~mv2.jpg", path: "serie/la-ira-del-heredero", audio: "Latino" },
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Latino" },
-    { title: "The Chosen", banner: "https://static.wixstatic.com/media/859174_bf72940f01ab4bda9d0750e5d22c6a16~mv2.jpg", path: "serie-tv/the-chosen", audio: "Latino" },
     { title: "Apocalispis", banner: "https://static.wixstatic.com/media/859174_ace5fbe133b3490593913ede8144fe06~mv2.jpg", path: "serie/apocalipsis", audio: "Latino" },
     { title: "Reyes La División", banner: "https://static.wixstatic.com/media/859174_6986effb4d7a48c1925babb9425be472~mv2.jpg", path: "serie/reyes-la-division", audio: "Latino" },
     { title: "Reyes La Decadencia", banner: "https://static.wixstatic.com/media/859174_844bdbe858b74adab24665964be596b1~mv2.jpg", path: "serie/reyes-la-decadencia", audio: "Latino" },
