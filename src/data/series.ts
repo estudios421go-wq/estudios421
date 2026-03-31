@@ -55,6 +55,7 @@ export const allSeries: Serie[] = [
   { id: 43, title: "María Magdalena", path: "/serie-tv/maria-magdalena", audio: 'Latino', category: 'Serie de TV', banner: "https://static.wixstatic.com/media/859174_a6c8755b0d7f42d2b8ad21009f75c4e3~mv2.jpg" },
   { id: 44, title: "Testamento: La Historia De Moisés", path: "/serie-tv/testamento-la-historia-de-moises", audio: 'Latino', category: 'Serie de TV', banner: "https://static.wixstatic.com/media/859174_2eabf33760ca467895f9edd4646b2bbe~mv2.jpg" },
   { id: 45, title: "Jesús De Nazaret", path: "/serie-tv/jesus-de-nazaret", audio: 'Latino', category: 'Serie de TV', banner: "https://static.wixstatic.com/media/859174_a9d3a4a2dcaa4de4bd5c4d0be6d47613~mv2.jpg" },
+  { id: 46, title: "The Chosen", path: "/series-tv/the-chosen", audio: 'Latino', category: 'Serie de TV', banner: "https://static.wixstatic.com/media/859174_bf72940f01ab4bda9d0750e5d22c6a16~mv2.jpg" },
 
   // --- PELÍCULAS ---
   { id: 60, title: "La Pasión De Cristo", path: "/pelicula/la-pasion-de-cristo", audio: 'Latino', category: 'Película', banner: "https://static.wixstatic.com/media/859174_68e2caed65fb48f482bead90d49ac07a~mv2.jpg" },
