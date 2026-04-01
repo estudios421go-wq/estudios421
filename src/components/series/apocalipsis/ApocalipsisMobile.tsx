@@ -43,13 +43,13 @@ const apocalipsis155Episodes: Episode[] = [
 ];
 
 // Generador de cronograma automático (Ep 21 en adelante - Lunes a Viernes)
-const startDate = new Date(2026, 2, 2); 
+const startDate = new Date(2026, 3, 2); 
 let currentEpDate = new Date(startDate);
 
 for (let i = 21; i <= 155; i++) {
   apocalipsis155Episodes.push({
     id: i,
-    title: `Episodio ${String(i).padStart(4, '0')} | Apocalipsis`,
+    title: `Episodio ${String(i).padStart(3, '0')} | Apocalipsis`,
     dur: "--:--",
     thumb: "",
     url: "",
