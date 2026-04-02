@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { IoSearchOutline, IoCheckmarkCircle, IoPlay } from 'react-icons/io5';
+import { IoSearchOutline, IoCheckmarkCircle, IoPlay, IoClose } from 'react-icons/io5';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube } from 'react-icons/fa';
 import { FaXTwitter } from 'react-icons/fa6';
 import { allSeries } from '../../../data/series';
@@ -15,11 +15,11 @@ const MOVIE_DATA = {
   titleEn: "The Passion of the Christ",
   titlePt: "A Paixão de Cristo",
   url: "https://drive.google.com/file/d/1Ny9P8IUje_RZmsbkDrPBClV9Pmn0_7ol/preview",
-  banner: "https://static.wixstatic.com/media/859174_d865ffa84f264770bbd4b4e86487fb89~mv2.jpg",
-  desc: "Una representación visualmente impactante y profundamente conmovedora de las últimas doce horas en la vida de Jesús de Nazaret. Dirigida por Mel Gibson, la película narra con detalle el sacrificio, la fe y el camino hacia la crucifixión, convirtiéndose en una obra maestra del cine bíblico."
+  banner: "https://static.wixstatic.com/media/859174_d865ffa84f264770bbd4b4e86487fb89~mv2.jpg"
 };
 
 const LaPasionDeCristoPC = () => {
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
   const [inMyList, setInMyList] = useState(false);
@@ -28,7 +28,6 @@ const LaPasionDeCristoPC = () => {
   const [randomMovies, setRandomMovies] = useState<any[]>([]);
 
   useEffect(() => {
-    // Seguridad y Scroll
     const handleGlobalPrevent = (e: any) => e.preventDefault();
     document.addEventListener('contextmenu', handleGlobalPrevent);
     document.addEventListener('dragstart', handleGlobalPrevent);
@@ -41,14 +40,12 @@ const LaPasionDeCristoPC = () => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
 
-    // Mi Lista
     const myListData = JSON.parse(localStorage.getItem('myList') || '[]');
     if (myListData.includes(MOVIE_DATA.id)) setInMyList(true);
 
-    // Lógica de Recomendaciones Aleatorias (Filtra películas excepto la actual)
     const moviesOnly = allSeries.filter(s => s.category === 'Película' && s.id !== MOVIE_DATA.id);
     const shuffled = [...moviesOnly].sort(() => 0.5 - Math.random());
-    setRandomMovies(shuffled.slice(0, 3));
+    setRandomMovies(shuffled.slice(0, 4));
 
     return () => {
       document.removeEventListener('contextmenu', handleGlobalPrevent);
@@ -58,12 +55,28 @@ const LaPasionDeCristoPC = () => {
     };
   }, []);
 
-  // Buscador
+  // --- BUSCADOR COMPLETO AL 100% ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       const term = normalize(searchQuery);
-      const filtered = allSeries.filter(serie => normalize(serie.title).includes(term) || normalize(serie.category || "").includes(term));
+      const themeMap: { [key: string]: string[] } = {
+        moises: ['moises', 'diez mandamientos', 'egipto'],
+        jesus: ['jesus', 'milagros', 'pasion'],
+        reyes: ['reyes', 'david', 'saul', 'salomon', 'ester', 'persia', 'casa de david'],
+        david: ['david', 'casa de david', 'reyes', 'goliat', 'saul', 'betseba'],
+        biblia: ['biblia', 'milagros']
+      };
+      const relatedTerms = new Set<string>();
+      relatedTerms.add(term);
+      Object.entries(themeMap).forEach(([key, values]) => {
+        if (term.includes(key) || key.includes(term)) values.forEach(v => relatedTerms.add(v));
+      });
+      const filtered = allSeries.filter(serie => {
+        const titleNormalized = normalize(serie.title);
+        const categoryNormalized = normalize(serie.category || "");
+        return Array.from(relatedTerms).some(t => titleNormalized.includes(t)) || categoryNormalized.includes(term);
+      });
       setSearchResults(filtered);
     } else { setSearchResults([]); }
   }, [searchQuery]);
@@ -84,7 +97,6 @@ const LaPasionDeCristoPC = () => {
     <div className="bg-black min-h-screen text-white font-sans select-none overflow-x-hidden text-left unselectable">
       <Head><title>{MOVIE_DATA.title} — Estudios 421</title></Head>
 
-      {/* NAVBAR (Deducción de idiomas incluida) */}
       <nav className={`fixed top-0 w-full z-[130] transition-all duration-500 px-8 py-4 flex items-center justify-between ${isScrolled || searchQuery.length > 0 ? 'bg-black shadow-lg' : 'bg-gradient-to-b from-black via-black/60 to-transparent'}`}>
         <div className="flex items-center gap-10">
           <Link href="/"><div className="relative w-[160px] h-[45px] cursor-pointer"><Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" fill className="object-contain" priority /></div></Link>
@@ -97,9 +109,9 @@ const LaPasionDeCristoPC = () => {
         </div>
         <div className="flex items-center gap-6">
           <div className="flex gap-4 mr-4">
-            <Link href={`/pelicula/${MOVIE_DATA.title.toLowerCase().replace(/ /g, '-')}`}><img src="https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="ES" /></Link>
-            <Link href={`/en/movie/${MOVIE_DATA.titleEn.toLowerCase().replace(/ /g, '-')}`}><img src="https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="EN" /></Link>
-            <Link href={`/pt/filme/${MOVIE_DATA.titlePt.toLowerCase().replace(/ /g, '-')}`}><img src="https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="PT" /></Link>
+            <Link href={`/pelicula/la-pasion-de-cristo`}><img src="https://static.wixstatic.com/media/859174_367960b11c1c44ba89cd1582fd1b5776~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="ES" /></Link>
+            <Link href={`/en/movie/the-passion-of-the-christ`}><img src="https://static.wixstatic.com/media/859174_35112d9ffe234d6f9dcef16cf8f7544e~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="EN" /></Link>
+            <Link href={`/pt/filme/a-paixao-de-cristo`}><img src="https://static.wixstatic.com/media/859174_830f1c20656e4d44a819bedfc13a22cc~mv2.png" className="w-7 h-7 object-contain cursor-pointer hover:scale-110 transition-transform" alt="PT" /></Link>
           </div>
           <form onSubmit={(e) => e.preventDefault()} className="flex items-center bg-white/10 rounded-full px-4 py-1 border border-white/5 focus-within:border-[#FF8A00]">
             <IoSearchOutline className="text-white text-xl" />
@@ -109,7 +121,6 @@ const LaPasionDeCristoPC = () => {
         </div>
       </nav>
 
-      {/* SEARCH RESULTS */}
       {searchQuery.length > 0 && (
         <div className="fixed inset-0 bg-black z-[120] pt-24 px-16 overflow-y-auto pb-20">
           <h2 className="text-white text-2xl font-bold mb-10 uppercase tracking-widest flex items-center gap-3"><span className="w-1.5 h-6 bg-[#FF8A00]" />Resultados: "{searchQuery}"</h2>
@@ -121,48 +132,44 @@ const LaPasionDeCristoPC = () => {
         </div>
       )}
 
-      {/* HERO SECTION - REPRODUCTOR FIJO */}
-      <div className="relative w-full h-[90vh] bg-black">
+      <div className="relative w-full h-[88vh] bg-black">
         {!showPlayer ? (
           <>
             <img src={MOVIE_DATA.banner} className="w-full h-full object-cover animate-fade-in" alt={MOVIE_DATA.title} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-            <div className="absolute bottom-10 left-16 z-20 max-w-2xl">
-              <h1 className="text-6xl font-black uppercase mb-4 tracking-tighter italic">{MOVIE_DATA.title}</h1>
-              <p className="text-gray-300 text-lg mb-8 leading-relaxed text-justify">{MOVIE_DATA.desc}</p>
-              <div className="flex gap-4">
-                <button onClick={() => setShowPlayer(true)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-tighter">
-                  <IoPlay size={24}/> Ver Ahora
-                </button>
-                <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
-                  {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
-                </button>
-                <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
-              </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
+            <div className="absolute bottom-10 left-16 z-20 flex gap-6 items-center">
+              <button onClick={() => setShowPlayer(true)} className="bg-white text-black font-black py-4 px-12 rounded-sm text-lg hover:bg-[#FF8A00] hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-tighter shadow-2xl">
+                <IoPlay size={24}/> Ver Ahora
+              </button>
+              <button onClick={toggleMyList} className={`border py-4 px-10 rounded-sm transition-all uppercase font-bold ${inMyList ? 'bg-[#FF8A00] border-[#FF8A00] text-white' : 'bg-white/10 border-white/20 text-white hover:bg-white/20'}`}>
+                {inMyList ? <><IoCheckmarkCircle className="inline mr-2" /> En Mi Lista</> : '+ Mi Lista'}
+              </button>
+              <button onClick={() => window.open('https://www.paypal.com/donate/?hosted_button_id=C2Y74BGQB4HKS', '_blank')} className="border py-4 px-10 rounded-sm bg-white/10 border-white/20 text-white hover:bg-white/20 transition-all uppercase font-bold">❤ Donar</button>
             </div>
           </>
         ) : (
-          <div className="w-full h-full pt-[80px]">
-             <iframe src={MOVIE_DATA.url} className="w-full h-full border-none shadow-[0_0_50px_rgba(255,138,0,0.1)]" allow="fullscreen" allowFullScreen />
+          <div className="relative w-full h-full pt-[75px] animate-fade-in bg-black">
+             <button onClick={() => setShowPlayer(false)} className="absolute top-[90px] right-8 z-[150] bg-black/50 text-white/50 hover:text-[#FF8A00] hover:scale-125 transition-all p-2 rounded-full backdrop-blur-md border border-white/10">
+               <IoClose size={40} />
+             </button>
+             <iframe src={MOVIE_DATA.url} className="w-full h-full border-none" allow="fullscreen" allowFullScreen />
           </div>
         )}
       </div>
 
-      {/* RECOMENDACIONES ALEATORIAS */}
-      <div className="px-16 py-20 bg-black">
-        <header className="flex items-center gap-4 mb-10 border-b border-white/10 pb-4">
+      <div className="px-16 py-24 bg-black">
+        <header className="flex items-center gap-4 mb-12 border-b border-white/10 pb-4">
           <div className="w-1.5 h-8 bg-[#FF8A00]"></div>
           <h2 className="text-2xl font-bold tracking-tight uppercase">Te puede interesar también</h2>
         </header>
-        <div className="grid grid-cols-3 gap-10">
+        <div className="grid grid-cols-4 gap-8">
           {randomMovies.map((movie) => (
             <Link key={movie.id} href={movie.path}>
-              <div className="group cursor-pointer relative overflow-hidden rounded-lg aspect-video border border-white/5 hover:border-[#FF8A00]/50 transition-all duration-500">
-                <Image src={movie.banner} alt={movie.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700 opacity-60 group-hover:opacity-100" unoptimized />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-6">
-                  <h3 className="text-xl font-black uppercase tracking-tighter group-hover:text-[#FF8A00] transition-colors">{movie.title}</h3>
-                  <span className="text-[10px] bg-[#FF8A00] text-black px-2 py-0.5 font-bold rounded mt-2 inline-block uppercase">Película</span>
+              <div className="group cursor-pointer relative aspect-[2/3] rounded-lg overflow-hidden border border-white/5 hover:border-[#FF8A00]/50 transition-all duration-500 hover:scale-105 shadow-2xl">
+                <Image src={movie.banner} alt={movie.title} fill className="object-cover group-hover:scale-110 transition-transform duration-700" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="text-sm font-black uppercase tracking-tight group-hover:text-[#FF8A00] transition-colors line-clamp-1">{movie.title}</h3>
                 </div>
               </div>
             </Link>
@@ -170,7 +177,6 @@ const LaPasionDeCristoPC = () => {
         </div>
       </div>
 
-      {/* FOOTER (Intocable) */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-start md:justify-end gap-6 mb-10">
@@ -197,7 +203,7 @@ const LaPasionDeCristoPC = () => {
       <style jsx global>{`
         .unselectable { -webkit-user-select: none; user-select: none; }
         img { pointer-events: none !important; }
-        .animate-fade-in { animation: fadeIn 1.2s ease-out forwards; }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
     </div>
