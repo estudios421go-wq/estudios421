@@ -14,7 +14,7 @@ const MOVIE_DATA = {
   title: "Pablo El Apóstol De Cristo",
   titleEn: "Paul, Apostle of Christ",
   titlePt: "Paulo, Apóstolo de Cristo",
-  url: "https://drive.google.com/file/d/19PAFlbPPkk2ztYmkl5-SX71HCvzxKPyu/preview",
+  url: "https://drive.google.com/file/d/19PAFlbPPkk2ztYmkl5-sX71HCvzxKPyu/preview",
   banner: "https://static.wixstatic.com/media/859174_76a70f46c96845c7a98aaa83c732e41d~mv2.jpg"
 };
 
