@@ -27,7 +27,7 @@ const davidEpisodes = [
   { id: 12, season: 2, title: "CAMINO HACIA LA EXPIACIÓN", thumb: "https://static.wixstatic.com/media/859174_69c51664022b45cdaf76505b5b1fa5d6~mv2.webp", url: "https://drive.google.com/file/d/1CzH51XVPBJdrulRYOK5-joobh2UJ-iKa/preview", isNew: true },
   { id: 13, season: 2, title: "DIOS DE LAS ESPADAS", thumb: "https://static.wixstatic.com/media/859174_49f65c6eb81041a1b461b8b880553ec4~mv2.jpg", url: "https://drive.google.com/file/d/1Blm3BUiVQGinqlCgH8UazwUHTp40OeBS/preview", isNew: true },
   { id: 14, season: 2, title: "FORJADO EN EL FUEGO", thumb: "https://static.wixstatic.com/media/859174_8c5c6395dd9946e18dafc5f0871671c4~mv2.jpg", url: "https://drive.google.com/file/d/1iIpNHiAix2DOomtzW6RkzTB9CARAPipO/preview", isNew: true },
-  { id: 15, season: 2, title: "UNA BODA REAL", thumb: "https://static.wixstatic.com/media/859174_772c7e032d02464d8a144a286123d3a8~mv2.webp", url: "https://drive.google.com/file/d/1unF0BDAwi79sBlGFjF3mcEIObqit3bmh/preview", isNew: true },
+  { id: 15, season: 2, title: "UNA BODA REAL", thumb: "https://static.wixstatic.com/media/859174_772c7e032d02464d8a144a286123d3a8~mv2.webp", url: "https://drive.google.com/file/d/14Eox9bXTHYeDnfht01wtf7A33NgQprNV/preview", isNew: true },
   { id: 16, season: 2, title: "LA VERDAD REVELADA", thumb: "https://static.wixstatic.com/media/859174_1039ec57f90649689f2996b78c989da6~mv2.webp", url: "https://drive.google.com/file/d/1c-V6PaqDqvSLrLi3blo4e2Fmz7p-RZyy/preview", isNew: true },
 ];
 
