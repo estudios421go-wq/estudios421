@@ -14,7 +14,7 @@ const MOVIE_DATA = {
   title: "Hijo De Dios",
   titleEn: "Son of God",
   titlePt: "O Filho de Deus",
-  url: "https://drive.google.com/file/d/1luz2KZYJE2r5-I0Clr_gkgLRncuNKXxE/preview",
+  url: "https://drive.google.com/file/d/1h1ZsUzZoqjrGEl-zKjZUEciu63PJMWjF/preview",
   banner: "https://static.wixstatic.com/media/859174_b6250c4e8f544d709ef9ef8eefb8d347~mv2.jpg"
 };
 
