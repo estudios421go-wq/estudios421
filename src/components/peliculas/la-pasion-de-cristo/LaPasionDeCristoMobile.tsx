@@ -34,7 +34,6 @@ const PasionDeCristoMobile = () => {
     const list = JSON.parse(localStorage.getItem('myList') || '[]');
     if (list.includes(MOVIE_DATA.id)) setInMyList(true);
 
-    // Recomendaciones Aleatorias (3 pósteres para móvil)
     const moviesOnly = allSeries.filter(s => s.category === 'Película' && s.id !== MOVIE_DATA.id);
     const shuffled = [...moviesOnly].sort(() => 0.5 - Math.random());
     setRandomMovies(shuffled.slice(0, 3));
@@ -42,7 +41,6 @@ const PasionDeCristoMobile = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // --- BUSCADOR 100% ---
   useEffect(() => {
     if (searchQuery.trim().length >= 2) {
       const normalize = (text: string) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -81,7 +79,7 @@ const PasionDeCristoMobile = () => {
 
   if (showPlayer) {
     return (
-      <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden">
+      <div className="fixed inset-0 z-[2000] bg-black flex flex-col overflow-hidden text-left">
         <div className="px-6 h-[80px] flex items-center justify-between bg-black border-b border-white/5">
           <div className="flex flex-col border-l-4 border-[#FF8A00] pl-4">
             <span className="text-[10px] font-black text-[#FF8A00] uppercase tracking-widest">REPRODUCIENDO</span>
@@ -120,7 +118,7 @@ const PasionDeCristoMobile = () => {
       </nav>
 
       {searchQuery.length > 0 && (
-        <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20">
+        <div className="fixed inset-0 bg-black z-[105] pt-24 px-4 overflow-y-auto pb-20 text-left">
           <h2 className="text-white text-sm font-black mb-6 uppercase tracking-widest flex items-center gap-2"><span className="w-1 h-4 bg-[#FF8A00]" />RESULTADOS: "{searchQuery}"</h2>
           <div className="grid grid-cols-2 gap-4">
             {searchResults.map((m) => (
@@ -131,7 +129,7 @@ const PasionDeCristoMobile = () => {
       )}
 
       <div className={`fixed inset-0 bg-black/98 z-[100] transition-transform duration-500 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex flex-col h-full pt-24 px-8 gap-8">
+        <div className="flex flex-col h-full pt-24 px-8 gap-8 text-left">
           <p className="text-gray-500 text-[10px] uppercase tracking-widest border-b border-white/10 pb-2">NAVEGACIÓN</p>
           <Link href="/" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold">Inicio</Link>
           <Link href="/series-biblicas" onClick={() => setIsMenuOpen(false)} className="text-xl font-bold">Series Bíblicas</Link>
@@ -148,10 +146,10 @@ const PasionDeCristoMobile = () => {
 
       <div className="relative w-full shadow-2xl">
         <div className="w-full aspect-[4/3] relative">
-          <img src={MOVIE_DATA.banner} className="w-full h-full object-cover" alt="Banner" />
+          <img src={MOVIE_DATA.banner} className="w-full h-full object-contain" alt="Banner" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
         </div>
-        <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20">
+        <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20 text-left">
           <button onClick={() => setShowPlayer(true)} className="w-full bg-white text-black font-black py-4 rounded-md text-sm uppercase tracking-[0.2em] shadow-2xl flex items-center justify-center gap-2">
             <IoPlay size={20} /> VER AHORA
           </button>
@@ -164,7 +162,7 @@ const PasionDeCristoMobile = () => {
         </div>
       </div>
 
-      <div className="px-5 mt-16 mb-20">
+      <div className="px-5 mt-16 mb-20 text-left">
         <header className="flex items-center gap-3 mb-8 border-b border-white/5 pb-3">
           <div className="w-1 h-5 bg-[#FF8A00]"></div>
           <h2 className="text-[11px] font-black text-white/50 tracking-[0.3em] uppercase">También te puede interesar</h2>
@@ -172,7 +170,7 @@ const PasionDeCristoMobile = () => {
         <div className="grid grid-cols-3 gap-3">
           {randomMovies.map((movie) => (
             <Link key={movie.id} href={movie.path}>
-              <div className="flex flex-col gap-2 active:scale-95 transition-all">
+              <div className="flex flex-col gap-2 active:scale-95 transition-all text-left">
                 <div className="relative aspect-[2/3] rounded-md overflow-hidden border border-white/5">
                   <Image src={movie.banner} alt={movie.title} fill className="object-cover" unoptimized />
                 </div>
@@ -183,7 +181,7 @@ const PasionDeCristoMobile = () => {
         </div>
       </div>
 
-      <footer className="bg-[#0a0a0a] text-gray-500 py-10 px-6 border-t border-white/5">
+      <footer className="bg-[#0a0a0a] text-gray-500 py-10 px-6 border-t border-white/5 text-left">
         <div className="flex justify-start gap-6 mb-8 text-xl">
           <a href="#"><FaFacebookF /></a>
           <a href="#"><FaInstagram /></a>
