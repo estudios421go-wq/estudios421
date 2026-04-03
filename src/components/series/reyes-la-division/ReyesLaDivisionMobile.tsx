@@ -11,7 +11,7 @@ import { allSeries } from '../../../data/series';
 // --- CONFIGURACIÓN DE EPISODIOS REAL (ID: 30) ---
 const reyesDivisionEpisodes = [
   { id: 1, title: "ME QUEDÉ SOLO", dur: "57:20", thumb: "https://static.wixstatic.com/media/859174_5620b12cd0754f39894b8e2bc2b35fd2~mv2.jpg", url: "https://ok.ru/videoembed/15777259588096", available: true },
-  { id: 2, title: "NO TE TRAICIONES A TI MISMO", dur: "42:13", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/15796254607872", available: true },
+  { id: 2, title: "NO TE TRAICIONES A TI MISMO", dur: "42:13", thumb: "https://static.wixstatic.com/media/859174_9240fb8b57bf4d6a88b33d369aa29746~mv2.jpg", url: "https://ok.ru/videoembed/16990765648384", available: true },
   { id: 3, title: "¿DE QUIÉN ES ISRAEL?", dur: "48:35", thumb: "https://static.wixstatic.com/media/859174_92933f124d1d47088e8fa079feb9e528~mv2.jpg", url: "https://ok.ru/videoembed/15847004244480", available: true },
   { id: 4, title: "¡HACIA UNA NUEVA NACIÓN!", dur: "32:59", thumb: "https://static.wixstatic.com/media/859174_1852ff5af52640ec9b3b963208eb36ce~mv2.jpg", url: "https://ok.ru/videoembed/15875085634048", available: true },
   { id: 5, title: "UNA REUNIÓN DE SERPIENTES", dur: "40:29", thumb: "https://static.wixstatic.com/media/859174_8baf86dedc3f4ff19b0642370fe43acb~mv2.jpg", url: "https://ok.ru/videoembed/15907665676800", available: true },
