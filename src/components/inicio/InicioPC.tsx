@@ -45,7 +45,7 @@ const InicioPC = () => {
   }, []);
 
   const dataEstrenos = [
-    { title: "Reyes La Emboscada", banner: "https://static.wixstatic.com/media/859174_f35b870683e8403691226c9f53b7231c~mv2.jpg", path: "serie/reyes-la-emboscada", audio: "Latino" },
+    { title: "Reyes La Emboscada", banner: "https://static.wixstatic.com/media/859174_39af669f528c41f6be4925d32b80b42c~mv2.jpg", path: "serie/reyes-la-emboscada", audio: "Latino" },
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Latino" },
     { title: "Apocalispis", banner: "https://static.wixstatic.com/media/859174_ace5fbe133b3490593913ede8144fe06~mv2.jpg", path: "serie/apocalipsis", audio: "Latino" },
     { title: "Reyes La Sucesión", banner: "https://static.wixstatic.com/media/859174_2960f93a729e41df96813820c93b80eb~mv2.jpg", path: "serie/reyes-la-sucesion", audio: "Latino" },
