@@ -45,10 +45,7 @@ const InicioPC = () => {
   }, []);
 
   const dataEstrenos = [
-    { title: "Ben-Hur: La Serie", banner: "https://static.wixstatic.com/media/859174_4d59c45f63c84539b1e383a4289f0c73~mv2.jpg", path: "serie/ben-hur", audio: "Latino" },
-    { title: "Amor en Ruinas", banner: "https://static.wixstatic.com/media/859174_d0b47539f9cb48ccb7302576d7c2a026~mv2.jpg", path: "serie/amor-en-ruinas", audio: "Latino" },
-    { title: "Las Siete Marías", banner: "https://static.wixstatic.com/media/859174_7a0e35b0cded4ad58d8df0b5d4d6464e~mv2.jpg", path: "serie/las-siete-marias", audio: "Latino" },
-    { title: "La Ira del Heredero", banner: "https://static.wixstatic.com/media/859174_187bcd28360641f8b3150361aec85495~mv2.jpg", path: "serie/la-ira-del-heredero", audio: "Latino" },
+    { title: "Reyes La Emboscada", banner: "https://static.wixstatic.com/media/859174_f35b870683e8403691226c9f53b7231c~mv2.jpg", path: "serie/reyes-la-emboscada", audio: "Latino" },
     { title: "La Casa De David", banner: "https://static.wixstatic.com/media/859174_bc1b97a10d3247e097ff4bbdda56e973~mv2.jpg", path: "serie-tv/la-casa-de-david", audio: "Latino" },
     { title: "Apocalispis", banner: "https://static.wixstatic.com/media/859174_ace5fbe133b3490593913ede8144fe06~mv2.jpg", path: "serie/apocalipsis", audio: "Latino" },
     { title: "Reyes La División", banner: "https://static.wixstatic.com/media/859174_6986effb4d7a48c1925babb9425be472~mv2.jpg", path: "serie/reyes-la-division", audio: "Latino" },
@@ -57,6 +54,10 @@ const InicioPC = () => {
     { title: "La Reina De Persia", banner: "https://static.wixstatic.com/media/859174_25430a5b5d74415f8a6ad729958081d2~mv2.jpg", path: "serie/la-reina-de-persia", audio: "Latino" },
     { title: "La Vida De Job", banner: "https://static.wixstatic.com/media/859174_d0095ad0db584be09c815e43b4bd1c39~mv2.jpg", path: "serie/la-vida-de-job", audio: "Subtitulado" },
     { title: "El Señor Y La Sierva", banner: "https://static.wixstatic.com/media/859174_9e32bbc02d864ed9842fb43173bfd1e3~mv2.jpg", path: "serie/el-senor-y-la-sierva", audio: "Subtitulado" },
+    { title: "Ben-Hur: La Serie", banner: "https://static.wixstatic.com/media/859174_4d59c45f63c84539b1e383a4289f0c73~mv2.jpg", path: "serie/ben-hur", audio: "Latino" },
+    { title: "Amor en Ruinas", banner: "https://static.wixstatic.com/media/859174_d0b47539f9cb48ccb7302576d7c2a026~mv2.jpg", path: "serie/amor-en-ruinas", audio: "Latino" },
+    { title: "Las Siete Marías", banner: "https://static.wixstatic.com/media/859174_7a0e35b0cded4ad58d8df0b5d4d6464e~mv2.jpg", path: "serie/las-siete-marias", audio: "Latino" },
+    { title: "La Ira del Heredero", banner: "https://static.wixstatic.com/media/859174_187bcd28360641f8b3150361aec85495~mv2.jpg", path: "serie/la-ira-del-heredero", audio: "Latino" },
   ];
 
   const dataBiblicas = [
