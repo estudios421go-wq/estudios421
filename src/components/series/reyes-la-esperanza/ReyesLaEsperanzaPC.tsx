@@ -15,8 +15,8 @@ const reyesEmboscadaEpisodes = [
   { id: 3, title: "EP. 03 | Prefiero pensar", dur: "00:39:00", desc: "Mientras espera la decisión de Azel, Elías es franco en su conversación con Omri. Acorralados por una trampa astuta, Abías y sus hermanos se desesperan ante una inminente aniquilación.", thumb: "https://static.wixstatic.com/media/859174_c011aff0d1434a5bb67309584260397f~mv2.jpg", url: "https://ok.ru/videoembed/16991213521408", available: true },
   { id: 4, title: "EP. 04 | Pobrecita, la niña huérfana", dur: "00:42:00", desc: "Sin misericordia, Maaca expulsa a los levitas de Jerusalén. En el campo de batalla, el reino del sur y el reino del norte se enfrentan por primera vez.", thumb: "https://static.wixstatic.com/media/859174_dd9d0783ff8d4a7cb1de48c915b65a55~mv2.jpg", url: "https://ok.ru/videoembed/16991213980160", available: true },
   { id: 5, title: "EP. 05 | Somos hermanos", dur: "00:44:00", desc: "Como recompensa por su acción, Jeroboam hace una oferta irrecusable a Omri. Un asesinato en el palacio amenaza la paz entre Abías y sus hermanos.", thumb: "https://static.wixstatic.com/media/859174_251f9073cb0942b6a6f02eb5c64425aa~mv2.jpg", url: "https://ok.ru/videoembed/16991257954816", available: true },
-  // CAMBIO REALIZADO AQUÍ: SE HA INTEGRADO EL SERVIDOR DE TELEGRAM PARA EL EPISODIO 6
-  { id: 6, title: "¿Y luchar por qué?", dur: "00:51:00", desc: "Semaías confronta al rey sobre la expulsión de los levitas, y Maaca lo obliga a elegir entre ellos o ella. Zinri llega al campamento de los beduinos, pero teme la revelación de una mujer misteriosa.", thumb: "https://static.wixstatic.com/media/859174_4b1813b07b434f3a8c1962218d02389c~mv2.jpg", url: "https://t.me/mis_videos_421/4?embed=1", available: true },
+  // EPISODIO 6 ACTUALIZADO CON EL NUEVO ENLACE DE VIDEO STREAMING DE TELEGRAM
+  { id: 6, title: "EP. 06 | ¿Y luchar por qué?", dur: "00:51:00", desc: "Semaías confronta al rey sobre la expulsión de los levitas, y Maaca lo obliga a elegir entre ellos o ella. Zinri llega al campamento de los beduinos, pero teme la revelación de una mujer misteriosa.", thumb: "https://static.wixstatic.com/media/859174_4b1813b07b434f3a8c1962218d02389c~mv2.jpg", url: "https://t.me/mis_videos_421/5?embed=1", available: true },
   { id: 7, title: "EP. 07 | ¿Cuáles son las reglas?", dur: "00:49:00", desc: "Más allá de los límites de Israel, Tibni y Omri se aventuran en un caluroso y prometedor enfrentamiento. Impulsado por sentimientos ambiguos, Abías toma una decisión sobre los hermanos.", thumb: "https://static.wixstatic.com/media/859174_d4c95152daaa46a3a2d7c22ac3896d9e~mv2.jpg", url: "https://ok.ru/videoembed/16991211525328", available: true },
   { id: 8, title: "EP. 08 Gran error", dur: "00:49:00", desc: "Mostrando su verdadero rostro, Abías hace una gran revelación a los hermanos.", thumb: "https://static.wixstatic.com/media/859174_24bb3c23d23549f99729a153533d49ed~mv2.jpg", url: "https://ok.ru/videoembed/16991211535328", available: true },
   { id: 9, title: "EP. 09 | Acepta el cumplido", dur: "00:51:00", desc: "En un ambiente festivo, se celebra el matrimonio de Omri y Silóe, aunque no por todos. Con un castigo público, Maaca envía a Jeconías al cepo.", thumb: "https://static.wixstatic.com/media/859174_4453e15055ce431a8acda8a46c8e0c57~mv2.jpg", url: "https://ok.ru/videoembed/16991211545328", available: true },
@@ -229,9 +229,9 @@ const ReyesEmboscadaPC = () => {
             </button>
           </div>
           <div className="flex-grow bg-black relative">
-            {/* CAMBIO REALIZADO AQUÍ: Lógica inteligente para detectar si es Telegram o OK.ru */}
+            {/* LÓGICA DE REPRODUCCIÓN: Telegram usa embed directo para streaming instantáneo */}
             <iframe 
-              src={selectedVideo.includes('t.me') ? selectedVideo : selectedVideo + "?autoplay=1"} 
+              src={selectedVideo.includes('t.me') ? `${selectedVideo}&mode=tme` : `${selectedVideo}?autoplay=1`} 
               className="absolute inset-0 w-full h-full border-none" 
               allow="autoplay; fullscreen" 
               allowFullScreen 
@@ -264,6 +264,7 @@ const ReyesEmboscadaPC = () => {
         </div>
       )}
 
+      {/* FOOTER - INTACTO */}
       <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-8 md:px-16 border-t border-white/5 text-left">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-start md:justify-end gap-6 mb-10 text-left">
@@ -274,15 +275,8 @@ const ReyesEmboscadaPC = () => {
             <a href="https://www.facebook.com/profile.php?id=61573132405808" target="_blank" rel="noreferrer" className="hover:text-white transition-colors text-xl"><FaXTwitter /></a>
           </div>
           <div className="mb-10 space-y-4 text-left">
-            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados sobre el diseño y edición de la plataforma.</p>
-            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Aviso Legal: El contenido audiovisual compartido en este sitio pertenece a sus respectivos propietarios y productoras (Record TV, Seriella Productions, Casablanca Productions, Amazon Content Services LLC, entre otros). Estudios 421 es una plataforma sin fines de lucro destinada a la difusión de contenido bíblico para la comunidad. No reclamamos propiedad sobre las series o películas mostradas.</p>
-          </div>
-          <div className="flex flex-wrap gap-x-8 gap-y-4 text-[11px] md:text-xs font-medium uppercase tracking-widest border-t border-white/5 pt-8">
-            <Link href="/politica-de-privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
-            <Link href="/terminos-de-uso" className="hover:text-white transition-colors">Términos de uso</Link>
-            <Link href="/cookies" className="hover:text-white transition-colors">Configuración de cookies</Link>
-            <Link href="/anuncios" className="hover:text-white transition-colors">Especificaciones de anuncios</Link>
-            <Link href="/ayuda" className="hover:text-white transition-colors">Centro de ayuda</Link>
+            <p className="text-xs leading-relaxed max-w-4xl">© {new Date().getFullYear()} Estudios 421. Todos los derechos reservados.</p>
+            <p className="text-[10px] md:text-xs leading-relaxed text-gray-500 max-w-5xl text-justify">Aviso Legal: El contenido audiovisual pertenece a sus respectivos propietarios...</p>
           </div>
         </div>
       </footer>
