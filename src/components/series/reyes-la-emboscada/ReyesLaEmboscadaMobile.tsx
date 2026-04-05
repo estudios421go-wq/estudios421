@@ -15,7 +15,7 @@ const reyesEmboscadaEpisodes = [
   { id: 3, title: "PREFIERO PENSAR", dur: "39:00", thumb: "https://static.wixstatic.com/media/859174_c011aff0d1434a5bb67309584260397f~mv2.jpg", url: "https://ok.ru/videoembed/16991213521408", available: true },
   { id: 4, title: "POBRECITA, LA NIÑA HUÉRFANA", dur: "42:00", thumb: "https://static.wixstatic.com/media/859174_dd9d0783ff8d4a7cb1de48c915b65a55~mv2.jpg", url: "https://ok.ru/videoembed/16991213980160", available: true },
   { id: 5, title: "SOMOS HERMANOS", dur: "44:00", thumb: "https://static.wixstatic.com/media/859174_251f9073cb0942b6a6f02eb5c64425aa~mv2.jpg", url: "https://ok.ru/videoembed/16991257954816", available: true },
-  { id: 6, title: "¿Y LUCHAR POR QUÉ?", dur: "51:00", thumb: "https://static.wixstatic.com/media/859174_4b1813b07b434f3a8c1962218d02389c~mv2.jpg", url: "https://ok.ru/videoembed/16991211515328", available: true },
+  { id: 6, title: "¿Y LUCHAR POR QUÉ?", dur: "51:00", thumb: "https://static.wixstatic.com/media/859174_4b1813b07b434f3a8c1962218d02389c~mv2.jpg", url: "https://t.me/mis_videos_421/5?embed=1", available: true },
   { id: 7, title: "¿CUÁLES SON LAS REGLAS?", dur: "49:00", thumb: "https://static.wixstatic.com/media/859174_d4c95152daaa46a3a2d7c22ac3896d9e~mv2.jpg", url: "https://ok.ru/videoembed/16991211525328", available: true },
   { id: 8, title: "GRAN ERROR", dur: "49:00", thumb: "https://static.wixstatic.com/media/859174_24bb3c23d23549f99729a153533d49ed~mv2.jpg", url: "https://ok.ru/videoembed/16991211535328", available: true },
   { id: 9, title: "ACEPTA EL CUMPLIDO", dur: "51:00", thumb: "https://static.wixstatic.com/media/859174_4453e15055ce431a8acda8a46c8e0c57~mv2.jpg", url: "https://ok.ru/videoembed/16991211545328", available: true },
