@@ -11,6 +11,11 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         {/* Esta línea es la que soluciona el problema del tamaño en móviles */}
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(s){s.dataset.zone='10908546',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`
+          }}
+        />
       </Head>
       <Component {...pageProps} />
     </>
