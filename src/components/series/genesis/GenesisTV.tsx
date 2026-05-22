@@ -227,8 +227,6 @@ const genesisEpisodes = [
   { id: 221, title: "Todos Unidos", dur: "43 min", thumb: "https://static.wixstatic.com/media/859174_ac6e61ae8f7b46fd91b24fe79a1b6cda~mv2.jpg", url: "https://ok.ru/videoembed/14280213531136", desc: "Boda con todos los hombres de Israel en Egipto. Fin de la historia de Génesis." },
 ];
 
-// ── VISTAS: 'detalle' | 'episodios' | 'player' ────────────────────────────────
-
 const GenesisTV = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [vista, setVista] = useState<'detalle' | 'episodios' | 'player'>('detalle');
@@ -238,20 +236,37 @@ const GenesisTV = () => {
   const [epFoco, setEpFoco] = useState(0);
   const epRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── FOCO AUTOMÁTICO — crítico para control remoto desde el inicio ──
+  // ── FOCO AUTOMÁTICO — compatible Samsung Tizen, LG webOS, Panasonic, Hisense ──
   useEffect(() => {
-    const forzarFoco = () => containerRef.current?.focus();
+    const forzarFoco = () => {
+      if (document.activeElement !== containerRef.current) {
+        containerRef.current?.focus();
+      }
+    };
     forzarFoco();
+    // Intervalo de seguridad los primeros 3 seg (LG webOS tarda en estar listo)
+    const intervalo = setInterval(forzarFoco, 300);
+    const parar = setTimeout(() => clearInterval(intervalo), 3000);
+
     document.addEventListener('visibilitychange', forzarFoco);
     window.addEventListener('focus', forzarFoco);
+    window.addEventListener('focusin', forzarFoco); // Samsung Tizen
+
     return () => {
+      clearInterval(intervalo);
+      clearTimeout(parar);
       document.removeEventListener('visibilitychange', forzarFoco);
       window.removeEventListener('focus', forzarFoco);
+      window.removeEventListener('focusin', forzarFoco);
     };
   }, []);
 
+  // Forzar foco al cambiar de vista con múltiples intentos
   useEffect(() => {
-    setTimeout(() => containerRef.current?.focus(), 100);
+    const t1 = setTimeout(() => containerRef.current?.focus(), 50);
+    const t2 = setTimeout(() => containerRef.current?.focus(), 200);
+    const t3 = setTimeout(() => containerRef.current?.focus(), 500);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [vista]);
 
   // Cargar último episodio
@@ -259,7 +274,7 @@ const GenesisTV = () => {
     const saved = localStorage.getItem('genesis_last_ep');
     if (saved) {
       const idx = parseInt(saved);
-      if (idx < genesisEpisodes.length) setCurrentIdx(idx);
+      if (!isNaN(idx) && idx < genesisEpisodes.length) setCurrentIdx(idx);
     }
   }, []);
 
@@ -270,7 +285,7 @@ const GenesisTV = () => {
     }
   }, [epFoco, vista]);
 
-  // Refs de estado — listener una sola vez
+  // Refs de estado para el listener (evita closures stale)
   const stateRef = useRef({ vista, detalleBtn, epFoco, currentIdx });
   useEffect(() => {
     stateRef.current = { vista, detalleBtn, epFoco, currentIdx };
@@ -283,56 +298,98 @@ const GenesisTV = () => {
     setVista('player');
   };
 
-  // ── CONTROL REMOTO — UNA SOLA VEZ ─────────────────────────────────────────
+  // ── CONTROL REMOTO — Samsung Tizen, LG webOS, Panasonic, Hisense, Philips, Sony ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       const s = stateRef.current;
-      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Backspace','Escape'].includes(e.key)) {
-        e.preventDefault();
-      }
 
-      // PLAYER
+      // ── Normalizar tecla: unifica key + keyCode de todos los fabricantes ──
+      const key = (() => {
+        const k = e.key;
+        const c = e.keyCode;
+
+        // Direccionales — estándar y numéricos
+        if (k === 'ArrowUp'    || c === 38) return 'UP';
+        if (k === 'ArrowDown'  || c === 40) return 'DOWN';
+        if (k === 'ArrowLeft'  || c === 37) return 'LEFT';
+        if (k === 'ArrowRight' || c === 39) return 'RIGHT';
+
+        // OK / Seleccionar / Enter
+        if (k === 'Enter'  || c === 13) return 'OK';
+        if (k === 'Accept' || c === 32) return 'OK'; // algunos TVs usan espacio
+
+        // Volver / Atrás — varía bastante por marca
+        if (k === 'Escape'    || c === 27)    return 'BACK';
+        if (k === 'Backspace' || c === 8)     return 'BACK';
+        if (k === 'GoBack'    || c === 461)   return 'BACK'; // LG webOS
+        if (c === 10009)                      return 'BACK'; // Samsung Tizen
+        if (c === 166)                        return 'BACK'; // Philips / algunos Hisense
+        if (k === 'XF86Back')                 return 'BACK'; // webOS alternativo
+
+        return null;
+      })();
+
+      if (!key) return;
+
+      // Bloquear comportamiento nativo del TV (scroll, salida de app, etc.)
+      e.preventDefault();
+      e.stopPropagation();
+
+      // ── PLAYER ──────────────────────────────────────────────────────────
       if (s.vista === 'player') {
-        if (e.key === 'Escape' || e.key === 'Backspace') setVista('detalle');
-        if (e.key === 'ArrowRight' && s.currentIdx < genesisEpisodes.length - 1) {
+        if (key === 'BACK') {
+          setVista('detalle');
+          return;
+        }
+        if (key === 'RIGHT' && s.currentIdx < genesisEpisodes.length - 1) {
           const next = s.currentIdx + 1;
           setCurrentIdx(next);
           setSelectedUrl(genesisEpisodes[next].url);
           localStorage.setItem('genesis_last_ep', next.toString());
+          return;
         }
-        if (e.key === 'ArrowLeft' && s.currentIdx > 0) {
+        if (key === 'LEFT' && s.currentIdx > 0) {
           const prev = s.currentIdx - 1;
           setCurrentIdx(prev);
           setSelectedUrl(genesisEpisodes[prev].url);
           localStorage.setItem('genesis_last_ep', prev.toString());
+          return;
         }
         return;
       }
 
-      // DETALLE
+      // ── DETALLE ──────────────────────────────────────────────────────────
       if (s.vista === 'detalle') {
-        if (e.key === 'ArrowDown') setDetalleBtn(b => Math.min(b + 1, 2));
-        if (e.key === 'ArrowUp')   setDetalleBtn(b => Math.max(b - 1, 0));
-        if (e.key === 'Enter') {
+        if (key === 'DOWN') { setDetalleBtn(b => Math.min(b + 1, 2)); return; }
+        if (key === 'UP')   { setDetalleBtn(b => Math.max(b - 1, 0)); return; }
+        if (key === 'OK') {
           if (s.detalleBtn === 0) openEpisode(s.currentIdx);
           if (s.detalleBtn === 1) openEpisode(0);
           if (s.detalleBtn === 2) { setEpFoco(s.currentIdx); setVista('episodios'); }
+          return;
         }
         return;
       }
 
-      // EPISODIOS
+      // ── EPISODIOS ─────────────────────────────────────────────────────────
       if (s.vista === 'episodios') {
-        if (e.key === 'ArrowDown') setEpFoco(p => Math.min(p + 1, genesisEpisodes.length - 1));
-        if (e.key === 'ArrowUp')   setEpFoco(p => Math.max(p - 1, 0));
-        if (e.key === 'Enter')     openEpisode(s.epFoco);
-        if (e.key === 'Backspace' || e.key === 'Escape') setVista('detalle');
+        if (key === 'DOWN') { setEpFoco(p => Math.min(p + 1, genesisEpisodes.length - 1)); return; }
+        if (key === 'UP')   { setEpFoco(p => Math.max(p - 1, 0)); return; }
+        if (key === 'OK')   { openEpisode(s.epFoco); return; }
+        if (key === 'BACK') { setVista('detalle'); return; }
         return;
       }
     };
 
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    // Escuchar en window Y document con capture:true
+    // (algunos TVs solo disparan en uno de los dos)
+    window.addEventListener('keydown', handleKey, true);
+    document.addEventListener('keydown', handleKey, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKey, true);
+      document.removeEventListener('keydown', handleKey, true);
+    };
   }, []);
 
   const ep = genesisEpisodes[currentIdx];
@@ -340,9 +397,21 @@ const GenesisTV = () => {
   // ── PLAYER ─────────────────────────────────────────────────────────────────
   if (vista === 'player') {
     return (
-      <div ref={containerRef} tabIndex={0} className="fixed inset-0 bg-black outline-none z-50">
+      <div
+        ref={containerRef}
+        tabIndex={0}
+        onKeyDown={(e) => e.stopPropagation()}
+        className="fixed inset-0 bg-black outline-none z-50"
+        style={{ outline: 'none' }}
+      >
         <Head><title>{ep.title} — Génesis</title></Head>
-        <iframe src={selectedUrl + '?autoplay=1'} className="w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
+        <iframe
+          src={selectedUrl + '?autoplay=1'}
+          className="w-full h-full border-none"
+          allow="autoplay; fullscreen"
+          allowFullScreen
+          style={{ pointerEvents: 'none' }}
+        />
         <div className="absolute top-6 left-8 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
           <div className="w-1.5 h-10 bg-[#F09800] rounded-full" />
           <div>
@@ -353,25 +422,46 @@ const GenesisTV = () => {
         </div>
         <div className="absolute bottom-8 inset-x-0 flex justify-between px-16 items-center">
           <button
-            onClick={() => { if (currentIdx > 0) { const p = currentIdx-1; setCurrentIdx(p); setSelectedUrl(genesisEpisodes[p].url); localStorage.setItem('genesis_last_ep', p.toString()); } }}
+            onClick={() => {
+              if (currentIdx > 0) {
+                const p = currentIdx - 1;
+                setCurrentIdx(p);
+                setSelectedUrl(genesisEpisodes[p].url);
+                localStorage.setItem('genesis_last_ep', p.toString());
+              }
+            }}
             disabled={currentIdx === 0}
             className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-8 py-4 rounded-xl border border-white/10 disabled:opacity-20 text-white text-lg font-bold"
           >
-            <IoChevronBack size={24} /> EP. {currentIdx > 0 ? genesisEpisodes[currentIdx-1].id : ''}
+            <IoChevronBack size={24} /> EP. {currentIdx > 0 ? genesisEpisodes[currentIdx - 1].id : ''}
           </button>
-          <button onClick={() => setVista('detalle')} className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-10 py-4 rounded-xl border border-white/20 text-white text-lg font-bold">
+          <button
+            onClick={() => setVista('detalle')}
+            className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-10 py-4 rounded-xl border border-white/20 text-white text-lg font-bold"
+          >
             <IoList size={24} className="text-[#F09800]" /> Volver
           </button>
           <button
-            onClick={() => { if (currentIdx < genesisEpisodes.length-1) { const n = currentIdx+1; setCurrentIdx(n); setSelectedUrl(genesisEpisodes[n].url); localStorage.setItem('genesis_last_ep', n.toString()); } }}
+            onClick={() => {
+              if (currentIdx < genesisEpisodes.length - 1) {
+                const n = currentIdx + 1;
+                setCurrentIdx(n);
+                setSelectedUrl(genesisEpisodes[n].url);
+                localStorage.setItem('genesis_last_ep', n.toString());
+              }
+            }}
             disabled={currentIdx === genesisEpisodes.length - 1}
             className="flex items-center gap-3 bg-[#F09800] px-8 py-4 rounded-xl disabled:opacity-20 text-white text-lg font-bold"
           >
-            EP. {currentIdx < genesisEpisodes.length-1 ? genesisEpisodes[currentIdx+1].id : ''} <IoChevronForward size={24} />
+            EP. {currentIdx < genesisEpisodes.length - 1 ? genesisEpisodes[currentIdx + 1].id : ''} <IoChevronForward size={24} />
           </button>
         </div>
         <p className="absolute bottom-3 right-6 text-gray-600 text-xs tracking-widest">← → cambiar ep · ESC volver</p>
-        <style jsx global>{`body{overflow:hidden;background:black;} *{-webkit-user-select:none;user-select:none;} *:focus{outline:none;}`}</style>
+        <style jsx global>{`
+          body { overflow: hidden; background: black; }
+          * { -webkit-user-select: none; user-select: none; }
+          *:focus { outline: none; }
+        `}</style>
       </div>
     );
   }
@@ -379,14 +469,32 @@ const GenesisTV = () => {
   // ── EPISODIOS ──────────────────────────────────────────────────────────────
   if (vista === 'episodios') {
     return (
-      <div ref={containerRef} tabIndex={0} className="bg-black min-h-screen text-white flex outline-none">
+      <div
+        ref={containerRef}
+        tabIndex={0}
+        onKeyDown={(e) => e.stopPropagation()}
+        className="bg-black min-h-screen text-white flex outline-none"
+        style={{ outline: 'none' }}
+      >
         <Head><title>Episodios — Génesis</title></Head>
         <div className="w-[380px] flex-shrink-0 flex flex-col justify-center px-12 py-16 border-r border-white/10">
-          <Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" width={180} height={50} className="object-contain mb-8" unoptimized />
+          <Image
+            src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png"
+            alt="Logo"
+            width={180}
+            height={50}
+            className="object-contain mb-8"
+            unoptimized
+          />
           <h1 className="text-4xl font-black uppercase mb-3">Génesis</h1>
           <p className="text-gray-400 text-lg mb-2">1 Temporada · 221 Episodios</p>
-          <p className="text-gray-500 text-base leading-relaxed mb-10">Revive el origen de todo. La creación, el arca de Noé y la historia de los patriarcas.</p>
-          <button onClick={() => setVista('detalle')} className="flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-4 rounded-xl text-white text-lg font-bold hover:bg-white/20 transition-all">
+          <p className="text-gray-500 text-base leading-relaxed mb-10">
+            Revive el origen de todo. La creación, el arca de Noé y la historia de los patriarcas.
+          </p>
+          <button
+            onClick={() => setVista('detalle')}
+            className="flex items-center gap-3 bg-white/10 border border-white/20 px-6 py-4 rounded-xl text-white text-lg font-bold hover:bg-white/20 transition-all"
+          >
             ← Volver
           </button>
           <p className="mt-8 text-gray-600 text-sm tracking-widest">↑ ↓ navegar · OK ver · ESC volver</p>
@@ -400,10 +508,16 @@ const GenesisTV = () => {
                 key={ep.id}
                 ref={el => { epRefs.current[idx] = el; }}
                 onClick={() => openEpisode(idx)}
-                className={`flex gap-5 mb-4 rounded-2xl p-4 cursor-pointer transition-all duration-200 ${esFoco ? 'bg-white/15 border-2 border-[#F09800] scale-[1.02]' : esActual ? 'bg-white/8 border-2 border-white/30' : 'border-2 border-transparent hover:bg-white/8'}`}
+                className={`flex gap-5 mb-4 rounded-2xl p-4 cursor-pointer transition-all duration-200 ${
+                  esFoco
+                    ? 'bg-white/15 border-2 border-[#F09800] scale-[1.02]'
+                    : esActual
+                    ? 'bg-white/8 border-2 border-white/30'
+                    : 'border-2 border-transparent hover:bg-white/8'
+                }`}
               >
                 <div className="relative flex-shrink-0 w-40 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
-                  <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
+                  <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" alt={ep.title} />
                   {esActual && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                       <IoPlay className="text-[#F09800] text-3xl" />
@@ -417,9 +531,13 @@ const GenesisTV = () => {
                 </div>
                 <div className="flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className={`text-sm font-black uppercase tracking-widest ${esFoco ? 'text-[#F09800]' : 'text-gray-500'}`}>Episodio {ep.id}</span>
+                    <span className={`text-sm font-black uppercase tracking-widest ${esFoco ? 'text-[#F09800]' : 'text-gray-500'}`}>
+                      Episodio {ep.id}
+                    </span>
                     <span className="text-gray-600 text-sm">· {ep.dur}</span>
-                    {esActual && <span className="text-xs bg-[#F09800] text-white px-2 py-0.5 rounded font-black">▶ VIENDO</span>}
+                    {esActual && (
+                      <span className="text-xs bg-[#F09800] text-white px-2 py-0.5 rounded font-black">▶ VIENDO</span>
+                    )}
                   </div>
                   <h3 className={`text-xl font-bold mb-1 ${esFoco ? 'text-white' : 'text-gray-300'}`}>{ep.title}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed line-clamp-2">{ep.desc}</p>
@@ -428,22 +546,44 @@ const GenesisTV = () => {
             );
           })}
         </div>
-        <style jsx global>{`body{overflow:hidden;background:black;} *{-webkit-user-select:none;user-select:none;} ::-webkit-scrollbar{display:none;} *:focus{outline:none;}`}</style>
+        <style jsx global>{`
+          body { overflow: hidden; background: black; }
+          * { -webkit-user-select: none; user-select: none; }
+          ::-webkit-scrollbar { display: none; }
+          *:focus { outline: none; }
+        `}</style>
       </div>
     );
   }
 
   // ── DETALLE ────────────────────────────────────────────────────────────────
   const btnClasses = (idx: number) =>
-    `flex items-center gap-4 px-8 py-5 rounded-xl text-xl font-bold transition-all duration-200 w-full ${detalleBtn === idx ? 'bg-white text-black scale-105 shadow-2xl' : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'}`;
+    `flex items-center gap-4 px-8 py-5 rounded-xl text-xl font-bold transition-all duration-200 w-full ${
+      detalleBtn === idx
+        ? 'bg-white text-black scale-105 shadow-2xl'
+        : 'bg-white/10 text-white border border-white/20 hover:bg-white/20'
+    }`;
 
   return (
-    <div ref={containerRef} tabIndex={0} className="bg-black min-h-screen text-white flex outline-none overflow-hidden">
+    <div
+      ref={containerRef}
+      tabIndex={0}
+      onKeyDown={(e) => e.stopPropagation()}
+      className="bg-black min-h-screen text-white flex outline-none overflow-hidden"
+      style={{ outline: 'none' }}
+    >
       <Head><title>Génesis — Smart TV</title></Head>
 
       {/* IZQUIERDA — info + botones */}
       <div className="w-[45%] flex flex-col justify-center px-16 py-12 relative z-10">
-        <Image src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png" alt="Logo" width={200} height={56} className="object-contain mb-8" unoptimized />
+        <Image
+          src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png"
+          alt="Logo"
+          width={200}
+          height={56}
+          className="object-contain mb-8"
+          unoptimized
+        />
         <h1 className="text-6xl font-black uppercase leading-tight mb-3">Génesis</h1>
         <div className="flex items-center gap-3 mb-4">
           <span className="text-gray-400 text-lg">1 Temporada</span>
@@ -457,18 +597,27 @@ const GenesisTV = () => {
           <span className="text-gray-400 text-lg">— {ep.title}</span>
         </div>
         <div className="w-full h-1.5 bg-white/20 rounded-full mb-2">
-          <div className="h-full bg-[#F09800] rounded-full" style={{ width: `${(currentIdx / (genesisEpisodes.length - 1)) * 100}%` }} />
+          <div
+            className="h-full bg-[#F09800] rounded-full"
+            style={{ width: `${(currentIdx / (genesisEpisodes.length - 1)) * 100}%` }}
+          />
         </div>
-        <p className="text-gray-500 text-sm mb-8">{ep.dur} · {genesisEpisodes.length - currentIdx - 1} episodios restantes</p>
+        <p className="text-gray-500 text-sm mb-8">
+          {ep.dur} · {genesisEpisodes.length - currentIdx - 1} episodios restantes
+        </p>
         <p className="text-gray-300 text-lg leading-relaxed mb-10 max-w-lg">{ep.desc}</p>
         <div className="flex flex-col gap-4 w-full max-w-md">
           <button onClick={() => openEpisode(currentIdx)} className={btnClasses(0)}>
-            <IoPlay size={24} />{currentIdx === 0 ? 'Ver Ahora' : `Reanudar Ep. ${ep.id}`}
+            <IoPlay size={24} />
+            {currentIdx === 0 ? 'Ver Ahora' : `Reanudar Ep. ${ep.id}`}
           </button>
           <button onClick={() => openEpisode(0)} className={btnClasses(1)}>
             <IoRefresh size={24} />Ver desde el inicio
           </button>
-          <button onClick={() => { setEpFoco(currentIdx); setVista('episodios'); }} className={btnClasses(2)}>
+          <button
+            onClick={() => { setEpFoco(currentIdx); setVista('episodios'); }}
+            className={btnClasses(2)}
+          >
             <IoList size={24} />Más episodios
           </button>
         </div>
@@ -477,7 +626,11 @@ const GenesisTV = () => {
 
       {/* DERECHA — imagen grande */}
       <div className="w-[55%] relative">
-        <img src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg" className="w-full h-full object-cover" alt="Génesis" />
+        <img
+          src="https://static.wixstatic.com/media/859174_264be00ba6d14e699767e79c49297e5c~mv2.jpg"
+          className="w-full h-full object-cover"
+          alt="Génesis"
+        />
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         <div className="absolute bottom-8 right-8 bg-black/70 backdrop-blur-md px-6 py-4 rounded-xl border border-white/10">
