@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
-import { IoPlay, IoRefresh, IoList, IoChevronDown, IoChevronUp, IoClose } from 'react-icons/io5';
+import { IoPlay, IoRefresh, IoList } from 'react-icons/io5';
 
 // ─── EPISODIOS ────────────────────────────────────────────────────────────────
 const jobEpisodes = [
@@ -27,48 +27,99 @@ const jobEpisodes = [
   { id: 20, title: "La Continuación del Fin", dur: "53 min", thumb: "https://static.wixstatic.com/media/859174_83e339dc10f04a53b4361f4f4b321d3c~mv2.jpg", url: "https://ok.ru/videoembed/14216479377920", desc: "Job recibe visitas especiales. Gabriel entrega un mensaje de Dios a una joven mujer." },
 ];
 
-// ─── VISTAS ───────────────────────────────────────────────────────────────────
-// 'detalle' = pantalla principal con botones
-// 'episodios' = lista de episodios
-// 'player' = reproduciendo
+// ─── MAPEO DE KEYCODES PARA SMART TVs ─────────────────────────────────────────
+// Samsung Tizen, LG webOS, Panasonic, Philips, Hisense, TCL, Android TV, etc.
+const getNavKey = (e: KeyboardEvent): string | null => {
+  // Por nombre (navegadores modernos)
+  if (e.key === 'ArrowUp')    return 'UP';
+  if (e.key === 'ArrowDown')  return 'DOWN';
+  if (e.key === 'ArrowLeft')  return 'LEFT';
+  if (e.key === 'ArrowRight') return 'RIGHT';
+  if (e.key === 'Enter')      return 'OK';
+  if (e.key === 'Backspace')  return 'BACK';
+  if (e.key === 'Escape')     return 'BACK';
+
+  // Por keyCode (Smart TVs antiguas y variantes de fabricante)
+  switch (e.keyCode) {
+    // Flechas — estándar en todos los navegadores
+    case 38: return 'UP';
+    case 40: return 'DOWN';
+    case 37: return 'LEFT';
+    case 39: return 'RIGHT';
+    // OK / Enter / Select
+    case 13:  return 'OK';
+    case 32:  return 'OK';   // Space como OK (Android TV)
+    // Atrás / Volver
+    case 8:   return 'BACK'; // Backspace
+    case 27:  return 'BACK'; // Escape
+    case 461: return 'BACK'; // LG webOS botón Back
+    case 10009: return 'BACK'; // Samsung Tizen botón Return
+    case 10182: return 'BACK'; // Samsung botón Exit
+    // Samsung Tizen — botones de color y media
+    case 403: return null; // Rojo
+    case 404: return null; // Verde
+    case 405: return null; // Amarillo
+    case 406: return null; // Azul
+    case 415: return null; // Play
+    case 19:  return null; // Pause
+    case 413: return null; // Stop
+    case 417: return null; // Fast Forward
+    case 412: return null; // Rewind
+    default:  return null;
+  }
+};
 
 const LaVidaDeJobTV = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  // ── OVERLAY: div transparente que se pone ENCIMA del iframe
+  // para que el iframe no capture el foco ni los eventos de teclado
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   const [vista, setVista] = useState<'detalle' | 'episodios' | 'player'>('detalle');
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedUrl, setSelectedUrl] = useState('');
-
-  // Foco en detalle: 0=Reanudar, 1=Ver inicio, 2=Episodios
   const [detalleBtn, setDetalleBtn] = useState(0);
-
-  // Foco en lista episodios
   const [epFoco, setEpFoco] = useState(0);
   const epRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── FOCO AUTOMÁTICO — crítico para que el control remoto funcione desde el inicio ──
+  // ── FOCO GLOBAL — escucha en document Y en window para máxima compatibilidad ──
+  // En Smart TVs el foco puede estar en document.body, no en el div
   useEffect(() => {
-    const forzarFoco = () => containerRef.current?.focus();
+    const forzarFoco = () => {
+      // En webOS/Tizen el foco debe estar en document.body o en el elemento raíz
+      // NO dependemos solo de containerRef porque el iframe lo roba
+      if (containerRef.current) {
+        containerRef.current.focus({ preventScroll: true });
+      }
+    };
     forzarFoco();
+    // Recuperar foco cuando la ventana vuelve a estar activa
     document.addEventListener('visibilitychange', forzarFoco);
     window.addEventListener('focus', forzarFoco);
+    // Recuperar foco si el usuario hace clic fuera del container
+    document.addEventListener('click', forzarFoco);
     return () => {
       document.removeEventListener('visibilitychange', forzarFoco);
       window.removeEventListener('focus', forzarFoco);
+      document.removeEventListener('click', forzarFoco);
     };
   }, []);
 
+  // Reenfocar al cambiar de vista
   useEffect(() => {
-    setTimeout(() => containerRef.current?.focus(), 100);
+    const t = setTimeout(() => containerRef.current?.focus({ preventScroll: true }), 50);
+    return () => clearTimeout(t);
   }, [vista]);
 
   // Cargar último episodio
   useEffect(() => {
-    const saved = localStorage.getItem('job_last_ep');
-    if (saved) {
-      const idx = parseInt(saved);
-      if (idx < jobEpisodes.length) setCurrentIdx(idx);
-    }
+    try {
+      const saved = localStorage.getItem('job_last_ep');
+      if (saved) {
+        const idx = parseInt(saved);
+        if (!isNaN(idx) && idx < jobEpisodes.length) setCurrentIdx(idx);
+      }
+    } catch (_) {}
   }, []);
 
   // Scroll al episodio enfocado
@@ -78,7 +129,7 @@ const LaVidaDeJobTV = () => {
     }
   }, [epFoco, vista]);
 
-  // ── REFS DE ESTADO — listener registrado una sola vez ──
+  // Refs de estado — el listener se registra una sola vez
   const stateRef = useRef({ vista, detalleBtn, epFoco, currentIdx, selectedUrl });
   useEffect(() => {
     stateRef.current = { vista, detalleBtn, epFoco, currentIdx, selectedUrl };
@@ -87,64 +138,78 @@ const LaVidaDeJobTV = () => {
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
     setSelectedUrl(jobEpisodes[idx].url);
-    localStorage.setItem('job_last_ep', idx.toString());
+    try { localStorage.setItem('job_last_ep', idx.toString()); } catch (_) {}
     setVista('player');
   };
 
-  // ── CONTROL REMOTO — UNA SOLA VEZ ─────────────────────────────────────────
+  // ── MANEJADOR CENTRAL DE TECLADO ─────────────────────────────────────────────
+  // Se registra en AMBOS: window (captura global) y document (fallback Smart TV)
+  // También captura en la fase de CAPTURE (true) para interceptar ANTES que el iframe
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
+      const nav = getNavKey(e);
+      if (!nav) return;
+
+      // Prevenir comportamiento del navegador (scroll, etc.)
+      e.preventDefault();
+      e.stopPropagation(); // Evitar que el iframe lo consuma
+
       const s = stateRef.current;
 
-      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Backspace','Escape'].includes(e.key)) {
-        e.preventDefault();
-      }
-
-      // ── PLAYER ──
+      // ── PLAYER ──────────────────────────────────────────────────────────────
       if (s.vista === 'player') {
-        if (e.key === 'Escape' || e.key === 'Backspace') {
+        if (nav === 'BACK') {
           setVista('detalle');
+          return;
         }
-        if (e.key === 'ArrowRight' && s.currentIdx < jobEpisodes.length - 1) {
+        if (nav === 'RIGHT' && s.currentIdx < jobEpisodes.length - 1) {
           const next = s.currentIdx + 1;
           setCurrentIdx(next);
           setSelectedUrl(jobEpisodes[next].url);
-          localStorage.setItem('job_last_ep', next.toString());
+          try { localStorage.setItem('job_last_ep', next.toString()); } catch (_) {}
+          return;
         }
-        if (e.key === 'ArrowLeft' && s.currentIdx > 0) {
+        if (nav === 'LEFT' && s.currentIdx > 0) {
           const prev = s.currentIdx - 1;
           setCurrentIdx(prev);
           setSelectedUrl(jobEpisodes[prev].url);
-          localStorage.setItem('job_last_ep', prev.toString());
+          try { localStorage.setItem('job_last_ep', prev.toString()); } catch (_) {}
+          return;
         }
         return;
       }
 
-      // ── DETALLE ──
+      // ── DETALLE ──────────────────────────────────────────────────────────────
       if (s.vista === 'detalle') {
-        const totalBtns = 3; // 0=Reanudar, 1=Ver inicio, 2=Episodios
-        if (e.key === 'ArrowDown') setDetalleBtn(b => Math.min(b + 1, totalBtns - 1));
-        if (e.key === 'ArrowUp')   setDetalleBtn(b => Math.max(b - 1, 0));
-        if (e.key === 'Enter') {
+        if (nav === 'DOWN') { setDetalleBtn(b => Math.min(b + 1, 2)); return; }
+        if (nav === 'UP')   { setDetalleBtn(b => Math.max(b - 1, 0)); return; }
+        if (nav === 'OK') {
           if (s.detalleBtn === 0) openEpisode(s.currentIdx);
           if (s.detalleBtn === 1) openEpisode(0);
           if (s.detalleBtn === 2) { setEpFoco(s.currentIdx); setVista('episodios'); }
+          return;
         }
         return;
       }
 
-      // ── EPISODIOS ──
+      // ── EPISODIOS ────────────────────────────────────────────────────────────
       if (s.vista === 'episodios') {
-        if (e.key === 'ArrowDown') setEpFoco(p => Math.min(p + 1, jobEpisodes.length - 1));
-        if (e.key === 'ArrowUp')   setEpFoco(p => Math.max(p - 1, 0));
-        if (e.key === 'Enter')     openEpisode(s.epFoco);
-        if (e.key === 'Backspace' || e.key === 'Escape') setVista('detalle');
+        if (nav === 'DOWN') { setEpFoco(p => Math.min(p + 1, jobEpisodes.length - 1)); return; }
+        if (nav === 'UP')   { setEpFoco(p => Math.max(p - 1, 0)); return; }
+        if (nav === 'OK')   { openEpisode(s.epFoco); return; }
+        if (nav === 'BACK') { setVista('detalle'); return; }
         return;
       }
     };
 
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
+    // ⚠️ CLAVE: usar capture:true para interceptar ANTES que el iframe
+    window.addEventListener('keydown', handleKey, true);
+    document.addEventListener('keydown', handleKey, true);
+
+    return () => {
+      window.removeEventListener('keydown', handleKey, true);
+      document.removeEventListener('keydown', handleKey, true);
+    };
   }, []);
 
   const ep = jobEpisodes[currentIdx];
@@ -154,14 +219,29 @@ const LaVidaDeJobTV = () => {
     return (
       <div ref={containerRef} tabIndex={0} className="fixed inset-0 bg-black outline-none z-50">
         <Head><title>{ep.title} — La Vida de Job</title></Head>
+
         <iframe
           src={selectedUrl + '?autoplay=1'}
           className="w-full h-full border-none"
           allow="autoplay; fullscreen"
           allowFullScreen
         />
+
+        {/*
+          ── OVERLAY TRANSPARENTE SOBRE EL IFRAME ──────────────────────────────
+          Este div invisible flota encima del iframe.
+          Impide que el iframe robe el foco y los eventos de teclado.
+          pointer-events:none para que el mouse/puntero pase al iframe,
+          pero el teclado lo captura el listener global (capture:true).
+        */}
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 z-10"
+          style={{ pointerEvents: 'none', background: 'transparent' }}
+        />
+
         {/* HUD info */}
-        <div className="absolute top-6 left-8 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
+        <div className="absolute top-6 left-8 z-20 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
           <div className="w-1.5 h-10 bg-[#F09800] rounded-full" />
           <div>
             <p className="text-xs text-[#F09800] font-black uppercase tracking-widest">La Vida de Job</p>
@@ -169,14 +249,22 @@ const LaVidaDeJobTV = () => {
             <p className="text-gray-400 text-sm">{ep.dur}</p>
           </div>
         </div>
+
         {/* Controles navegación */}
-        <div className="absolute bottom-8 inset-x-0 flex justify-between px-16 items-center">
+        <div className="absolute bottom-8 inset-x-0 z-20 flex justify-between px-16 items-center">
           <button
-            onClick={() => { if (currentIdx > 0) { const p = currentIdx-1; setCurrentIdx(p); setSelectedUrl(jobEpisodes[p].url); localStorage.setItem('job_last_ep', p.toString()); } }}
+            onClick={() => {
+              if (currentIdx > 0) {
+                const p = currentIdx - 1;
+                setCurrentIdx(p);
+                setSelectedUrl(jobEpisodes[p].url);
+                try { localStorage.setItem('job_last_ep', p.toString()); } catch (_) {}
+              }
+            }}
             disabled={currentIdx === 0}
             className="flex items-center gap-3 bg-black/60 backdrop-blur-md px-8 py-4 rounded-xl border border-white/10 disabled:opacity-20 text-white text-lg font-bold"
           >
-            ← EP. {currentIdx > 0 ? jobEpisodes[currentIdx-1].id : ''}
+            ← EP. {currentIdx > 0 ? jobEpisodes[currentIdx - 1].id : ''}
           </button>
           <button
             onClick={() => setVista('detalle')}
@@ -185,20 +273,33 @@ const LaVidaDeJobTV = () => {
             <IoList size={24} className="text-[#F09800]" /> Volver
           </button>
           <button
-            onClick={() => { if (currentIdx < jobEpisodes.length-1) { const n = currentIdx+1; setCurrentIdx(n); setSelectedUrl(jobEpisodes[n].url); localStorage.setItem('job_last_ep', n.toString()); } }}
+            onClick={() => {
+              if (currentIdx < jobEpisodes.length - 1) {
+                const n = currentIdx + 1;
+                setCurrentIdx(n);
+                setSelectedUrl(jobEpisodes[n].url);
+                try { localStorage.setItem('job_last_ep', n.toString()); } catch (_) {}
+              }
+            }}
             disabled={currentIdx === jobEpisodes.length - 1}
             className="flex items-center gap-3 bg-[#F09800] px-8 py-4 rounded-xl disabled:opacity-20 text-white text-lg font-bold"
           >
-            EP. {currentIdx < jobEpisodes.length-1 ? jobEpisodes[currentIdx+1].id : ''} →
+            EP. {currentIdx < jobEpisodes.length - 1 ? jobEpisodes[currentIdx + 1].id : ''} →
           </button>
         </div>
-        <p className="absolute bottom-3 right-6 text-gray-600 text-xs tracking-widest">← → cambiar ep · ESC volver</p>
-        <style jsx global>{`body{overflow:hidden;background:black;} *{-webkit-user-select:none;user-select:none;} *:focus{outline:none;}`}</style>
+
+        <p className="absolute bottom-3 right-6 z-20 text-gray-600 text-xs tracking-widest">← → cambiar ep · ESC/BACK volver</p>
+
+        <style jsx global>{`
+          body { overflow: hidden; background: black; }
+          * { -webkit-user-select: none; user-select: none; }
+          *:focus { outline: none; }
+        `}</style>
       </div>
     );
   }
 
-  // ── RENDER EPISODIOS (lista estilo Netflix Samsung) ────────────────────────
+  // ── RENDER EPISODIOS ───────────────────────────────────────────────────────
   if (vista === 'episodios') {
     return (
       <div ref={containerRef} tabIndex={0} className="bg-black min-h-screen text-white flex outline-none">
@@ -224,7 +325,7 @@ const LaVidaDeJobTV = () => {
           >
             ← Volver
           </button>
-          <p className="mt-8 text-gray-600 text-sm tracking-widest">↑ ↓ navegar · OK ver · ESC volver</p>
+          <p className="mt-8 text-gray-600 text-sm tracking-widest">↑ ↓ navegar · OK ver · ESC/BACK volver</p>
         </div>
 
         {/* Lista episodios */}
@@ -245,7 +346,6 @@ const LaVidaDeJobTV = () => {
                     : 'border-2 border-transparent hover:bg-white/8'
                 }`}
               >
-                {/* Miniatura */}
                 <div className="relative flex-shrink-0 w-40 rounded-xl overflow-hidden" style={{ aspectRatio: '16/9' }}>
                   <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
                   {esActual && (
@@ -253,15 +353,12 @@ const LaVidaDeJobTV = () => {
                       <IoPlay className="text-[#F09800] text-3xl" />
                     </div>
                   )}
-                  {/* Barra de progreso si es el actual */}
                   {esActual && (
                     <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
                       <div className="h-full bg-[#F09800] w-1/3" />
                     </div>
                   )}
                 </div>
-
-                {/* Info */}
                 <div className="flex-1 flex flex-col justify-center">
                   <div className="flex items-center gap-3 mb-1">
                     <span className={`text-sm font-black uppercase tracking-widest ${esFoco ? 'text-[#F09800]' : 'text-gray-500'}`}>
@@ -288,7 +385,7 @@ const LaVidaDeJobTV = () => {
     );
   }
 
-  // ── RENDER DETALLE (pantalla principal estilo Netflix Samsung) ──────────────
+  // ── RENDER DETALLE ─────────────────────────────────────────────────────────
   const btnClasses = (idx: number) =>
     `flex items-center gap-4 px-8 py-5 rounded-xl text-xl font-bold transition-all duration-200 w-full ${
       detalleBtn === idx
@@ -300,9 +397,7 @@ const LaVidaDeJobTV = () => {
     <div ref={containerRef} tabIndex={0} className="bg-black min-h-screen text-white flex outline-none overflow-hidden">
       <Head><title>La Vida de Job — Smart TV</title></Head>
 
-      {/* ── LADO IZQUIERDO — info + botones ── */}
       <div className="w-[45%] flex flex-col justify-center px-16 py-12 relative z-10">
-
         <Image
           src="https://static.wixstatic.com/media/859174_bbede1754486446398ed23b19c40484e~mv2.png"
           alt="Logo"
@@ -310,11 +405,7 @@ const LaVidaDeJobTV = () => {
           className="object-contain mb-8"
           unoptimized
         />
-
-        <h1 className="text-6xl font-black uppercase leading-tight mb-3">
-          La Vida de Job
-        </h1>
-
+        <h1 className="text-6xl font-black uppercase leading-tight mb-3">La Vida de Job</h1>
         <div className="flex items-center gap-3 mb-4">
           <span className="text-gray-400 text-lg">1 Temporada</span>
           <span className="text-gray-600">·</span>
@@ -322,14 +413,10 @@ const LaVidaDeJobTV = () => {
           <span className="text-gray-600">·</span>
           <span className="bg-white/10 border border-white/20 px-3 py-0.5 rounded text-sm font-bold">HD</span>
         </div>
-
-        {/* Episodio actual */}
         <div className="flex items-center gap-3 mb-3">
           <span className="text-[#F09800] font-black text-lg">Episodio {ep.id}</span>
           <span className="text-gray-400 text-lg">— {ep.title}</span>
         </div>
-
-        {/* Barra de progreso */}
         <div className="w-full h-1.5 bg-white/20 rounded-full mb-2">
           <div
             className="h-full bg-[#F09800] rounded-full"
@@ -337,12 +424,8 @@ const LaVidaDeJobTV = () => {
           />
         </div>
         <p className="text-gray-500 text-sm mb-8">{ep.dur} · {jobEpisodes.length - currentIdx - 1} episodios restantes</p>
+        <p className="text-gray-300 text-lg leading-relaxed mb-10 max-w-lg">{ep.desc}</p>
 
-        <p className="text-gray-300 text-lg leading-relaxed mb-10 max-w-lg">
-          {ep.desc}
-        </p>
-
-        {/* Botones verticales estilo Netflix Samsung */}
         <div className="flex flex-col gap-4 w-full max-w-md">
           <button onClick={() => openEpisode(currentIdx)} className={btnClasses(0)}>
             <IoPlay size={24} />
@@ -361,19 +444,14 @@ const LaVidaDeJobTV = () => {
         <p className="mt-10 text-gray-600 text-sm tracking-widest">↑ ↓ navegar · OK seleccionar</p>
       </div>
 
-      {/* ── LADO DERECHO — imagen grande ── */}
       <div className="w-[55%] relative">
         <img
           src="https://static.wixstatic.com/media/859174_f2663a3ee1e64c0e872790d28c7f659e~mv2.jpg"
           className="w-full h-full object-cover"
           alt="La Vida de Job"
         />
-        {/* Gradiente izquierdo para mezclar con el fondo */}
         <div className="absolute inset-0 bg-gradient-to-r from-black via-black/30 to-transparent" />
-        {/* Gradiente inferior */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Badge episodio actual en la imagen */}
         <div className="absolute bottom-8 right-8 bg-black/70 backdrop-blur-md px-6 py-4 rounded-xl border border-white/10">
           <p className="text-xs text-[#F09800] font-black uppercase tracking-widest mb-1">Viendo ahora</p>
           <p className="text-white text-lg font-bold">EP. {ep.id} — {ep.title}</p>
