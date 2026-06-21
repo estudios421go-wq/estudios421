@@ -3,6 +3,18 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { IoPlay, IoRefresh, IoList, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
+// Throttle manual para evitar lag
+const throttle = (func, limit) => {
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
+
 const genesisEpisodes = [
   { id: 1, title: "El Edén", dur: "43 min", thumb: "https://static.wixstatic.com/media/859174_c53ccb92b54b4aafb86c104d6f72e589~mv2.jpg", url: "https://ok.ru/videoembed/13888818973184", desc: "Esta es la historia de cómo todo fue creado por Dios y el inicio de la humanidad con Adán y Eva." },
   { id: 2, title: "Las Consecuencias", dur: "43 min", thumb: "https://static.wixstatic.com/media/859174_ecc4e327ec1b460aaa9939ab537584f2~mv2.jpg", url: "https://ok.ru/videoembed/13888837454336", desc: "Adán y Eva tienen que vivir las consecuencias de haber comido el fruto prohibido." },
@@ -226,7 +238,6 @@ const genesisEpisodes = [
   { id: 220, title: "Caricia Necesaria", dur: "42 min", thumb: "https://static.wixstatic.com/media/859174_e26b65ee655a40f48a00fb5efdffe2fe~mv2.jpg", url: "https://ok.ru/videoembed/14280213268992", desc: "Israel llega a Egipto y el encuentro con José es emotivo y necesario." },
   { id: 221, title: "Todos Unidos", dur: "43 min", thumb: "https://static.wixstatic.com/media/859174_ac6e61ae8f7b46fd91b24fe79a1b6cda~mv2.jpg", url: "https://ok.ru/videoembed/14280213531136", desc: "Boda con todos los hombres de Israel en Egipto. Fin de la historia de Génesis." },
 ];
-
 const GenesisTV = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [vista, setVista] = useState<'detalle' | 'episodios' | 'player'>('detalle');
@@ -236,37 +247,32 @@ const GenesisTV = () => {
   const [epFoco, setEpFoco] = useState(0);
   const epRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── FOCO AUTOMÁTICO — compatible Samsung Tizen, LG webOS, Panasonic, Hisense ──
+  // ── FOCO AUTOMÁTICO OPTIMIZADO ──
   useEffect(() => {
     const forzarFoco = () => {
       if (document.activeElement !== containerRef.current) {
         containerRef.current?.focus();
       }
     };
+    
     forzarFoco();
-    // Intervalo de seguridad los primeros 3 seg (LG webOS tarda en estar listo)
-    const intervalo = setInterval(forzarFoco, 300);
-    const parar = setTimeout(() => clearInterval(intervalo), 3000);
-
+    const timeout = setTimeout(forzarFoco, 500);
+    
     document.addEventListener('visibilitychange', forzarFoco);
     window.addEventListener('focus', forzarFoco);
-    window.addEventListener('focusin', forzarFoco); // Samsung Tizen
 
     return () => {
-      clearInterval(intervalo);
-      clearTimeout(parar);
+      clearTimeout(timeout);
       document.removeEventListener('visibilitychange', forzarFoco);
       window.removeEventListener('focus', forzarFoco);
-      window.removeEventListener('focusin', forzarFoco);
     };
   }, []);
 
-  // Forzar foco al cambiar de vista con múltiples intentos
+  // Forzar foco al cambiar de vista
   useEffect(() => {
     const t1 = setTimeout(() => containerRef.current?.focus(), 50);
     const t2 = setTimeout(() => containerRef.current?.focus(), 200);
-    const t3 = setTimeout(() => containerRef.current?.focus(), 500);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [vista]);
 
   // Cargar último episodio
@@ -278,18 +284,12 @@ const GenesisTV = () => {
     }
   }, []);
 
-  // Scroll al episodio enfocado
+  // Scroll al episodio enfocado (optimizado)
   useEffect(() => {
     if (vista === 'episodios') {
-      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     }
   }, [epFoco, vista]);
-
-  // Refs de estado para el listener (evita closures stale)
-  const stateRef = useRef({ vista, detalleBtn, epFoco, currentIdx });
-  useEffect(() => {
-    stateRef.current = { vista, detalleBtn, epFoco, currentIdx };
-  });
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
@@ -298,58 +298,44 @@ const GenesisTV = () => {
     setVista('player');
   };
 
-  // ── CONTROL REMOTO — Samsung Tizen, LG webOS, Panasonic, Hisense, Philips, Sony ──
+  // ── CONTROL REMOTO CORREGIDO ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      const s = stateRef.current;
-
-      // ── Normalizar tecla: unifica key + keyCode de todos los fabricantes ──
+      // Normalizar tecla SOLO con key (sin keyCode)
       const key = (() => {
         const k = e.key;
-        const c = e.keyCode;
-
-        // Direccionales — estándar y numéricos
-        if (k === 'ArrowUp'    || c === 38) return 'UP';
-        if (k === 'ArrowDown'  || c === 40) return 'DOWN';
-        if (k === 'ArrowLeft'  || c === 37) return 'LEFT';
-        if (k === 'ArrowRight' || c === 39) return 'RIGHT';
-
-        // OK / Seleccionar / Enter
-        if (k === 'Enter'  || c === 13) return 'OK';
-        if (k === 'Accept' || c === 32) return 'OK'; // algunos TVs usan espacio
-
-        // Volver / Atrás — varía bastante por marca
-        if (k === 'Escape'    || c === 27)    return 'BACK';
-        if (k === 'Backspace' || c === 8)     return 'BACK';
-        if (k === 'GoBack'    || c === 461)   return 'BACK'; // LG webOS
-        if (c === 10009)                      return 'BACK'; // Samsung Tizen
-        if (c === 166)                        return 'BACK'; // Philips / algunos Hisense
-        if (k === 'XF86Back')                 return 'BACK'; // webOS alternativo
-
+        
+        // Direccionales
+        if (k === 'ArrowUp' || k === 'ArrowDown' || k === 'ArrowLeft' || k === 'ArrowRight') return k;
+        
+        // OK / Enter
+        if (k === 'Enter' || k === 'Accept' || k === ' ') return 'OK';
+        
+        // BACK / Escape
+        if (k === 'Escape' || k === 'GoBack' || k === 'Backspace') return 'BACK';
+        
         return null;
       })();
 
       if (!key) return;
 
-      // Bloquear comportamiento nativo del TV (scroll, salida de app, etc.)
       e.preventDefault();
-      e.stopPropagation();
 
-      // ── PLAYER ──────────────────────────────────────────────────────────
-      if (s.vista === 'player') {
+      // ── PLAYER ──
+      if (vista === 'player') {
         if (key === 'BACK') {
           setVista('detalle');
           return;
         }
-        if (key === 'RIGHT' && s.currentIdx < genesisEpisodes.length - 1) {
-          const next = s.currentIdx + 1;
+        if (key === 'RIGHT' && currentIdx < genesisEpisodes.length - 1) {
+          const next = currentIdx + 1;
           setCurrentIdx(next);
           setSelectedUrl(genesisEpisodes[next].url);
           localStorage.setItem('genesis_last_ep', next.toString());
           return;
         }
-        if (key === 'LEFT' && s.currentIdx > 0) {
-          const prev = s.currentIdx - 1;
+        if (key === 'LEFT' && currentIdx > 0) {
+          const prev = currentIdx - 1;
           setCurrentIdx(prev);
           setSelectedUrl(genesisEpisodes[prev].url);
           localStorage.setItem('genesis_last_ep', prev.toString());
@@ -358,49 +344,48 @@ const GenesisTV = () => {
         return;
       }
 
-      // ── DETALLE ──────────────────────────────────────────────────────────
-      if (s.vista === 'detalle') {
+      // ── DETALLE ──
+      if (vista === 'detalle') {
         if (key === 'DOWN') { setDetalleBtn(b => Math.min(b + 1, 2)); return; }
         if (key === 'UP')   { setDetalleBtn(b => Math.max(b - 1, 0)); return; }
         if (key === 'OK') {
-          if (s.detalleBtn === 0) openEpisode(s.currentIdx);
-          if (s.detalleBtn === 1) openEpisode(0);
-          if (s.detalleBtn === 2) { setEpFoco(s.currentIdx); setVista('episodios'); }
+          if (detalleBtn === 0) openEpisode(currentIdx);
+          if (detalleBtn === 1) openEpisode(0);
+          if (detalleBtn === 2) { setEpFoco(currentIdx); setVista('episodios'); }
           return;
         }
         return;
       }
 
-      // ── EPISODIOS ─────────────────────────────────────────────────────────
-      if (s.vista === 'episodios') {
+      // ── EPISODIOS ──
+      if (vista === 'episodios') {
         if (key === 'DOWN') { setEpFoco(p => Math.min(p + 1, genesisEpisodes.length - 1)); return; }
         if (key === 'UP')   { setEpFoco(p => Math.max(p - 1, 0)); return; }
-        if (key === 'OK')   { openEpisode(s.epFoco); return; }
+        if (key === 'OK')   { openEpisode(epFoco); return; }
         if (key === 'BACK') { setVista('detalle'); return; }
         return;
       }
     };
 
-    // Escuchar en window Y document con capture:true
-    // (algunos TVs solo disparan en uno de los dos)
-    window.addEventListener('keydown', handleKey, true);
-    document.addEventListener('keydown', handleKey, true);
+    // Aplicar throttle de 100ms para evitar lag
+    const throttledHandleKey = throttle(handleKey, 100);
+    
+    // SOLO UN LISTENER (sin duplicar)
+    window.addEventListener('keydown', throttledHandleKey);
 
     return () => {
-      window.removeEventListener('keydown', handleKey, true);
-      document.removeEventListener('keydown', handleKey, true);
+      window.removeEventListener('keydown', throttledHandleKey);
     };
-  }, []);
+  }, [vista, detalleBtn, epFoco, currentIdx]);
 
   const ep = genesisEpisodes[currentIdx];
 
-  // ── PLAYER ─────────────────────────────────────────────────────────────────
+  // ── PLAYER ──
   if (vista === 'player') {
     return (
       <div
         ref={containerRef}
         tabIndex={0}
-        onKeyDown={(e) => e.stopPropagation()}
         className="fixed inset-0 bg-black outline-none z-50"
         style={{ outline: 'none' }}
       >
@@ -410,7 +395,6 @@ const GenesisTV = () => {
           className="w-full h-full border-none"
           allow="autoplay; fullscreen"
           allowFullScreen
-          style={{ pointerEvents: 'none' }}
         />
         <div className="absolute top-6 left-8 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
           <div className="w-1.5 h-10 bg-[#F09800] rounded-full" />
@@ -466,13 +450,12 @@ const GenesisTV = () => {
     );
   }
 
-  // ── EPISODIOS ──────────────────────────────────────────────────────────────
+  // ── EPISODIOS ──
   if (vista === 'episodios') {
     return (
       <div
         ref={containerRef}
         tabIndex={0}
-        onKeyDown={(e) => e.stopPropagation()}
         className="bg-black min-h-screen text-white flex outline-none"
         style={{ outline: 'none' }}
       >
@@ -556,7 +539,7 @@ const GenesisTV = () => {
     );
   }
 
-  // ── DETALLE ────────────────────────────────────────────────────────────────
+  // ── DETALLE ──
   const btnClasses = (idx: number) =>
     `flex items-center gap-4 px-8 py-5 rounded-xl text-xl font-bold transition-all duration-200 w-full ${
       detalleBtn === idx
@@ -568,7 +551,6 @@ const GenesisTV = () => {
     <div
       ref={containerRef}
       tabIndex={0}
-      onKeyDown={(e) => e.stopPropagation()}
       className="bg-black min-h-screen text-white flex outline-none overflow-hidden"
       style={{ outline: 'none' }}
     >
