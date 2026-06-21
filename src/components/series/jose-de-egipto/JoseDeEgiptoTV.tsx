@@ -4,6 +4,18 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { IoChevronBack, IoChevronForward, IoClose, IoPlay, IoList } from 'react-icons/io5';
 
+// ─── THROTTLE PARA EVITAR LAG ──────────────────────────────────────────────
+const throttle = (func: Function, limit: number) => {
+  let inThrottle: boolean;
+  return function(...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
+
 const joseEpisodes = [
   { id: 1, title: "El nacimiento de José", dur: "00:42:50", thumb: "https://static.wixstatic.com/media/859174_b44bad1703f7498ab87ffc2899850ed7~mv2.jpg", url: "https://ok.ru/videoembed/14201500797440" },
   { id: 2, title: "Espadas desaparecidas", dur: "00:41:20", thumb: "https://static.wixstatic.com/media/859174_04e0e0290e5b4812a701e159ffdce225~mv2.jpg", url: "https://ok.ru/videoembed/14202233752064" },
@@ -41,66 +53,139 @@ const joseEpisodes = [
 ];
 
 const JoseDeEgiptoTV = () => {
-  const [focusIndex, setFocusIndex] = useState(0); // 0 = Hero button, 1+ = episodios
+  const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  
+  const [focusIndex, setFocusIndex] = useState(0);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [currentIdx, setCurrentIdx] = useState(0);
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // ── FOCO AUTOMÁTICO OPTIMIZADO ──
   useEffect(() => {
-    const saved = localStorage.getItem('jose_last_ep');
-    if (saved) {
-      const idx = parseInt(saved);
-      if (idx < joseEpisodes.length) setCurrentIdx(idx);
-    }
+    const forzarFoco = () => {
+      containerRef.current?.focus({ preventScroll: true });
+    };
+    
+    forzarFoco();
+    const timeout = setTimeout(forzarFoco, 500);
+    
+    document.addEventListener('visibilitychange', forzarFoco);
+    window.addEventListener('focus', forzarFoco);
+
+    return () => {
+      clearTimeout(timeout);
+      document.removeEventListener('visibilitychange', forzarFoco);
+      window.removeEventListener('focus', forzarFoco);
+    };
   }, []);
 
+  // Reenfocar al cambiar de vista
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (selectedVideo) {
-        if (e.key === 'Backspace' || e.key === 'Escape') setSelectedVideo(null);
-        if (e.key === 'ArrowRight' && currentIdx < joseEpisodes.length - 1) openEpisode(currentIdx + 1);
-        if (e.key === 'ArrowLeft' && currentIdx > 0) openEpisode(currentIdx - 1);
-        return;
-      }
+    const t = setTimeout(() => containerRef.current?.focus({ preventScroll: true }), 50);
+    return () => clearTimeout(t);
+  }, [selectedVideo]);
 
-      switch (e.key) {
-        case 'ArrowRight':
-          setFocusIndex((prev) => Math.min(prev + 1, joseEpisodes.length));
-          break;
-        case 'ArrowLeft':
-          setFocusIndex((prev) => Math.max(prev - 1, 0));
-          break;
-        case 'ArrowDown':
-          setFocusIndex((prev) => Math.min(prev + 5, joseEpisodes.length));
-          break;
-        case 'ArrowUp':
-          setFocusIndex((prev) => Math.max(prev - 5, 0));
-          break;
-        case 'Enter':
-          if (focusIndex === 0) openEpisode(currentIdx);
-          else openEpisode(focusIndex - 1);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [focusIndex, selectedVideo, currentIdx]);
-
+  // Cargar último episodio
   useEffect(() => {
-    if (focusIndex > 0) {
-      episodeRefs.current[focusIndex - 1]?.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    try {
+      const saved = localStorage.getItem('jose_last_ep');
+      if (saved) {
+        const idx = parseInt(saved);
+        if (idx < joseEpisodes.length) setCurrentIdx(idx);
+      }
+    } catch (_) {}
+  }, []);
+
+  // Scroll al episodio enfocado (optimizado)
+  useEffect(() => {
+    if (focusIndex > 0 && !selectedVideo) {
+      episodeRefs.current[focusIndex - 1]?.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' });
     }
-  }, [focusIndex]);
+  }, [focusIndex, selectedVideo]);
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
     setSelectedVideo(joseEpisodes[idx].url);
-    localStorage.setItem('jose_last_ep', idx.toString());
+    try { localStorage.setItem('jose_last_ep', idx.toString()); } catch (_) {}
   };
 
+  // ── CONTROL REMOTO CORREGIDO ──
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevenir scroll y comportamientos del navegador
+      e.preventDefault();
+
+      // ── PLAYER ACTIVO ──
+      if (selectedVideo) {
+        // BACK / Escape
+        if (e.key === 'Backspace' || e.key === 'Escape') {
+          setSelectedVideo(null);
+          return;
+        }
+        // Siguiente episodio
+        if (e.key === 'ArrowRight' && currentIdx < joseEpisodes.length - 1) {
+          openEpisode(currentIdx + 1);
+          return;
+        }
+        // Episodio anterior
+        if (e.key === 'ArrowLeft' && currentIdx > 0) {
+          openEpisode(currentIdx - 1);
+          return;
+        }
+        return;
+      }
+
+      // ── NAVEGACIÓN PRINCIPAL ──
+      // Navegación horizontal
+      if (e.key === 'ArrowRight') {
+        setFocusIndex((prev) => Math.min(prev + 1, joseEpisodes.length));
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        setFocusIndex((prev) => Math.max(prev - 1, 0));
+        return;
+      }
+      
+      // Navegación vertical (salto de 4 en 4 para grid de 5 columnas)
+      if (e.key === 'ArrowDown') {
+        setFocusIndex((prev) => Math.min(prev + 4, joseEpisodes.length));
+        return;
+      }
+      if (e.key === 'ArrowUp') {
+        setFocusIndex((prev) => Math.max(prev - 4, 0));
+        return;
+      }
+      
+      // OK / Enter
+      if (e.key === 'Enter') {
+        if (focusIndex === 0) {
+          openEpisode(currentIdx);
+        } else {
+          openEpisode(focusIndex - 1);
+        }
+        return;
+      }
+    };
+
+    // Aplicar throttle de 100ms para evitar lag
+    const throttledHandleKey = throttle(handleKeyDown, 100);
+    
+    // SOLO UN LISTENER (sin duplicar)
+    window.addEventListener('keydown', throttledHandleKey);
+
+    return () => {
+      window.removeEventListener('keydown', throttledHandleKey);
+    };
+  }, [focusIndex, selectedVideo, currentIdx]);
+
   return (
-    <div className="bg-[#0a0a0a] min-h-screen text-white font-sans overflow-hidden">
+    <div 
+      ref={containerRef}
+      tabIndex={0}
+      className="bg-[#0a0a0a] min-h-screen text-white font-sans overflow-hidden outline-none"
+      style={{ outline: 'none' }}
+    >
       <Head><title>José de Egipto — Smart TV</title></Head>
 
       {/* ── HERO SECTION ── */}
@@ -120,6 +205,7 @@ const JoseDeEgiptoTV = () => {
             width={300}
             height={85}
             className="mb-6 object-contain"
+            unoptimized
           />
           <h1 className="text-5xl font-black uppercase tracking-wider text-white mb-4">
             José de Egipto
@@ -199,7 +285,7 @@ const JoseDeEgiptoTV = () => {
 
       {/* ── PLAYER TV ── */}
       {selectedVideo && (
-        <div className="fixed inset-0 z-[1000] bg-black">
+        <div className="fixed inset-0 z-[1000] bg-black outline-none" tabIndex={0}>
           <iframe
             src={selectedVideo + "?autoplay=1"}
             className="w-full h-full border-none"
@@ -207,8 +293,15 @@ const JoseDeEgiptoTV = () => {
             allowFullScreen
           />
 
+          {/* OVERLAY TRANSPARENTE SOBRE EL IFRAME */}
+          <div
+            ref={overlayRef}
+            className="absolute inset-0 z-10"
+            style={{ pointerEvents: 'none', background: 'transparent' }}
+          />
+
           {/* HUD superior */}
-          <div className="absolute top-8 left-10 flex items-center gap-4 bg-black/70 px-6 py-4 rounded-xl backdrop-blur-md border border-white/10">
+          <div className="absolute top-8 left-10 z-20 flex items-center gap-4 bg-black/70 px-6 py-4 rounded-xl backdrop-blur-md border border-white/10">
             <div className="w-2 h-12 bg-[#FF8A00] rounded-full" />
             <div>
               <p className="text-xs font-black text-[#FF8A00] uppercase tracking-widest">José de Egipto</p>
@@ -218,7 +311,7 @@ const JoseDeEgiptoTV = () => {
           </div>
 
           {/* Controles inferiores */}
-          <div className="absolute bottom-8 inset-x-0 flex items-center justify-between px-16">
+          <div className="absolute bottom-8 inset-x-0 z-20 flex items-center justify-between px-16">
             <button
               disabled={currentIdx === 0}
               onClick={() => openEpisode(currentIdx - 1)}
@@ -253,16 +346,17 @@ const JoseDeEgiptoTV = () => {
           </div>
 
           {/* Indicador control remoto */}
-          <div className="absolute bottom-8 right-6 text-gray-600 text-sm font-bold tracking-widest">
+          <div className="absolute bottom-8 right-6 z-20 text-gray-600 text-sm font-bold tracking-widest">
             ← → Episodios · ESC Salir
           </div>
         </div>
       )}
 
       <style jsx global>{`
-        body { overflow: hidden; }
+        body { overflow: hidden; background: #0a0a0a; }
         img { pointer-events: none !important; -webkit-user-drag: none; }
         * { -webkit-user-select: none; user-select: none; }
+        *:focus { outline: none; }
       `}</style>
     </div>
   );
