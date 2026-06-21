@@ -3,6 +3,18 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { IoPlay, IoRefresh, IoList } from 'react-icons/io5';
 
+// ─── THROTTLE PARA EVITAR LAG ──────────────────────────────────────────────
+const throttle = (func: Function, limit: number) => {
+  let inThrottle: boolean;
+  return function(...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
+
 // ─── EPISODIOS ────────────────────────────────────────────────────────────────
 const jobEpisodes = [
   { id: 1,  title: "La Juventud",           dur: "51 min",  thumb: "https://static.wixstatic.com/media/859174_6e9c9f95017d48fab10979c79bbe504b~mv2.jpg",  url: "https://ok.ru/videoembed/14200848714240", desc: "Al recibir un aviso urgente, Job causa revuelo en la recepción de José y su familia en Gosén." },
@@ -27,52 +39,28 @@ const jobEpisodes = [
   { id: 20, title: "La Continuación del Fin", dur: "53 min", thumb: "https://static.wixstatic.com/media/859174_83e339dc10f04a53b4361f4f4b321d3c~mv2.jpg", url: "https://ok.ru/videoembed/14216479377920", desc: "Job recibe visitas especiales. Gabriel entrega un mensaje de Dios a una joven mujer." },
 ];
 
-// ─── MAPEO DE KEYCODES PARA SMART TVs ─────────────────────────────────────────
-// Samsung Tizen, LG webOS, Panasonic, Philips, Hisense, TCL, Android TV, etc.
+// ─── NORMALIZACIÓN DE TECLAS (SOLO key, sin keyCode) ──────────────────────
 const getNavKey = (e: KeyboardEvent): string | null => {
-  // Por nombre (navegadores modernos)
-  if (e.key === 'ArrowUp')    return 'UP';
-  if (e.key === 'ArrowDown')  return 'DOWN';
-  if (e.key === 'ArrowLeft')  return 'LEFT';
-  if (e.key === 'ArrowRight') return 'RIGHT';
-  if (e.key === 'Enter')      return 'OK';
-  if (e.key === 'Backspace')  return 'BACK';
-  if (e.key === 'Escape')     return 'BACK';
-
-  // Por keyCode (Smart TVs antiguas y variantes de fabricante)
-  switch (e.keyCode) {
-    // Flechas — estándar en todos los navegadores
-    case 38: return 'UP';
-    case 40: return 'DOWN';
-    case 37: return 'LEFT';
-    case 39: return 'RIGHT';
-    // OK / Enter / Select
-    case 13:  return 'OK';
-    case 32:  return 'OK';   // Space como OK (Android TV)
-    // Atrás / Volver
-    case 8:   return 'BACK'; // Backspace
-    case 27:  return 'BACK'; // Escape
-    case 461: return 'BACK'; // LG webOS botón Back
-    case 10009: return 'BACK'; // Samsung Tizen botón Return
-    case 10182: return 'BACK'; // Samsung botón Exit
-    // Samsung Tizen — botones de color y media
-    case 403: return null; // Rojo
-    case 404: return null; // Verde
-    case 405: return null; // Amarillo
-    case 406: return null; // Azul
-    case 415: return null; // Play
-    case 19:  return null; // Pause
-    case 413: return null; // Stop
-    case 417: return null; // Fast Forward
-    case 412: return null; // Rewind
-    default:  return null;
-  }
+  const k = e.key;
+  
+  // Direccionales
+  if (k === 'ArrowUp') return 'UP';
+  if (k === 'ArrowDown') return 'DOWN';
+  if (k === 'ArrowLeft') return 'LEFT';
+  if (k === 'ArrowRight') return 'RIGHT';
+  
+  // OK / Enter / Select
+  if (k === 'Enter' || k === 'Accept' || k === ' ') return 'OK';
+  
+  // BACK / Escape / Volver
+  if (k === 'Escape' || k === 'GoBack' || k === 'Backspace') return 'BACK';
+  
+  return null;
 };
 
+// ─── COMPONENTE PRINCIPAL ────────────────────────────────────────────────────
 const LaVidaDeJobTV = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  // ── OVERLAY: div transparente que se pone ENCIMA del iframe
-  // para que el iframe no capture el foco ni los eventos de teclado
   const overlayRef = useRef<HTMLDivElement>(null);
 
   const [vista, setVista] = useState<'detalle' | 'episodios' | 'player'>('detalle');
@@ -82,26 +70,22 @@ const LaVidaDeJobTV = () => {
   const [epFoco, setEpFoco] = useState(0);
   const epRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── FOCO GLOBAL — escucha en document Y en window para máxima compatibilidad ──
-  // En Smart TVs el foco puede estar en document.body, no en el div
+  // ── FOCO AUTOMÁTICO OPTIMIZADO ──
   useEffect(() => {
     const forzarFoco = () => {
-      // En webOS/Tizen el foco debe estar en document.body o en el elemento raíz
-      // NO dependemos solo de containerRef porque el iframe lo roba
-      if (containerRef.current) {
-        containerRef.current.focus({ preventScroll: true });
-      }
+      containerRef.current?.focus({ preventScroll: true });
     };
+    
     forzarFoco();
-    // Recuperar foco cuando la ventana vuelve a estar activa
+    const timeout = setTimeout(forzarFoco, 500);
+    
     document.addEventListener('visibilitychange', forzarFoco);
     window.addEventListener('focus', forzarFoco);
-    // Recuperar foco si el usuario hace clic fuera del container
-    document.addEventListener('click', forzarFoco);
+
     return () => {
+      clearTimeout(timeout);
       document.removeEventListener('visibilitychange', forzarFoco);
       window.removeEventListener('focus', forzarFoco);
-      document.removeEventListener('click', forzarFoco);
     };
   }, []);
 
@@ -122,18 +106,12 @@ const LaVidaDeJobTV = () => {
     } catch (_) {}
   }, []);
 
-  // Scroll al episodio enfocado
+  // Scroll al episodio enfocado (optimizado sin smooth)
   useEffect(() => {
     if (vista === 'episodios') {
-      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     }
   }, [epFoco, vista]);
-
-  // Refs de estado — el listener se registra una sola vez
-  const stateRef = useRef({ vista, detalleBtn, epFoco, currentIdx, selectedUrl });
-  useEffect(() => {
-    stateRef.current = { vista, detalleBtn, epFoco, currentIdx, selectedUrl };
-  });
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
@@ -142,35 +120,30 @@ const LaVidaDeJobTV = () => {
     setVista('player');
   };
 
-  // ── MANEJADOR CENTRAL DE TECLADO ─────────────────────────────────────────────
-  // Se registra en AMBOS: window (captura global) y document (fallback Smart TV)
-  // También captura en la fase de CAPTURE (true) para interceptar ANTES que el iframe
+  // ── CONTROL REMOTO CORREGIDO ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       const nav = getNavKey(e);
       if (!nav) return;
 
-      // Prevenir comportamiento del navegador (scroll, etc.)
+      // SOLO preventDefault (sin stopPropagation)
       e.preventDefault();
-      e.stopPropagation(); // Evitar que el iframe lo consuma
 
-      const s = stateRef.current;
-
-      // ── PLAYER ──────────────────────────────────────────────────────────────
-      if (s.vista === 'player') {
+      // ── PLAYER ──
+      if (vista === 'player') {
         if (nav === 'BACK') {
           setVista('detalle');
           return;
         }
-        if (nav === 'RIGHT' && s.currentIdx < jobEpisodes.length - 1) {
-          const next = s.currentIdx + 1;
+        if (nav === 'RIGHT' && currentIdx < jobEpisodes.length - 1) {
+          const next = currentIdx + 1;
           setCurrentIdx(next);
           setSelectedUrl(jobEpisodes[next].url);
           try { localStorage.setItem('job_last_ep', next.toString()); } catch (_) {}
           return;
         }
-        if (nav === 'LEFT' && s.currentIdx > 0) {
-          const prev = s.currentIdx - 1;
+        if (nav === 'LEFT' && currentIdx > 0) {
+          const prev = currentIdx - 1;
           setCurrentIdx(prev);
           setSelectedUrl(jobEpisodes[prev].url);
           try { localStorage.setItem('job_last_ep', prev.toString()); } catch (_) {}
@@ -179,42 +152,43 @@ const LaVidaDeJobTV = () => {
         return;
       }
 
-      // ── DETALLE ──────────────────────────────────────────────────────────────
-      if (s.vista === 'detalle') {
+      // ── DETALLE ──
+      if (vista === 'detalle') {
         if (nav === 'DOWN') { setDetalleBtn(b => Math.min(b + 1, 2)); return; }
         if (nav === 'UP')   { setDetalleBtn(b => Math.max(b - 1, 0)); return; }
         if (nav === 'OK') {
-          if (s.detalleBtn === 0) openEpisode(s.currentIdx);
-          if (s.detalleBtn === 1) openEpisode(0);
-          if (s.detalleBtn === 2) { setEpFoco(s.currentIdx); setVista('episodios'); }
+          if (detalleBtn === 0) openEpisode(currentIdx);
+          if (detalleBtn === 1) openEpisode(0);
+          if (detalleBtn === 2) { setEpFoco(currentIdx); setVista('episodios'); }
           return;
         }
         return;
       }
 
-      // ── EPISODIOS ────────────────────────────────────────────────────────────
-      if (s.vista === 'episodios') {
+      // ── EPISODIOS ──
+      if (vista === 'episodios') {
         if (nav === 'DOWN') { setEpFoco(p => Math.min(p + 1, jobEpisodes.length - 1)); return; }
         if (nav === 'UP')   { setEpFoco(p => Math.max(p - 1, 0)); return; }
-        if (nav === 'OK')   { openEpisode(s.epFoco); return; }
+        if (nav === 'OK')   { openEpisode(epFoco); return; }
         if (nav === 'BACK') { setVista('detalle'); return; }
         return;
       }
     };
 
-    // ⚠️ CLAVE: usar capture:true para interceptar ANTES que el iframe
-    window.addEventListener('keydown', handleKey, true);
-    document.addEventListener('keydown', handleKey, true);
+    // Aplicar throttle de 100ms para evitar lag
+    const throttledHandleKey = throttle(handleKey, 100);
+    
+    // SOLO UN LISTENER (sin duplicar)
+    window.addEventListener('keydown', throttledHandleKey);
 
     return () => {
-      window.removeEventListener('keydown', handleKey, true);
-      document.removeEventListener('keydown', handleKey, true);
+      window.removeEventListener('keydown', throttledHandleKey);
     };
-  }, []);
+  }, [vista, detalleBtn, epFoco, currentIdx]);
 
   const ep = jobEpisodes[currentIdx];
 
-  // ── RENDER PLAYER ──────────────────────────────────────────────────────────
+  // ── RENDER PLAYER ──
   if (vista === 'player') {
     return (
       <div ref={containerRef} tabIndex={0} className="fixed inset-0 bg-black outline-none z-50">
@@ -227,13 +201,7 @@ const LaVidaDeJobTV = () => {
           allowFullScreen
         />
 
-        {/*
-          ── OVERLAY TRANSPARENTE SOBRE EL IFRAME ──────────────────────────────
-          Este div invisible flota encima del iframe.
-          Impide que el iframe robe el foco y los eventos de teclado.
-          pointer-events:none para que el mouse/puntero pase al iframe,
-          pero el teclado lo captura el listener global (capture:true).
-        */}
+        {/* OVERLAY TRANSPARENTE SOBRE EL IFRAME */}
         <div
           ref={overlayRef}
           className="absolute inset-0 z-10"
@@ -299,7 +267,7 @@ const LaVidaDeJobTV = () => {
     );
   }
 
-  // ── RENDER EPISODIOS ───────────────────────────────────────────────────────
+  // ── RENDER EPISODIOS ──
   if (vista === 'episodios') {
     return (
       <div ref={containerRef} tabIndex={0} className="bg-black min-h-screen text-white flex outline-none">
@@ -385,7 +353,7 @@ const LaVidaDeJobTV = () => {
     );
   }
 
-  // ── RENDER DETALLE ─────────────────────────────────────────────────────────
+  // ── RENDER DETALLE ──
   const btnClasses = (idx: number) =>
     `flex items-center gap-4 px-8 py-5 rounded-xl text-xl font-bold transition-all duration-200 w-full ${
       detalleBtn === idx
