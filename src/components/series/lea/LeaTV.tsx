@@ -3,6 +3,18 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { IoPlay, IoRefresh, IoList, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 
+// ─── THROTTLE PARA EVITAR LAG ──────────────────────────────────────────────
+const throttle = (func: Function, limit: number) => {
+  let inThrottle: boolean;
+  return function(...args: any[]) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+};
+
 // ─── EPISODIOS ────────────────────────────────────────────────────────────────
 const leaEpisodes = [
   { id: 1,  title: "Hermanas del destino",       dur: "40 min", thumb: "https://static.wixstatic.com/media/859174_86a2172b057b4dbb8f9aad8c28163653~mv2.jpg", url: "https://ok.ru/videoembed/14199373957632", desc: "Lea y Raquel son hermanas con destinos muy diferentes. Sus vidas cambiarán para siempre cuando Jacob llega a su hogar." },
@@ -21,6 +33,8 @@ const leaEpisodes = [
 
 const LeaTV = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  
   const [vista, setVista] = useState<'detalle' | 'episodios' | 'player'>('detalle');
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedUrl, setSelectedUrl] = useState('');
@@ -28,102 +42,133 @@ const LeaTV = () => {
   const [epFoco, setEpFoco] = useState(0);
   const epRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // ── FOCO AUTOMÁTICO — crítico para control remoto desde el inicio ──
+  // ── FOCO AUTOMÁTICO OPTIMIZADO ──
   useEffect(() => {
-    const forzarFoco = () => containerRef.current?.focus();
+    const forzarFoco = () => {
+      containerRef.current?.focus({ preventScroll: true });
+    };
+    
     forzarFoco();
+    const timeout = setTimeout(forzarFoco, 500);
+    
     document.addEventListener('visibilitychange', forzarFoco);
     window.addEventListener('focus', forzarFoco);
+
     return () => {
+      clearTimeout(timeout);
       document.removeEventListener('visibilitychange', forzarFoco);
       window.removeEventListener('focus', forzarFoco);
     };
   }, []);
 
+  // Reenfocar al cambiar de vista
   useEffect(() => {
-    setTimeout(() => containerRef.current?.focus(), 100);
+    const t = setTimeout(() => containerRef.current?.focus({ preventScroll: true }), 50);
+    return () => clearTimeout(t);
   }, [vista]);
 
   // Cargar último episodio
   useEffect(() => {
-    const saved = localStorage.getItem('lea_last_ep');
-    if (saved) {
-      const idx = parseInt(saved);
-      if (idx < leaEpisodes.length) setCurrentIdx(idx);
-    }
+    try {
+      const saved = localStorage.getItem('lea_last_ep');
+      if (saved) {
+        const idx = parseInt(saved);
+        if (idx < leaEpisodes.length) setCurrentIdx(idx);
+      }
+    } catch (_) {}
   }, []);
 
-  // Scroll al episodio enfocado
+  // Scroll al episodio enfocado (optimizado sin smooth)
   useEffect(() => {
     if (vista === 'episodios') {
-      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      epRefs.current[epFoco]?.scrollIntoView({ behavior: 'auto', block: 'nearest' });
     }
   }, [epFoco, vista]);
-
-  // Refs de estado — listener una sola vez
-  const stateRef = useRef({ vista, detalleBtn, epFoco, currentIdx });
-  useEffect(() => {
-    stateRef.current = { vista, detalleBtn, epFoco, currentIdx };
-  });
 
   const openEpisode = (idx: number) => {
     setCurrentIdx(idx);
     setSelectedUrl(leaEpisodes[idx].url);
-    localStorage.setItem('lea_last_ep', idx.toString());
+    try { localStorage.setItem('lea_last_ep', idx.toString()); } catch (_) {}
     setVista('player');
   };
 
-  // ── CONTROL REMOTO — UNA SOLA VEZ ─────────────────────────────────────────
+  // ── CONTROL REMOTO CORREGIDO ──
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      const s = stateRef.current;
-      if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Backspace','Escape'].includes(e.key)) {
-        e.preventDefault();
-      }
+      const key = e.key;
+      
+      // Normalizar teclas (solo key)
+      const navKey = (() => {
+        if (key === 'ArrowUp') return 'UP';
+        if (key === 'ArrowDown') return 'DOWN';
+        if (key === 'ArrowLeft') return 'LEFT';
+        if (key === 'ArrowRight') return 'RIGHT';
+        if (key === 'Enter' || key === 'Accept' || key === ' ') return 'OK';
+        if (key === 'Escape' || key === 'GoBack' || key === 'Backspace') return 'BACK';
+        return null;
+      })();
 
-      // PLAYER
-      if (s.vista === 'player') {
-        if (e.key === 'Escape' || e.key === 'Backspace') setVista('detalle');
-        if (e.key === 'ArrowRight' && s.currentIdx < leaEpisodes.length - 1) {
-          const next = s.currentIdx + 1;
+      if (!navKey) return;
+
+      // Prevenir comportamientos del navegador
+      e.preventDefault();
+
+      // ── PLAYER ──
+      if (vista === 'player') {
+        if (navKey === 'BACK') {
+          setVista('detalle');
+          return;
+        }
+        if (navKey === 'RIGHT' && currentIdx < leaEpisodes.length - 1) {
+          const next = currentIdx + 1;
           setCurrentIdx(next);
           setSelectedUrl(leaEpisodes[next].url);
-          localStorage.setItem('lea_last_ep', next.toString());
+          try { localStorage.setItem('lea_last_ep', next.toString()); } catch (_) {}
+          return;
         }
-        if (e.key === 'ArrowLeft' && s.currentIdx > 0) {
-          const prev = s.currentIdx - 1;
+        if (navKey === 'LEFT' && currentIdx > 0) {
+          const prev = currentIdx - 1;
           setCurrentIdx(prev);
           setSelectedUrl(leaEpisodes[prev].url);
-          localStorage.setItem('lea_last_ep', prev.toString());
+          try { localStorage.setItem('lea_last_ep', prev.toString()); } catch (_) {}
+          return;
         }
         return;
       }
 
-      // DETALLE
-      if (s.vista === 'detalle') {
-        if (e.key === 'ArrowDown') setDetalleBtn(b => Math.min(b + 1, 2));
-        if (e.key === 'ArrowUp')   setDetalleBtn(b => Math.max(b - 1, 0));
-        if (e.key === 'Enter') {
-          if (s.detalleBtn === 0) openEpisode(s.currentIdx);
-          if (s.detalleBtn === 1) openEpisode(0);
-          if (s.detalleBtn === 2) { setEpFoco(s.currentIdx); setVista('episodios'); }
+      // ── DETALLE ──
+      if (vista === 'detalle') {
+        if (navKey === 'DOWN') { setDetalleBtn(b => Math.min(b + 1, 2)); return; }
+        if (navKey === 'UP')   { setDetalleBtn(b => Math.max(b - 1, 0)); return; }
+        if (navKey === 'OK') {
+          if (detalleBtn === 0) openEpisode(currentIdx);
+          if (detalleBtn === 1) openEpisode(0);
+          if (detalleBtn === 2) { setEpFoco(currentIdx); setVista('episodios'); }
+          return;
         }
         return;
       }
 
-      // EPISODIOS
-      if (s.vista === 'episodios') {
-        if (e.key === 'ArrowDown') setEpFoco(p => Math.min(p + 1, leaEpisodes.length - 1));
-        if (e.key === 'ArrowUp')   setEpFoco(p => Math.max(p - 1, 0));
-        if (e.key === 'Enter')     openEpisode(s.epFoco);
-        if (e.key === 'Backspace' || e.key === 'Escape') setVista('detalle');
+      // ── EPISODIOS ──
+      if (vista === 'episodios') {
+        if (navKey === 'DOWN') { setEpFoco(p => Math.min(p + 1, leaEpisodes.length - 1)); return; }
+        if (navKey === 'UP')   { setEpFoco(p => Math.max(p - 1, 0)); return; }
+        if (navKey === 'OK')   { openEpisode(epFoco); return; }
+        if (navKey === 'BACK') { setVista('detalle'); return; }
         return;
       }
     };
 
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, []);
+    // Aplicar throttle de 100ms para evitar lag
+    const throttledHandleKey = throttle(handleKey, 100);
+    
+    // SOLO UN LISTENER
+    window.addEventListener('keydown', throttledHandleKey);
+
+    return () => {
+      window.removeEventListener('keydown', throttledHandleKey);
+    };
+  }, [vista, detalleBtn, epFoco, currentIdx]);
 
   const ep = leaEpisodes[currentIdx];
 
@@ -132,8 +177,22 @@ const LeaTV = () => {
     return (
       <div ref={containerRef} tabIndex={0} className="fixed inset-0 bg-black outline-none z-50">
         <Head><title>{ep.title} — Lea</title></Head>
-        <iframe src={selectedUrl + '?autoplay=1'} className="w-full h-full border-none" allow="autoplay; fullscreen" allowFullScreen />
-        <div className="absolute top-6 left-8 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
+        
+        <iframe
+          src={selectedUrl + '?autoplay=1'}
+          className="w-full h-full border-none"
+          allow="autoplay; fullscreen"
+          allowFullScreen
+        />
+
+        {/* OVERLAY TRANSPARENTE SOBRE EL IFRAME */}
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 z-10"
+          style={{ pointerEvents: 'none', background: 'transparent' }}
+        />
+
+        <div className="absolute top-6 left-8 z-20 bg-black/70 backdrop-blur-md px-6 py-3 rounded-xl border border-white/10 flex items-center gap-4">
           <div className="w-1.5 h-10 bg-[#F09800] rounded-full" />
           <div>
             <p className="text-xs text-[#F09800] font-black uppercase tracking-widest">Lea</p>
@@ -141,7 +200,8 @@ const LeaTV = () => {
             <p className="text-gray-400 text-sm">{ep.dur}</p>
           </div>
         </div>
-        <div className="absolute bottom-8 inset-x-0 flex justify-between px-16 items-center">
+        
+        <div className="absolute bottom-8 inset-x-0 z-20 flex justify-between px-16 items-center">
           <button
             onClick={() => { if (currentIdx > 0) { const p = currentIdx-1; setCurrentIdx(p); setSelectedUrl(leaEpisodes[p].url); localStorage.setItem('lea_last_ep', p.toString()); } }}
             disabled={currentIdx === 0}
@@ -160,8 +220,14 @@ const LeaTV = () => {
             EP. {currentIdx < leaEpisodes.length-1 ? leaEpisodes[currentIdx+1].id : ''} <IoChevronForward size={24} />
           </button>
         </div>
-        <p className="absolute bottom-3 right-6 text-gray-600 text-xs tracking-widest">← → cambiar ep · ESC volver</p>
-        <style jsx global>{`body{overflow:hidden;background:black;} *{-webkit-user-select:none;user-select:none;} *:focus{outline:none;}`}</style>
+        
+        <p className="absolute bottom-3 right-6 z-20 text-gray-600 text-xs tracking-widest">← → cambiar ep · ESC volver</p>
+        
+        <style jsx global>{`
+          body { overflow: hidden; background: black; }
+          * { -webkit-user-select: none; user-select: none; }
+          *:focus { outline: none; }
+        `}</style>
       </div>
     );
   }
@@ -218,7 +284,12 @@ const LeaTV = () => {
             );
           })}
         </div>
-        <style jsx global>{`body{overflow:hidden;background:black;} *{-webkit-user-select:none;user-select:none;} ::-webkit-scrollbar{display:none;} *:focus{outline:none;}`}</style>
+        <style jsx global>{`
+          body { overflow: hidden; background: black; }
+          * { -webkit-user-select: none; user-select: none; }
+          ::-webkit-scrollbar { display: none; }
+          *:focus { outline: none; }
+        `}</style>
       </div>
     );
   }
