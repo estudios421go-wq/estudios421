@@ -10,10 +10,86 @@ import { allSeries } from '../../../data/series';
 
 // --- CONFIGURACIÓN DE EPISODIOS (ID: 12) ---
 const esterEpisodes = [
-  "https://ok.ru/videoembed/3001179834896", "https://ok.ru/videoembed/3001180031504", "https://ok.ru/videoembed/3005876603408",
-  "https://ok.ru/videoembed/1843699976800", "https://ok.ru/videoembed/3004571650576", "https://ok.ru/videoembed/3004571716112",
-  "https://ok.ru/videoembed/3004571519504", "https://ok.ru/videoembed/3004571388432", "https://ok.ru/videoembed/3004571453968",
-  "https://ok.ru/videoembed/3004571322896"
+  { 
+    id: 1, 
+    title: "EL BANQUETE DEL REY ASUERO", 
+    desc: "El rey Asuero regresa victorioso a Susa y organiza un suntuoso banquete de 180 días para celebrar su poder ante el imperio. Mientras tanto, se introduce la humilde vida de la joven judía Ester junto a su primo Mardoqueo. El conflicto estalla cuando la reina Vasti desafía públicamente una orden del rey durante la fiesta.", 
+    dur: "50:18", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3001179834896" 
+  },
+  { 
+    id: 2, 
+    title: "LA DESTITUCIÓN DE LA REINA VASTI", 
+    desc: "Tras la humillante negativa de la reina Vasti de presentarse ante los invitados del rey Asuero, el monarca enfurece por el desafío a su autoridad. Bajo el consejo de sus ministros, quienes temen que este acto inspire a otras mujeres del imperio a desobedecer, Asuero toma la firme decisión de destituir a Vasti de su trono, decretando que se busque una nueva soberana en todo el reino.", 
+    dur: "51:05", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3001180031504" 
+  },
+  { 
+    id: 3, 
+    title: "EL DECRETO DEL REY Y LA BÚSQUEDA DE UNA NUEVA REINA", 
+    desc: "Tras la destitución de Vasti, el rey Asuero publica un decreto oficial en todo el imperio de Persia para convocar a las jóvenes más hermosas del reino. En Susa, los guardias reales comienzan la búsqueda exhaustiva de candidatas para el harén, obligando a Ester y a Mardoqueo a tomar difíciles decisiones para proteger su identidad judía ante el inminente reclutamiento.", 
+    dur: "41:07", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3005876603408" 
+  },
+  { 
+    id: 4, 
+    title: "EL RECLUTAMIENTO DE ESTER PARA EL HARÉN REAL", 
+    desc: "Los guardias del rey avanzan con la recolección de las jóvenes más bellas de Susa y, a pesar de los esfuerzos de Mardoqueo por ocultarla, Ester es descubierta y llevada a la fuerza al palacio. Antes de separarse, Mardoqueo le ruega encarecidamente que mantenga en estricto secreto sus orígenes judíos para proteger su vida dentro del harén.", 
+    dur: "45:11", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/1843699976800" 
+  },
+  { 
+    id: 5, 
+    title: "LA PREPARACIÓN EN EL HARÉN REAL Y EL ASCENSO DE AMÁN", 
+    desc: "Ester comienza su largo proceso de preparación y purificación dentro del harén bajo el cuidado del eunuco Hegai, destacando rápidamente por su gracia y humildad. Mientras tanto, en la corte, el influyente y arrogante Amán gana el favor del rey Asuero, consolidando un poder político que pronto pondrá en peligro a todo el pueblo judío.", 
+    dur: "47:41", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571650576" 
+  },
+  { 
+    id: 6, 
+    title: "EL ENCUENTRO DE ESTER CON EL REY ASUERO", 
+    desc: "Llega el momento decisivo en que Ester es presentada ante el rey Asuero tras culminar su periodo de preparación en el harén. Cautivado de inmediato por su belleza, gracia y pureza, el monarca se enamora profundamente de ella y decide coronarla como la nueva reina de Persia, ignorando por completo sus raíces judías.", 
+    dur: "41:15", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571716112" 
+  },
+  { 
+    id: 7, 
+    title: "EL COMPLOT CONTRA EL REY Y LA CONSPIRACIÓN DE AMÁN", 
+    desc: "Mardoqueo descubre una conspiración secreta de dos guardias reales para asesinar al rey Asuero e informa de inmediato a Ester, logrando salvar la vida del monarca. Sin embargo, el orgullo del cruel Amán se desborda cuando Mardoqueo se niega a arrodillarse ante él, desatando una sed de venganza que amenaza con destruir a todos los judíos del imperio.", 
+    dur: "45:58", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571519504" 
+  },
+  { 
+    id: 8, 
+    title: "EL DECRETO DE EXTERMINIO CONTRA LOS JUDÍOS", 
+    desc: "Amán manipula al rey Asuero para que firme un decreto oficial que ordena la aniquilación de todos los judíos del imperio en un día determinado. Al enterarse de la terrible noticia, Mardoqueo entra en un profundo luto y busca desesperadamente contactar a la reina Ester para exigirle que intervenga ante el rey y salve a su pueblo.", 
+    dur: "44:41", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571388432" 
+  },
+  { 
+    id: 9, 
+    title: "EL AYUNO DE ESTER Y EL RIESGO DE PRESENTARSE ANTE EL REY", 
+    desc: "Mardoqueo convence a Ester de que debe arriesgar su vida presentándose ante el rey Asuero sin haber sido convocada, una falta que se castiga con la muerte. Antes de dar el peligroso paso, Ester le pide a Mardoqueo que reúna a todos los judíos de Susa para realizar un ayuno estricto de tres días implorando el favor divino.", 
+    dur: "45:16", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571453968" 
+  },
+  { 
+    id: 10, 
+    title: "EL TRIUNFO DE MARDOQUEO Y LA SALVACIÓN DEL PUEBLO JUDÍO", 
+    desc: "Ester revela valientemente su origen judío ante el rey Asuero y desenmascara la traición del malvado Amán, quien termina recibiendo su propio castigo. Con el respaldo del monarca, Mardoqueo es honrado con un alto cargo y se emite un nuevo decreto real que permite a los judíos defenderse victorios amente, trayendo paz y una gran celebración a todo el imperio.", 
+    dur: "46:50", 
+    thumb: "https://static.wixstatic.com/media/859174_c5689b7012c3439cbebbf7dc9d70cfaa~mv2.jpg",
+    url: "https://ok.ru/videoembed/3004571322896" 
+  }
 ];
 
 const ReinaEsterMobile = () => {
@@ -66,7 +142,7 @@ const ReinaEsterMobile = () => {
   }, [searchQuery]);
 
   const openEpisode = (idx: number) => {
-    setSelectedVideo(esterEpisodes[idx]);
+    setSelectedVideo(esterEpisodes[idx].url);
     setCurrentIdx(idx);
     localStorage.setItem('ester_mobile_last_ep', idx.toString());
   };
@@ -91,7 +167,7 @@ const ReinaEsterMobile = () => {
           <div className="flex flex-col border-l-4 border-[#F09800] pl-4 py-1">
             <span className="text-[9px] font-black text-[#F09800] uppercase tracking-[0.3em] mb-1">Reina Ester</span>
             <h2 className="text-sm font-black tracking-tight uppercase truncate max-w-[200px]">
-              Episodio {currentIdx + 1}
+              Episodio {esterEpisodes[currentIdx].id} — {esterEpisodes[currentIdx].title}
             </h2>
           </div>
           <button onClick={() => setSelectedVideo(null)} className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-full border border-white/10 active:scale-90 transition-all">
@@ -173,7 +249,7 @@ const ReinaEsterMobile = () => {
         </div>
         <div className="px-4 -mt-14 flex flex-col gap-3 relative z-20">
           <button onClick={() => openEpisode(currentIdx)} className="w-full bg-white text-black font-black py-4 rounded-md text-sm active:scale-95 transition-transform uppercase tracking-[0.2em] shadow-2xl">
-            {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${currentIdx + 1}`}
+            {currentIdx === 0 ? "▶ Ver Ahora" : `▶ Continuar Ep. ${esterEpisodes[currentIdx].id}`}
           </button>
           <div className="flex gap-3">
             <button onClick={toggleMyList} className={`flex-1 py-3.5 rounded-md text-[10px] font-black border transition-all tracking-widest ${inMyList ? 'bg-[#F09800] border-[#F09800] text-black' : 'bg-white/5 border-white/10 text-white active:bg-white/20'}`}>
@@ -189,11 +265,16 @@ const ReinaEsterMobile = () => {
           <div className="w-1 h-5 bg-[#F09800]"></div>
           <h2 className="text-[11px] font-black text-white/50 tracking-[0.3em] uppercase">Episodios Disponibles</h2>
         </header>
-        <div className="grid grid-cols-5 gap-3">
-          {esterEpisodes.map((_, i) => (
-            <button key={i} onClick={() => openEpisode(i)} className={`aspect-square rounded-md text-[10px] font-black border transition-all ${currentIdx === i ? 'bg-[#F09800] border-[#F09800] text-black' : 'bg-white/5 border-white/10 text-white/60 active:bg-white/10'}`}>
-              {i + 1}
-            </button>
+        <div className="grid grid-cols-2 gap-5">
+          {esterEpisodes.map((ep, index) => (
+            <div key={ep.id} className="flex flex-col gap-2.5 active:scale-95 transition-all" onClick={() => openEpisode(index)}>
+              <div className={`relative aspect-video rounded-lg overflow-hidden border-2 ${currentIdx === index ? 'border-[#F09800] shadow-[0_0_15px_rgba(240,152,0,0.2)]' : 'border-white/5'}`}>
+                <img src={ep.thumb} className="w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-black/20" />
+                <span className="absolute bottom-1.5 right-1.5 bg-black/80 backdrop-blur-md px-2 py-0.5 text-[8px] font-black rounded border border-white/10 uppercase">{ep.dur}</span>
+              </div>
+              <h3 className="font-bold text-[10px] truncate uppercase tracking-tight text-white/90">EP. {ep.id} {ep.title}</h3>
+            </div>
           ))}
         </div>
       </div>
